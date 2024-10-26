@@ -1,5 +1,9 @@
 import { lazy, Suspense } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  Navigate,
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
 import SpinnerLoading from "./components/spinnerLoading/SpinnerLoading";
 import Layout from "./layouts/Layout";
 import AnonymousRoutes from "./components/anonymousRoutes/AnonymousRoutes";
@@ -7,6 +11,7 @@ import ProtectedRoutes from "./components/protectedRoutes/ProtectedRoutes";
 
 const DemoPage = lazy(() => import("./pages/demoPage/DemoPage"));
 const LoginPage = lazy(() => import("./pages/loginPage/LoginPage"));
+const NotFoundPage = lazy(() => import("./pages/notFoundPage/NotFoundPage"));
 
 const router = createBrowserRouter([
   {
@@ -39,6 +44,18 @@ const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path: "/404page",
+    element: (
+      <Suspense fallback={<SpinnerLoading />}>
+        <NotFoundPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: "*",
+    element: <Navigate to="/404page" replace />,
   },
 ]);
 
