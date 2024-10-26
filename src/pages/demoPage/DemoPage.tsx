@@ -1,5 +1,7 @@
+import PageContainer from "../PageContainer";
+
 function DemoPage() {
-  return <div>DemoPage</div>;
+  return <PageContainer>DemoPage</PageContainer>;
 }
 
 export default DemoPage;
