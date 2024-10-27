@@ -9,9 +9,11 @@ import {
 import React, { createElement, useState } from "react";
 
 import { UserGroupIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
+import { useNavigate } from "react-router-dom";
 
 function MenuList() {
   const [open, setOpen] = useState(0);
+  const navigate = useNavigate();
 
   const handleOpen = (value: any) => {
     setOpen(open === value ? 0 : value);
@@ -27,9 +29,11 @@ function MenuList() {
       subItems: [
         {
           label: "My Groups",
+          path: "/my-groups",
         },
         {
           label: "Available Groups",
+          path: "/",
         },
       ],
     },
@@ -71,6 +75,7 @@ function MenuList() {
                       <ListItem
                         className={`px-12 ${LIST_ITEM_STYLES}`}
                         key={subItem.label}
+                        onClick={() => navigate(subItem.path)}
                       >
                         {subItem.label}
                       </ListItem>
