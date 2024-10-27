@@ -4,14 +4,13 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import SpinnerLoading from "./components/spinnerLoading/SpinnerLoading";
 import Layout from "./layouts/Layout";
-import AnonymousRoutes from "./components/anonymousRoutes/AnonymousRoutes";
-import ProtectedRoutes from "./components/protectedRoutes/ProtectedRoutes";
+import { AnonymousRoutes, ProtectedRoutes, SpinnerLoading } from "./components";
 
 const DemoPage = lazy(() => import("./pages/demoPage/DemoPage"));
 const LoginPage = lazy(() => import("./pages/loginPage/LoginPage"));
 const NotFoundPage = lazy(() => import("./pages/notFoundPage/NotFoundPage"));
+const MyGroupsPage = lazy(() => import("./pages/myGroupsPage/MyGroupsPage"));
 
 const router = createBrowserRouter([
   {
@@ -38,6 +37,14 @@ const router = createBrowserRouter([
             element: (
               <Suspense fallback={<SpinnerLoading />}>
                 <DemoPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "/my-groups",
+            element: (
+              <Suspense fallback={<SpinnerLoading />}>
+                <MyGroupsPage />
               </Suspense>
             ),
           },
