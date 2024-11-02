@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import { fetchMyGroups, getMyGroups } from "./redux/myGroupListSlice";
 import { AsyncSelect } from "../../components";
+import { GroupForm } from "../groupForm";
 
 function MyGroupsList() {
   const initialized = useRef(false);
@@ -11,6 +12,9 @@ function MyGroupsList() {
   const myGroups = useAppSelector(getMyGroups);
   const [page, setPage] = useState<number>(1);
   const [selectedYear, setSelectedYear] = useState<string>("All");
+  const [formOpen, setFormOpen] = useState<boolean>(false);
+
+  const handleFormClose = () => setFormOpen(false);
 
   useEffect(() => {
     if (!initialized.current) {
@@ -27,6 +31,8 @@ function MyGroupsList() {
   useEffect(() => {
     setPage(1);
   }, [selectedYear]);
+
+  console.log(myGroups);
 
   const handleNextPage = () => {
     if (page === myGroups.pagination.pages) {
@@ -56,6 +62,7 @@ function MyGroupsList() {
 
   return (
     <>
+      <GroupForm open={formOpen} onClose={handleFormClose} />
       <Typography variant="h3" className="pb-6">
         My Groups
       </Typography>
@@ -73,7 +80,9 @@ function MyGroupsList() {
             ))}
           </AsyncSelect>
         </div>
-        <Button size="md">Add Group</Button>
+        <Button size="md" onClick={() => setFormOpen(true)}>
+          Add Group
+        </Button>
       </div>
       <GroupTable
         groups={myGroups.my_groups}
