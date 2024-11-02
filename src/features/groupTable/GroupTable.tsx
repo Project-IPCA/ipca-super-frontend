@@ -23,6 +23,8 @@ interface Props {
   groups: Group[];
   handleNextPage: () => void;
   handlePrevPage: () => void;
+  handleFormOpen: () => void;
+  handleSetGroupId: (groupId: string | null) => void;
   page: number;
   pages: number;
 }
@@ -31,6 +33,8 @@ function GroupTable({
   groups,
   handleNextPage,
   handlePrevPage,
+  handleFormOpen,
+  handleSetGroupId,
   page,
   pages,
 }: Props) {
@@ -152,7 +156,13 @@ function GroupTable({
                     )}
                   </td>
                   <td className="p-2">
-                    <IconButton variant="text">
+                    <IconButton
+                      variant="text"
+                      onClick={() => {
+                        handleSetGroupId(group.group_id);
+                        handleFormOpen();
+                      }}
+                    >
                       <PencilSquareIcon className="w-5 h-5" />
                     </IconButton>
                     <Menu placement="bottom-end">

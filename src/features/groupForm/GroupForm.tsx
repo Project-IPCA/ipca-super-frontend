@@ -25,10 +25,13 @@ import {
   clearGroupFormError,
   createStudentGroup,
   fetchDepartments,
+  fetchGroupInfo,
   fetchStaffs,
   getDepartments,
   getGroupFormError,
+  getGroupInfo,
   getStaffs,
+  updateStudentGroup,
 } from "./redux/groupFormSlice";
 import { useEffect, useRef } from "react";
 import MultiSelect from "./components/MultiSelect";
@@ -38,6 +41,7 @@ import { fetchMyGroups } from "../myGroupsList/redux/myGroupListSlice";
 interface Props {
   open: boolean;
   onClose: () => void;
+  groupId?: string | null;
 }
 
 const formDataSchema = yup.object({
@@ -64,12 +68,23 @@ const formDataSchema = yup.object({
 
 export type FormData = yup.InferType<typeof formDataSchema>;
 
-function GroupForm({ open, onClose }: Props) {
+function GroupForm({ open, onClose, groupId = null }: Props) {
   const dispatch = useAppDispatch();
   const departments = useAppSelector(getDepartments);
   const groupFormError = useAppSelector(getGroupFormError);
+  const groupInfo = useAppSelector(getGroupInfo);
   const staffs = useAppSelector(getStaffs);
   const initialized = useRef(false);
+  const defaultForm = {
+    groupName: "",
+    groupNumber: "",
+    dayOfWeek: "",
+    classTime: "",
+    semester: "",
+    year: "",
+    departmentId: "",
+    staffs: [],
+  };
   const {
     control,
     formState: { errors },
@@ -78,17 +93,40 @@ function GroupForm({ open, onClose }: Props) {
     reset,
   } = useForm<FormData>({
     resolver: yupResolver(formDataSchema),
-    defaultValues: {
-      groupName: "",
-      groupNumber: "",
-      dayOfWeek: "",
-      classTime: "",
-      semester: "",
-      year: "",
-      departmentId: "",
-      staffs: [],
-    },
+    defaultValues: defaultForm,
   });
+
+  useEffect(() => {
+    if (groupId && !groupInfo[groupId]) {
+      dispatch(fetchGroupInfo(groupId));
+    }
+  }, [dispatch, groupId]);
+
+  const formatTime = (timeString: string) => {
+    const [hours, minutes] = timeString.split(":");
+    return `${parseInt(hours, 10)}:${minutes}`;
+  };
+
+  useEffect(() => {
+    if (groupId && groupInfo[groupId]) {
+      const newGroupInfo = groupInfo[groupId];
+      const classTime = `${formatTime(newGroupInfo.time_start)} - ${formatTime(newGroupInfo.time_end)}`;
+      const staffs = newGroupInfo.staffs.map((staff) => ({
+        value: staff.supervisor_id,
+        label: `${staff.f_name} ${staff.l_name}`,
+      }));
+      reset({
+        groupName: newGroupInfo.name,
+        groupNumber: newGroupInfo.group_no.toString() || "",
+        dayOfWeek: newGroupInfo.day,
+        classTime: classTime,
+        semester: newGroupInfo.semester.toString(),
+        year: newGroupInfo.year.toString(),
+        departmentId: newGroupInfo.department.dept_id,
+        staffs: staffs,
+      });
+    }
+  }, [groupId, groupInfo]);
 
   useEffect(() => {
     if (!initialized.current) {
@@ -96,7 +134,7 @@ function GroupForm({ open, onClose }: Props) {
       dispatch(fetchDepartments());
       dispatch(fetchStaffs());
     }
-  }, [dispatch]);
+  }, [dispatch, initialized]);
 
   const staffsOptions = staffs.map((staff) => ({
     value: staff.supervisor_id,
@@ -104,7 +142,7 @@ function GroupForm({ open, onClose }: Props) {
   }));
 
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 2 }, (_, i) =>
+  const years = Array.from({ length: groupId ? 5 : 2 }, (_, i) =>
     (currentYear + 1 - i).toString(),
   );
 
@@ -139,22 +177,42 @@ function GroupForm({ open, onClose }: Props) {
       dept_id: data.departmentId,
       staffs: staffs,
     };
-    const resultAction = await dispatch(createStudentGroup(request));
-    if (createStudentGroup.fulfilled.match(resultAction)) {
-      toast.success("Student group has been created.", {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-      dispatch(fetchMyGroups({ year: "All", page: 1 }));
+    if (groupId) {
+      const resultAction = await dispatch(
+        updateStudentGroup({ request: request, groupId: groupId }),
+      );
+      if (updateStudentGroup.fulfilled.match(resultAction)) {
+        toast.success("Student group has been updated.", {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        dispatch(fetchGroupInfo(groupId));
+      }
+    } else {
+      const resultAction = await dispatch(createStudentGroup(request));
+      if (createStudentGroup.fulfilled.match(resultAction)) {
+        toast.success("Student group has been created.", {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
     }
-    reset();
+    dispatch(fetchMyGroups({ year: "All", page: 1 }));
+    reset(defaultForm);
     onClose();
   };
 
@@ -163,18 +221,21 @@ function GroupForm({ open, onClose }: Props) {
       <Dialog size="sm" open={open} handler={onClose} className="p-4">
         <DialogHeader className="relative m-0 block">
           <Typography variant="h4" color="blue-gray">
-            Create Student Group
+            {groupId ? "Edit Student Group" : "Create Student Group"}
           </Typography>
           <IconButton
             size="sm"
             variant="text"
             className="!absolute right-3.5 top-3.5"
-            onClick={onClose}
+            onClick={() => {
+              reset(defaultForm);
+              onClose();
+            }}
           >
             <XMarkIcon className="h-4 w-4 stroke-2" />
           </IconButton>
         </DialogHeader>
-        <DialogBody className="space-y-4 pb-6 lg:h-full lg:overscroll-none h-[42rem] overflow-scroll">
+        <DialogBody className="space-y-4 pb-6 lg:h-full  h-[42rem] lg:overflow-y-visible overflow-y-scroll">
           <div>
             <Typography
               variant="small"

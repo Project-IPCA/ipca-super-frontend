@@ -13,9 +13,15 @@ export interface Instructor {
   supervisor_id: string;
 }
 
+interface Department {
+  dept_id: string;
+  dept_name: string;
+}
+
 export interface Group {
   day: string;
-  department: string;
+  name: string;
+  department: Department;
   group_id: string;
   group_no: number;
   semester: number;

@@ -4,6 +4,7 @@ import { getFreshAccessToken } from "../../../utils/service";
 import axios from "axios";
 import { resolveApiError } from "../../../utils/function";
 import { RootState } from "../../../store/store";
+import { Group } from "../../myGroupsList/redux/myGroupListSlice";
 
 const VITE_IPCA_API = import.meta.env.VITE_IPCA_API;
 
@@ -32,6 +33,7 @@ interface Staffs {
 
 interface GroupFormState {
   departments: Department[];
+  groupInfo: { [key: string]: Group };
   staffs: Staffs[];
   isFetching: boolean;
   error: API_ERROR_RESPONSE | null;
@@ -39,10 +41,31 @@ interface GroupFormState {
 
 const initialState: GroupFormState = {
   departments: [],
+  groupInfo: {},
   staffs: [],
   isFetching: false,
   error: null,
 };
+
+export const fetchGroupInfo = createAsyncThunk(
+  "groupForm/fetchGroupInfo",
+  async (groupId: string, { rejectWithValue }) => {
+    try {
+      const token = getFreshAccessToken();
+      const response = await axios.get(
+        `${VITE_IPCA_API}/supervisor/my_group_info/${groupId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(resolveApiError(error));
+    }
+  },
+);
 
 export const fetchDepartments = createAsyncThunk(
   "groupForm/fetchDepartments",
@@ -103,6 +126,34 @@ export const createStudentGroup = createAsyncThunk(
   },
 );
 
+export const updateStudentGroup = createAsyncThunk(
+  "groupForm/updateStudentGroup",
+  async (
+    { request, groupId }: { request: FormRequest; groupId: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      const token = getFreshAccessToken();
+      const response = await axios.put(
+        `${VITE_IPCA_API}/supervisor/my_group_info/${groupId}`,
+        request,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data);
+      } else {
+        return rejectWithValue(resolveApiError(error));
+      }
+    }
+  },
+);
+
 const groupFormSlice = createSlice({
   name: "groupForm",
   initialState,
@@ -135,12 +186,28 @@ const groupFormSlice = createSlice({
         state.isFetching = false;
         state.error = action.payload as API_ERROR_RESPONSE;
       })
+      .addCase(fetchGroupInfo.pending, (state, _) => {
+        state.isFetching = true;
+      })
+      .addCase(fetchGroupInfo.fulfilled, (state, action) => {
+        const groupId = action.meta.arg;
+        state.isFetching = false;
+        state.groupInfo[groupId] = action.payload;
+      })
+      .addCase(fetchGroupInfo.rejected, (state, action) => {
+        state.isFetching = false;
+        state.error = action.payload as API_ERROR_RESPONSE;
+      })
       .addCase(createStudentGroup.rejected, (state, action) => {
+        state.error = action.payload as API_ERROR_RESPONSE;
+      })
+      .addCase(updateStudentGroup.rejected, (state, action) => {
         state.error = action.payload as API_ERROR_RESPONSE;
       }),
 });
 
 export const { clearGroupFormError } = groupFormSlice.actions;
+export const getGroupInfo = (state: RootState) => state.groupForm.groupInfo;
 export const getDepartments = (state: RootState) => state.groupForm.departments;
 export const getStaffs = (state: RootState) => state.groupForm.staffs;
 export const getGroupFormStatus = (state: RootState) =>
