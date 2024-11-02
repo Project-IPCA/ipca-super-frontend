@@ -6,4 +6,5 @@ export const TABLE_HEAD = [
   "Students",
   "Instructor",
   "Staffs",
+  "Actions",
 ];

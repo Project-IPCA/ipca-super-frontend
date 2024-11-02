@@ -1,7 +1,23 @@
-import { Button, Card, Typography } from "@material-tailwind/react";
+import {
+  Button,
+  Card,
+  IconButton,
+  Menu,
+  MenuHandler,
+  MenuItem,
+  MenuList,
+  Tooltip,
+  Typography,
+} from "@material-tailwind/react";
 import { TABLE_HEAD } from "./constants";
 import { Group, Instructor } from "../myGroupsList/redux/myGroupListSlice";
 import { truncate, capitalize } from "lodash";
+import {
+  EyeIcon,
+  PencilSquareIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
 
 interface Props {
   groups: Group[];
@@ -24,6 +40,7 @@ function GroupTable({
       .join(",");
     return truncate(staffList, { length: 16, separator: "..." });
   };
+
   return (
     <>
       <Card className="h-full w-full  shadow-none border-[1.5px]">
@@ -49,10 +66,7 @@ function GroupTable({
             </thead>
             <tbody>
               {groups.map((group) => (
-                <tr
-                  key={group.group_id}
-                  className="even:bg-blue-gray-50/50 hover:bg-blue-gray-50 cursor-pointer"
-                >
+                <tr key={group.group_id} className="even:bg-blue-gray-50/50 ">
                   <td className="p-4">
                     <Typography
                       variant="small"
@@ -91,8 +105,6 @@ function GroupTable({
                   </td>
                   <td className="p-4">
                     <Typography
-                      as="a"
-                      href="#"
                       variant="small"
                       color="blue-gray"
                       className="font-medium"
@@ -102,8 +114,6 @@ function GroupTable({
                   </td>
                   <td className="p-4">
                     <Typography
-                      as="a"
-                      href="#"
                       variant="small"
                       color="blue-gray"
                       className="font-medium"
@@ -112,17 +122,56 @@ function GroupTable({
                     </Typography>
                   </td>
                   <td className="p-4">
-                    <Typography
-                      as="a"
-                      href="#"
-                      variant="small"
-                      color="blue-gray"
-                      className="font-medium"
-                    >
-                      {group.staffs.length > 0
-                        ? formatStaffNames(group.staffs)
-                        : "No staffs"}
-                    </Typography>
+                    {group.staffs.length > 0 ? (
+                      <Tooltip
+                        content={group.staffs.map((staff) => (
+                          <Typography
+                            key={staff.supervisor_id}
+                            variant="small"
+                            className="font-medium"
+                          >{`${staff.f_name} ${staff.l_name}`}</Typography>
+                        ))}
+                        placement="bottom-start"
+                      >
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-medium"
+                        >
+                          {formatStaffNames(group.staffs)}
+                        </Typography>
+                      </Tooltip>
+                    ) : (
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-medium"
+                      >
+                        No staffs
+                      </Typography>
+                    )}
+                  </td>
+                  <td className="p-2">
+                    <IconButton variant="text">
+                      <PencilSquareIcon className="w-5 h-5" />
+                    </IconButton>
+                    <Menu placement="bottom-end">
+                      <MenuHandler>
+                        <IconButton variant="text">
+                          <EllipsisVerticalIcon className="w-5 h-5" />
+                        </IconButton>
+                      </MenuHandler>
+                      <MenuList>
+                        <MenuItem className="flex justify-start items-center gap-2">
+                          <EyeIcon className="w-5 h-5" />
+                          View
+                        </MenuItem>
+                        <MenuItem className="flex justify-start items-center gap-2">
+                          <TrashIcon className="w-5 h-5" />
+                          Delete
+                        </MenuItem>
+                      </MenuList>
+                    </Menu>
                   </td>
                 </tr>
               ))}
