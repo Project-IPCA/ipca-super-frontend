@@ -13,8 +13,16 @@ function MyGroupsList() {
   const [page, setPage] = useState<number>(1);
   const [selectedYear, setSelectedYear] = useState<string>("All");
   const [formOpen, setFormOpen] = useState<boolean>(false);
+  const [formGroupId, setFormGrouopId] = useState<string | null>(null);
 
-  const handleFormClose = () => setFormOpen(false);
+  const handleFormClose = () => {
+    setFormGrouopId(null);
+    setFormOpen(false);
+  };
+
+  const handleFormOpen = () => setFormOpen(true);
+
+  const handleSetGroupId = (groupId: string | null) => setFormGrouopId(groupId);
 
   useEffect(() => {
     if (!initialized.current) {
@@ -31,8 +39,6 @@ function MyGroupsList() {
   useEffect(() => {
     setPage(1);
   }, [selectedYear]);
-
-  console.log(myGroups);
 
   const handleNextPage = () => {
     if (page === myGroups.pagination.pages) {
@@ -62,7 +68,11 @@ function MyGroupsList() {
 
   return (
     <>
-      <GroupForm open={formOpen} onClose={handleFormClose} />
+      <GroupForm
+        open={formOpen}
+        onClose={handleFormClose}
+        groupId={formGroupId}
+      />
       <Typography variant="h3" className="pb-6">
         My Groups
       </Typography>
@@ -88,6 +98,8 @@ function MyGroupsList() {
         groups={myGroups.my_groups}
         handleNextPage={handleNextPage}
         handlePrevPage={handlePrevPage}
+        handleFormOpen={handleFormOpen}
+        handleSetGroupId={handleSetGroupId}
         page={page}
         pages={myGroups.pagination.pages}
       />
