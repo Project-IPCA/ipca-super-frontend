@@ -12,12 +12,9 @@ import {
 import { TABLE_HEAD } from "./constants";
 import { Group, Instructor } from "../myGroupsList/redux/myGroupListSlice";
 import { truncate, capitalize } from "lodash";
-import {
-  EyeIcon,
-  PencilSquareIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { EyeIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   groups: Group[];
@@ -38,6 +35,7 @@ function GroupTable({
   page,
   pages,
 }: Props) {
+  const navigate = useNavigate();
   const formatStaffNames = (staffs: Instructor[]): string => {
     const staffList = staffs
       .map((staff) => `${staff.f_name} ${staff.l_name}`)
@@ -156,15 +154,6 @@ function GroupTable({
                     )}
                   </td>
                   <td className="p-2">
-                    <IconButton
-                      variant="text"
-                      onClick={() => {
-                        handleSetGroupId(group.group_id);
-                        handleFormOpen();
-                      }}
-                    >
-                      <PencilSquareIcon className="w-5 h-5" />
-                    </IconButton>
                     <Menu placement="bottom-end">
                       <MenuHandler>
                         <IconButton variant="text">
@@ -172,13 +161,22 @@ function GroupTable({
                         </IconButton>
                       </MenuHandler>
                       <MenuList>
-                        <MenuItem className="flex justify-start items-center gap-2">
+                        <MenuItem
+                          className="flex justify-start items-center gap-2"
+                          onClick={() => navigate(`/group/${group.group_id}`)}
+                        >
                           <EyeIcon className="w-5 h-5" />
                           View
                         </MenuItem>
-                        <MenuItem className="flex justify-start items-center gap-2">
-                          <TrashIcon className="w-5 h-5" />
-                          Delete
+                        <MenuItem
+                          className="flex justify-start items-center gap-2"
+                          onClick={() => {
+                            handleSetGroupId(group.group_id);
+                            handleFormOpen();
+                          }}
+                        >
+                          <PencilSquareIcon className="w-5 h-5" />
+                          Edit
                         </MenuItem>
                       </MenuList>
                     </Menu>

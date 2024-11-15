@@ -1,15 +1,19 @@
 import { ControllerRenderProps } from "react-hook-form";
 import Select from "react-select";
 import { FormData } from "../GroupForm";
+import makeAnimated from "react-select/animated";
 
 interface Props {
   field: ControllerRenderProps<FormData>;
   staffs: { label: string; value: string }[];
 }
 function MultiSelect({ field, staffs }: Props) {
+  const animatedComponent = makeAnimated();
   return (
     <Select
       {...field}
+      closeMenuOnSelect={false}
+      components={animatedComponent}
       isMulti
       options={staffs}
       value={field.value}
