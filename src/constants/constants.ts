@@ -28,3 +28,32 @@ export const AVAILABLE_TIME = [
 ];
 
 export const SEMESTER = ["1", "2", "3"];
+
+export const ALLOW_TYPE = {
+  always: "ALWAYS",
+  deny: "DENY",
+  timer: "TIMER",
+  timerPaused: "TIME_PAUSED",
+  dateTime: "DATETIME",
+};
+
+export const PERMISIION_PREFIX = {
+  submit: "SUBMIT",
+  access: "ACCESS",
+};
+
+export const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+export const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
