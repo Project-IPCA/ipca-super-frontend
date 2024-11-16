@@ -6,6 +6,13 @@ import {
   fetchGroupStudents,
   getGroupStudents,
 } from "./redux/GroupStudentsSlice";
+import StudentPermissionForm from "./components/StudentPermissionForm";
+
+export interface StudentData {
+  name: string;
+  kmitlId: string;
+  studentId: string;
+}
 
 interface Props {
   groupId: string;
@@ -16,7 +23,16 @@ function GroupStudents({ groupId }: Props) {
   const dispatch = useAppDispatch();
   const groupStudent = useAppSelector(getGroupStudents);
   const [page, setPage] = useState<number>(1);
+  const [openPermForm, setOpenPermForm] = useState<boolean>(false);
+  const [studentSelected, setStudentSelected] = useState<StudentData | null>(
+    null,
+  );
   const pages = 10;
+
+  const handlePermFormClose = () => setOpenPermForm(false);
+  const handlePermFormOpen = () => setOpenPermForm(true);
+  const handleSetStudent = (student: StudentData) =>
+    setStudentSelected(student);
 
   useEffect(() => {
     if (!initialized.current) {
@@ -25,10 +41,14 @@ function GroupStudents({ groupId }: Props) {
     }
   }, [dispatch, initialized]);
 
-  console.log(groupStudent.student_list);
-
   return (
     <>
+      <StudentPermissionForm
+        open={openPermForm}
+        groupId={groupId}
+        studentSelected={studentSelected}
+        handleClose={handlePermFormClose}
+      />
       <div className="flex justify-between items-center pb-4">
         <div className="flex gap-x-5">
           <div className="flex items-center gap-x-1">
@@ -54,6 +74,8 @@ function GroupStudents({ groupId }: Props) {
         pages={pages}
         labInfo={groupStudent.lab_info}
         students={groupStudent.student_list}
+        handlePermFormOpen={handlePermFormOpen}
+        handleSetStudent={handleSetStudent}
       />
     </>
   );

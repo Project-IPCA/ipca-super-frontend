@@ -11,19 +11,29 @@ import {
   Typography,
 } from "@material-tailwind/react";
 
-import { EyeIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import { EyeIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
 import { LabInfo, Student } from "../redux/GroupStudentsSlice";
 import { profileNone } from "../../../assets";
+import { StudentData } from "../GroupStudents";
 
 interface Props {
   page: number;
   pages: number;
   labInfo: LabInfo[];
   students: Student[];
+  handlePermFormOpen: () => void;
+  handleSetStudent: (student: StudentData) => void;
 }
 
-function StudentTable({ page, pages, labInfo, students }: Props) {
+function StudentTable({
+  page,
+  pages,
+  labInfo,
+  students,
+  handlePermFormOpen,
+  handleSetStudent,
+}: Props) {
   const getTableHeader = () => {
     const labs = labInfo.map(
       (lab) => `Lab ${lab.chapter_idx} (${lab.full_mark})`,
@@ -40,8 +50,6 @@ function StudentTable({ page, pages, labInfo, students }: Props) {
       "Actions",
     ];
   };
-
-  console.log(students);
 
   return (
     <>
@@ -95,7 +103,7 @@ function StudentTable({ page, pages, labInfo, students }: Props) {
                       variant="ghost"
                       color={student.can_submit ? "green" : "red"}
                       size="sm"
-                      value={student.can_submit ? "Allow" : "Not Allow"}
+                      value={student.can_submit ? "Allow" : "Deny"}
                     />
                   </td>
                   <td className="p-4">
@@ -161,9 +169,19 @@ function StudentTable({ page, pages, labInfo, students }: Props) {
                           <EyeIcon className="w-5 h-5" />
                           View
                         </MenuItem>
-                        <MenuItem className="flex justify-start items-center gap-2">
-                          <PencilSquareIcon className="w-5 h-5" />
-                          Edit
+                        <MenuItem
+                          className="flex justify-start items-center gap-2"
+                          onClick={() => {
+                            handleSetStudent({
+                              name: `${student.f_name} ${student.l_name}`,
+                              kmitlId: student.kmitl_id,
+                              studentId: student.stu_id,
+                            });
+                            handlePermFormOpen();
+                          }}
+                        >
+                          <Cog6ToothIcon className="w-5 h-5" />
+                          Permission
                         </MenuItem>
                       </MenuList>
                     </Menu>
