@@ -53,8 +53,6 @@ function GroupSummary({ groupData }: Props) {
     }
   };
 
-  console.log(groupData);
-
   return (
     <div className="flex lg:flex-row flex-col gap-x-4 lg:gap-y-0 gap-y-3 w-full">
       <Card className="lg:w-1/3 w-full border-[1px] min-h-56">

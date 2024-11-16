@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { tabsValue } from "./constants";
 import { GroupExercises } from "../groupExercises";
+import GroupStudents from "../groupStudents/GroupStudents";
 
 interface Props {
   groupId: string;
@@ -29,7 +30,7 @@ function GroupDetail({ groupId }: Props) {
     {
       label: "Students",
       value: tabsValue.STUDENTS,
-      component: <div>hello</div>,
+      component: <GroupStudents groupId={groupId} />,
     },
     {
       label: "Activity Logs",
