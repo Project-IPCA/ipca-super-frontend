@@ -16,6 +16,7 @@ import {
   fetchGroupStudents,
   updateStudentCanSubmit,
 } from "../redux/GroupStudentsSlice";
+import { Bounce, toast } from "react-toastify";
 
 interface Props {
   open: boolean;
@@ -40,6 +41,17 @@ function StudentPermissionForm({
           canSubmit: submitPerm,
         }),
       );
+      toast.success("Permission has been updated.", {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
     if (groupId) {
       await dispatch(fetchGroupStudents(groupId));
