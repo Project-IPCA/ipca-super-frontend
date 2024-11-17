@@ -60,6 +60,36 @@ interface UpdateStudentCanSubmitRequest {
   canSubmit: boolean;
 }
 
+interface StudentsRequest {
+  groupId: string;
+  studentsList: string;
+}
+
+export const addStudents = createAsyncThunk(
+  "groupStudents/addStudents",
+  async ({ groupId, studentsList }: StudentsRequest, { rejectWithValue }) => {
+    try {
+      const token = getFreshAccessToken();
+      const request = {
+        group_id: groupId,
+        students_data: studentsList,
+      };
+      const response = await axios.post(
+        `${VITE_IPCA_API}/supervisor/students`,
+        request,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(resolveApiError(error));
+    }
+  },
+);
+
 export const updateStudentCanSubmit = createAsyncThunk(
   "groupStudents/updateStudentCanSubmit",
   async (
@@ -131,6 +161,9 @@ const groupStudentsSlice = createSlice({
       .addCase(fetchGroupStudents.rejected, (state, action) => {
         state.error = action.payload as API_ERROR_RESPONSE;
         state.isFetching = false;
+      })
+      .addCase(addStudents.rejected, (state, action) => {
+        state.error = action.payload as API_ERROR_RESPONSE;
       }),
 });
 

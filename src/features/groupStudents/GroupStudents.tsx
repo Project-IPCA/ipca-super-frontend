@@ -5,8 +5,11 @@ import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import {
   fetchGroupStudents,
   getGroupStudents,
+  getGroupStudentsError,
 } from "./redux/GroupStudentsSlice";
 import StudentPermissionForm from "./components/StudentPermissionForm";
+import AddStudentForm from "./components/AddStudentForm";
+import { Bounce, toast } from "react-toastify";
 
 export interface StudentData {
   name: string;
@@ -22,8 +25,10 @@ function GroupStudents({ groupId }: Props) {
   const initialized = useRef(false);
   const dispatch = useAppDispatch();
   const groupStudent = useAppSelector(getGroupStudents);
+  const groupStudentError = useAppSelector(getGroupStudentsError);
   const [page, setPage] = useState<number>(1);
   const [openPermForm, setOpenPermForm] = useState<boolean>(false);
+  const [openStudentFrom, setOpenStudentForm] = useState<boolean>(false);
   const [studentSelected, setStudentSelected] = useState<StudentData | null>(
     null,
   );
@@ -33,6 +38,7 @@ function GroupStudents({ groupId }: Props) {
   const handlePermFormOpen = () => setOpenPermForm(true);
   const handleSetStudent = (student: StudentData) =>
     setStudentSelected(student);
+  const handleStudentFormClose = () => setOpenStudentForm(false);
 
   useEffect(() => {
     if (!initialized.current) {
@@ -41,6 +47,22 @@ function GroupStudents({ groupId }: Props) {
     }
   }, [dispatch, initialized]);
 
+  useEffect(() => {
+    if (groupStudentError) {
+      toast.error(groupStudentError.error, {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
+  }, [dispatch, groupStudentError]);
+
   return (
     <>
       <StudentPermissionForm
@@ -48,6 +70,11 @@ function GroupStudents({ groupId }: Props) {
         groupId={groupId}
         studentSelected={studentSelected}
         handleClose={handlePermFormClose}
+      />
+      <AddStudentForm
+        open={openStudentFrom}
+        handleClose={handleStudentFormClose}
+        groupId={groupId}
       />
       <div className="flex justify-between items-center pb-4">
         <div className="flex gap-x-5">
@@ -67,7 +94,9 @@ function GroupStudents({ groupId }: Props) {
             {`Total: ${groupStudent.student_list.length}`}
           </Typography>
         </div>
-        <Button size="md">Add Student</Button>
+        <Button size="md" onClick={() => setOpenStudentForm(true)}>
+          Add Student
+        </Button>
       </div>
       <StudentTable
         page={page}

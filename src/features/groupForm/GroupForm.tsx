@@ -45,7 +45,7 @@ interface Props {
 }
 
 const formDataSchema = yup.object({
-  groupName: yup.string().required("Group name is required"),
+  groupName: yup.string().required("Group name is required."),
   groupNumber: yup
     .string()
     .required("Group number is required.")
