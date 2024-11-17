@@ -32,7 +32,6 @@ function GroupStudents({ groupId }: Props) {
   const [studentSelected, setStudentSelected] = useState<StudentData | null>(
     null,
   );
-  const pages = 10;
 
   const handlePermFormClose = () => setOpenPermForm(false);
   const handlePermFormOpen = () => setOpenPermForm(true);
@@ -43,7 +42,7 @@ function GroupStudents({ groupId }: Props) {
   useEffect(() => {
     if (!initialized.current) {
       initialized.current = true;
-      dispatch(fetchGroupStudents(groupId));
+      dispatch(fetchGroupStudents({ groupId: groupId, page: page }));
     }
   }, [dispatch, initialized]);
 
@@ -63,9 +62,25 @@ function GroupStudents({ groupId }: Props) {
     }
   }, [dispatch, groupStudentError]);
 
+  const handleChangePage = (direction: "next" | "prev") => {
+    setPage((prevPage) => {
+      if (direction === "next") {
+        return prevPage === groupStudent.pagination.pages ? 1 : prevPage + 1;
+      } else if (direction === "prev") {
+        return prevPage === 1 ? groupStudent.pagination.pages : prevPage - 1;
+      }
+      return prevPage;
+    });
+  };
+
+  useEffect(() => {
+    dispatch(fetchGroupStudents({ groupId: groupId, page: page }));
+  }, [dispatch, groupId, page]);
+
   return (
     <>
       <StudentPermissionForm
+        page={page}
         open={openPermForm}
         groupId={groupId}
         studentSelected={studentSelected}
@@ -100,11 +115,12 @@ function GroupStudents({ groupId }: Props) {
       </div>
       <StudentTable
         page={page}
-        pages={pages}
+        pages={groupStudent.pagination.pages}
         labInfo={groupStudent.lab_info}
         students={groupStudent.student_list}
         handlePermFormOpen={handlePermFormOpen}
         handleSetStudent={handleSetStudent}
+        handleChangePage={handleChangePage}
       />
     </>
   );

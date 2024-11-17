@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getFreshAccessToken } from "../../../utils/service";
 import axios from "axios";
 import { resolveApiError } from "../../../utils";
-import { API_ERROR_RESPONSE } from "../../../constants/constants";
+import { API_ERROR_RESPONSE, Pagination } from "../../../constants/constants";
 import { GroupStudent } from "..";
 import { RootState } from "../../../store/store";
 
@@ -37,6 +37,7 @@ interface GroupStudent {
   group_id: string;
   lab_info: LabInfo[];
   student_list: Student[];
+  pagination: Pagination;
 }
 
 interface GroupStudentState {
@@ -50,6 +51,11 @@ const initialState: GroupStudentState = {
     group_id: "",
     lab_info: [],
     student_list: [],
+    pagination: {
+      page: 1,
+      pageSize: 10,
+      pages: 10,
+    },
   },
   isFetching: false,
   error: null,
@@ -63,6 +69,11 @@ interface UpdateStudentCanSubmitRequest {
 interface StudentsRequest {
   groupId: string;
   studentsList: string;
+}
+
+interface GroupStudentRequest {
+  groupId: string;
+  page: number;
 }
 
 export const addStudents = createAsyncThunk(
@@ -119,11 +130,13 @@ export const updateStudentCanSubmit = createAsyncThunk(
 
 export const fetchGroupStudents = createAsyncThunk(
   "groupStudents/fetchGroupStudents",
-  async (groupId: string, { rejectWithValue }) => {
+  async ({ groupId, page }: GroupStudentRequest, { rejectWithValue }) => {
     try {
       const token = getFreshAccessToken();
       const params = {
         group_id: groupId,
+        page: page,
+        pageSize: 10,
       };
       const response = await axios.get(
         `${VITE_IPCA_API}/supervisor/get_student_group_list`,

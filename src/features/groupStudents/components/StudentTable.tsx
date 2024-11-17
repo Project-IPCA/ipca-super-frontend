@@ -24,6 +24,7 @@ interface Props {
   students: Student[];
   handlePermFormOpen: () => void;
   handleSetStudent: (student: StudentData) => void;
+  handleChangePage: (direction: "next" | "prev") => void;
 }
 
 function StudentTable({
@@ -33,6 +34,7 @@ function StudentTable({
   students,
   handlePermFormOpen,
   handleSetStudent,
+  handleChangePage,
 }: Props) {
   const getTableHeader = () => {
     const labs = labInfo.map(
@@ -78,7 +80,6 @@ function StudentTable({
               {students.map((student) => (
                 <tr key={student.stu_id} className="even:bg-blue-gray-50/50 ">
                   <td className="p-4">
-                    {}
                     <Avatar
                       src={student.avatar ? student.avatar : profileNone}
                       alt="avatar"
@@ -196,10 +197,18 @@ function StudentTable({
             Page {page} of {pages}
           </Typography>
           <div className="flex gap-2">
-            <Button variant="outlined" size="sm">
+            <Button
+              variant="outlined"
+              size="sm"
+              onClick={() => handleChangePage("prev")}
+            >
               Previous
             </Button>
-            <Button variant="outlined" size="sm">
+            <Button
+              variant="outlined"
+              size="sm"
+              onClick={() => handleChangePage("next")}
+            >
               Next
             </Button>
           </div>

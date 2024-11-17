@@ -67,7 +67,7 @@ function AddStudentForm({ open, handleClose, groupId }: Props) {
         });
       }
     }
-    await dispatch(fetchGroupStudents(groupId));
+    await dispatch(fetchGroupStudents({ groupId: groupId, page: 1 }));
     reset();
     handleClose();
   };

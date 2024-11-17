@@ -22,6 +22,7 @@ interface Props {
   open: boolean;
   handleClose: () => void;
   studentSelected: StudentData | null;
+  page: number;
   groupId: string;
 }
 
@@ -30,6 +31,7 @@ function StudentPermissionForm({
   studentSelected,
   handleClose,
   groupId,
+  page,
 }: Props) {
   const dispatch = useAppDispatch();
   const [submitPerm, setSubmitPerm] = useState<boolean>(true);
@@ -54,7 +56,7 @@ function StudentPermissionForm({
       });
     }
     if (groupId) {
-      await dispatch(fetchGroupStudents(groupId));
+      await dispatch(fetchGroupStudents({ groupId: groupId, page: page }));
     }
     handleClose();
   };
