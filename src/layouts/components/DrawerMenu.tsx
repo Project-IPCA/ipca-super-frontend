@@ -7,9 +7,18 @@ import Footer from "./Footer";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  profileImage: string;
+  firstName: string;
+  lastName: string;
 }
 
-function DrawerMenu({ isOpen, onClose }: Props) {
+function DrawerMenu({
+  isOpen,
+  onClose,
+  profileImage,
+  firstName,
+  lastName,
+}: Props) {
   return (
     <Drawer
       open={isOpen}
@@ -22,7 +31,11 @@ function DrawerMenu({ isOpen, onClose }: Props) {
       className="lg:w-full w-3/4"
     >
       <Header />
-      <Profile />
+      <Profile
+        profileImage={profileImage}
+        firstName={firstName}
+        lastName={lastName}
+      />
       <MenuList />
       <Footer />
     </Drawer>

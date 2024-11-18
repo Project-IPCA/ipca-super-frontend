@@ -5,6 +5,7 @@ import availableGroupsReducer from "../features/availableGroupList/redux/Availab
 import groupFormReducer from "../features/groupForm/redux/groupFormSlice";
 import groupExercisesReducer from "../features/groupExercises/redux/groupExercisesSlice";
 import groupStudentsReducer from "../features/groupStudents/redux/GroupStudentsSlice";
+import profileFormReducer from "../features/profileForm/redux/profileFormSlice";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     groupForm: groupFormReducer,
     groupExercise: groupExercisesReducer,
     groupStudent: groupStudentsReducer,
+    profileForm: profileFormReducer,
   },
 });
 
