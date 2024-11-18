@@ -79,7 +79,7 @@ function MyGroupsList() {
       <div className="flex justify-between items-center pb-4">
         <div className="w-36">
           <AsyncSelect
-            label="Select Version"
+            label="Year"
             value={selectedYear ? selectedYear : "All"}
             onChange={handleYearChange}
           >

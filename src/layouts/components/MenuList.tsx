@@ -33,7 +33,7 @@ function MenuList() {
         },
         {
           label: "Available Groups",
-          path: "/",
+          path: "/groups",
         },
       ],
     },

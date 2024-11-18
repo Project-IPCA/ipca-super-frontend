@@ -11,6 +11,9 @@ const DemoPage = lazy(() => import("./pages/demoPage/DemoPage"));
 const LoginPage = lazy(() => import("./pages/loginPage/LoginPage"));
 const NotFoundPage = lazy(() => import("./pages/notFoundPage/NotFoundPage"));
 const MyGroupsPage = lazy(() => import("./pages/myGroupsPage/MyGroupsPage"));
+const AvailableGroupPage = lazy(
+  () => import("./pages/availableGroupPage/AvailableGroupPage"),
+);
 const GroupDetailPage = lazy(
   () => import("./pages/groupDetailPage/GroupDetailPage"),
 );
@@ -48,6 +51,14 @@ const router = createBrowserRouter([
             element: (
               <Suspense fallback={<SpinnerLoading />}>
                 <MyGroupsPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "/groups",
+            element: (
+              <Suspense fallback={<SpinnerLoading />}>
+                <AvailableGroupPage />
               </Suspense>
             ),
           },
