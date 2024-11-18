@@ -5,18 +5,42 @@ import Profile from "./components/Profile";
 import MenuList from "./components/MenuList";
 import Footer from "./components/Footer";
 import { Bars3BottomLeftIcon } from "@heroicons/react/24/solid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DrawerMenu from "./components/DrawerMenu";
+import { useAppDispatch, useAppSelector } from "../hooks/store";
+import {
+  fetchProfile,
+  getProfile,
+} from "../features/profileForm/redux/profileFormSlice";
 
 function Layout() {
+  const dispatch = useAppDispatch();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const handleCloseDrawer = () => setDrawerOpen(false);
+  const profile = useAppSelector(getProfile);
+
+  useEffect(() => {
+    if (!profile.profile.f_name) {
+      dispatch(fetchProfile());
+    }
+  }, [dispatch, profile]);
+
   return (
     <>
-      <DrawerMenu isOpen={drawerOpen} onClose={handleCloseDrawer} />
+      <DrawerMenu
+        isOpen={drawerOpen}
+        onClose={handleCloseDrawer}
+        profileImage={profile.profile.avatar}
+        firstName={profile.profile.f_name}
+        lastName={profile.profile.l_name}
+      />
       <Card className="h-screen fixed max-w-[20rem] mx-auto p-6 shadow-md overflow-scroll z-20 lg:block hidden">
         <Header />
-        <Profile />
+        <Profile
+          profileImage={profile.profile.avatar}
+          firstName={profile.profile.f_name}
+          lastName={profile.profile.l_name}
+        />
         <MenuList />
         <Footer />
       </Card>

@@ -8,6 +8,7 @@ import Layout from "./layouts/Layout";
 import { AnonymousRoutes, ProtectedRoutes, SpinnerLoading } from "./components";
 
 const DemoPage = lazy(() => import("./pages/demoPage/DemoPage"));
+const ProfilePage = lazy(() => import("./pages/profilePage/ProfilePage"));
 const LoginPage = lazy(() => import("./pages/loginPage/LoginPage"));
 const NotFoundPage = lazy(() => import("./pages/notFoundPage/NotFoundPage"));
 const MyGroupsPage = lazy(() => import("./pages/myGroupsPage/MyGroupsPage"));
@@ -43,6 +44,14 @@ const router = createBrowserRouter([
             element: (
               <Suspense fallback={<SpinnerLoading />}>
                 <DemoPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "/profile",
+            element: (
+              <Suspense fallback={<SpinnerLoading />}>
+                <ProfilePage />
               </Suspense>
             ),
           },
