@@ -20,8 +20,8 @@ interface Props {
   groups: Group[];
   handleNextPage: () => void;
   handlePrevPage: () => void;
-  handleFormOpen: () => void;
-  handleSetGroupId: (groupId: string | null) => void;
+  handleFormOpen?: () => void;
+  handleSetGroupId?: (groupId: string | null) => void;
   page: number;
   pages: number;
 }
@@ -168,16 +168,18 @@ function GroupTable({
                           <EyeIcon className="w-5 h-5" />
                           View
                         </MenuItem>
-                        <MenuItem
-                          className="flex justify-start items-center gap-2"
-                          onClick={() => {
-                            handleSetGroupId(group.group_id);
-                            handleFormOpen();
-                          }}
-                        >
-                          <PencilSquareIcon className="w-5 h-5" />
-                          Edit
-                        </MenuItem>
+                        {handleSetGroupId && handleFormOpen && (
+                          <MenuItem
+                            className="flex justify-start items-center gap-2"
+                            onClick={() => {
+                              handleSetGroupId(group.group_id);
+                              handleFormOpen();
+                            }}
+                          >
+                            <PencilSquareIcon className="w-5 h-5" />
+                            Edit
+                          </MenuItem>
+                        )}
                       </MenuList>
                     </Menu>
                   </td>
@@ -188,7 +190,7 @@ function GroupTable({
         </div>
         <div className="flex items-center justify-between border-t border-blue-gray-50 p-4">
           <Typography variant="small" color="blue-gray" className="font-normal">
-            Page {page} of {pages}
+            Page {pages ? page : 0} of {pages}
           </Typography>
           <div className="flex gap-2">
             <Button variant="outlined" size="sm" onClick={handlePrevPage}>
