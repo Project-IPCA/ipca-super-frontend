@@ -16,6 +16,7 @@ import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
 import { LabInfo, Student } from "../redux/GroupStudentsSlice";
 import { profileNone } from "../../../assets";
 import { StudentData } from "../GroupStudents";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   page: number;
@@ -36,6 +37,7 @@ function StudentTable({
   handleSetStudent,
   handleChangePage,
 }: Props) {
+  const navigate = useNavigate();
   const getTableHeader = () => {
     const labs = labInfo.map(
       (lab) => `Lab ${lab.chapter_idx} (${lab.full_mark})`,
@@ -166,7 +168,10 @@ function StudentTable({
                         </IconButton>
                       </MenuHandler>
                       <MenuList>
-                        <MenuItem className="flex justify-start items-center gap-2">
+                        <MenuItem
+                          className="flex justify-start items-center gap-2"
+                          onClick={() => navigate(`/student/${student.stu_id}`)}
+                        >
                           <EyeIcon className="w-5 h-5" />
                           View
                         </MenuItem>
