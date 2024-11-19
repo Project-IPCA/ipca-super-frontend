@@ -18,7 +18,7 @@ interface Group {
   number: number;
 }
 
-interface StudentInfo {
+export interface StudentInfo {
   avatar: string;
   can_submit: boolean;
   dept: Department;

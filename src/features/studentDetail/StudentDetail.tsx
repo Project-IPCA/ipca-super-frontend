@@ -7,6 +7,7 @@ import {
   getStudentDetailState,
 } from "./redux/studentDetailSlice";
 import { useEffect } from "react";
+import StudentSummary from "./components/StudentSummary";
 
 function StudentDetail() {
   const dispatch = useAppDispatch();
@@ -20,8 +21,6 @@ function StudentDetail() {
     dispatch(fetchStudentInfo(String(studentId)));
   }, [dispatch, studentId]);
 
-  console.log(studentInfo);
-
   return (
     <>
       <div className="flex justify-start items-center pb-4 gap-x-2">
@@ -30,6 +29,7 @@ function StudentDetail() {
         </IconButton>
         <Typography variant="h3">Student {studentInfo?.kmitl_id}</Typography>
       </div>
+      <StudentSummary studentInfo={studentInfo} />
     </>
   );
 }

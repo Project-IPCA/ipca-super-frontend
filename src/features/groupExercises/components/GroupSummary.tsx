@@ -11,7 +11,6 @@ import {
   updateAllowGroupLogin,
   updateAllowGroupUploadProfile,
 } from "../redux/groupExercisesSlice";
-import InfoText from "./InfoText";
 import { capitalize } from "lodash";
 import {
   ArrowRightStartOnRectangleIcon,
@@ -19,6 +18,7 @@ import {
   PhotoIcon,
 } from "@heroicons/react/24/solid";
 import { useAppDispatch } from "../../../hooks/store";
+import { LabelValueText } from "../../../components";
 
 interface Props {
   groupData: GroupData | null;
@@ -57,17 +57,20 @@ function GroupSummary({ groupData }: Props) {
     <div className="flex lg:flex-row flex-col gap-x-4 lg:gap-y-0 gap-y-3 w-full">
       <Card className="lg:w-1/3 w-full border-[1px] min-h-56">
         <CardBody className="space-y-2">
-          <InfoText label={"Group Name"} value={groupData?.name} />
-          <InfoText label={"Group No"} value={groupData?.group_no.toString()} />
+          <LabelValueText label={"Group Name"} value={groupData?.name} />
+          <LabelValueText
+            label={"Group No"}
+            value={groupData?.group_no.toString()}
+          />
           <div className="flex justify-start flex-wrap items-center gap-x-4">
-            <InfoText label={"Year"} value={groupData?.year} />
-            <InfoText label={"Semester"} value={groupData?.semester} />
+            <LabelValueText label={"Year"} value={groupData?.year} />
+            <LabelValueText label={"Semester"} value={groupData?.semester} />
           </div>
-          <InfoText
+          <LabelValueText
             label={"Class Date"}
             value={`${capitalize(groupData?.day)}, ${formatTime(groupData?.time_start || "")} - ${formatTime(groupData?.time_end || "")}  `}
           />
-          <InfoText
+          <LabelValueText
             label={"Instructor"}
             value={`${groupData?.instructor.f_name} ${groupData?.instructor.l_name}`}
           />
@@ -75,9 +78,12 @@ function GroupSummary({ groupData }: Props) {
       </Card>
       <Card className="lg:w-1/3 w-full border-[1px] min-h-56">
         <CardBody className="space-y-2">
-          <InfoText label={"Department"} value={groupData?.department} />
-          <InfoText label={"All Student"} value={groupData?.student_amount} />
-          <InfoText label={"Online Student"} value={20} />
+          <LabelValueText label={"Department"} value={groupData?.department} />
+          <LabelValueText
+            label={"All Student"}
+            value={groupData?.student_amount}
+          />
+          <LabelValueText label={"Online Student"} value={20} />
         </CardBody>
         <CardFooter className="absolute bottom-0 w-full">
           <Button
@@ -96,7 +102,10 @@ function GroupSummary({ groupData }: Props) {
               <div className="w-16 h-16 flex justify-center items-center pb-3">
                 <LockClosedIcon className="w-14 h-14" />
               </div>
-              <Typography className=" font-semibold text-center min-h-16">
+              <Typography
+                className=" font-semibold text-center min-h-16"
+                color="blue-gray"
+              >
                 Allow login
               </Typography>
               <Switch
@@ -118,7 +127,10 @@ function GroupSummary({ groupData }: Props) {
               <div className="w-16 h-16 flex justify-center items-center pb-3">
                 <PhotoIcon />
               </div>
-              <Typography className="font-semibold text-center min-h-16">
+              <Typography
+                className="font-semibold text-center min-h-16"
+                color="blue-gray"
+              >
                 Allow upload profile picture
               </Typography>
               <Switch

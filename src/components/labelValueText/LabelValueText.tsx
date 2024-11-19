@@ -5,7 +5,7 @@ interface Props {
   value: string | number | undefined;
 }
 
-function InfoText({ label, value }: Props) {
+function LabelValueText({ label, value }: Props) {
   const getValueText = () => {
     if (!value) {
       if (typeof value === "number") {
@@ -17,10 +17,12 @@ function InfoText({ label, value }: Props) {
   };
   return (
     <div className="flex gap-2">
-      <Typography className="font-semibold">{label}</Typography>
+      <Typography className="font-semibold" color="blue-gray">
+        {label}
+      </Typography>
       <Typography>{getValueText()}</Typography>
     </div>
   );
 }
 
-export default InfoText;
+export default LabelValueText;
