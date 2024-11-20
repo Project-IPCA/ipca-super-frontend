@@ -6,6 +6,7 @@ import groupFormReducer from "../features/groupForm/redux/groupFormSlice";
 import groupExercisesReducer from "../features/groupExercises/redux/groupExercisesSlice";
 import groupStudentsReducer from "../features/groupStudents/redux/GroupStudentsSlice";
 import profileFormReducer from "../features/profileForm/redux/profileFormSlice";
+import studentDetailSlice from "../features/studentDetail/redux/studentDetailSlice";
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     groupExercise: groupExercisesReducer,
     groupStudent: groupStudentsReducer,
     profileForm: profileFormReducer,
+    studentDetail: studentDetailSlice,
   },
 });
 
