@@ -5,7 +5,7 @@ import { getLoginState } from "../../features/loginForm/redux/loginFormSlice";
 function AnonymousRoutes() {
   const loginState = useAppSelector(getLoginState);
   return loginState.token || localStorage.access_token ? (
-    <Navigate to="/" replace />
+    <Navigate to="/my-groups" replace />
   ) : (
     <Outlet />
   );

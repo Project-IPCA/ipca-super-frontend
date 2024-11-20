@@ -54,7 +54,7 @@ function LoginForm() {
 
   useEffect(() => {
     if (loginState.token) {
-      navigate("/");
+      navigate("/my-groups");
       setPendingLogin(false);
     }
   }, [loginState.token]);
