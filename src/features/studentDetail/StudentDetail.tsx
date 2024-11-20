@@ -8,6 +8,7 @@ import {
 } from "./redux/studentDetailSlice";
 import { useEffect } from "react";
 import StudentSummary from "./components/StudentSummary";
+import { Bounce, toast } from "react-toastify";
 
 function StudentDetail() {
   const dispatch = useAppDispatch();
@@ -16,9 +17,28 @@ function StudentDetail() {
   const { studentId } = useParams();
 
   const studentInfo = studentState[String(studentId)]?.studentInfo;
+  const error = studentState[String(studentId)]?.error;
 
   useEffect(() => {
-    dispatch(fetchStudentInfo(String(studentId)));
+    if (error) {
+      toast.error(error.error, {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (studentId) {
+      dispatch(fetchStudentInfo(studentId));
+    }
   }, [dispatch, studentId]);
 
   return (

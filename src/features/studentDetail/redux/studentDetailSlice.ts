@@ -45,6 +45,47 @@ const initialState: {
   [key: string]: StudentInfoState;
 } = {};
 
+export const deleteStudent = createAsyncThunk(
+  "studentInfo/deleteStudent",
+  async (studentId: string, { rejectWithValue }) => {
+    try {
+      const token = getFreshAccessToken();
+      const response = await axios.delete(
+        `${VITE_IPCA_API}/supervisor/student/${studentId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(resolveApiError(error));
+    }
+  },
+);
+
+export const resetStudentPasword = createAsyncThunk(
+  "studentInfo/resetStudentPassword",
+  async (studentId: string, { rejectWithValue }) => {
+    try {
+      const token = getFreshAccessToken();
+      const response = await axios.put(
+        `${VITE_IPCA_API}/supervisor/reset_student_password/${studentId}`,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(resolveApiError(error));
+    }
+  },
+);
+
 export const fetchStudentInfo = createAsyncThunk(
   "studentInfo/fetchStudentInfo",
   async (studentId: string, { rejectWithValue }) => {
@@ -92,6 +133,24 @@ const studentDetailSlice = createSlice({
         const studentId = action.meta.arg;
         state[studentId] = {
           studentInfo: null,
+          isFetching: false,
+          error: action.payload as API_ERROR_RESPONSE,
+        };
+      })
+      .addCase(resetStudentPasword.rejected, (state, action) => {
+        const studentId = action.meta.arg;
+        const existStudentInfo = state[studentId];
+        state[studentId] = {
+          studentInfo: existStudentInfo?.studentInfo || null,
+          isFetching: false,
+          error: action.payload as API_ERROR_RESPONSE,
+        };
+      })
+      .addCase(deleteStudent.rejected, (state, action) => {
+        const studentId = action.meta.arg;
+        const existStudentInfo = state[studentId];
+        state[studentId] = {
+          studentInfo: existStudentInfo?.studentInfo || null,
           isFetching: false,
           error: action.payload as API_ERROR_RESPONSE,
         };

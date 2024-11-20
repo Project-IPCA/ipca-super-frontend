@@ -7,9 +7,9 @@ import {
   getGroupStudents,
   getGroupStudentsError,
 } from "./redux/GroupStudentsSlice";
-import StudentPermissionForm from "./components/StudentPermissionForm";
 import AddStudentForm from "./components/AddStudentForm";
 import { Bounce, toast } from "react-toastify";
+import { StudentPermissionForm } from "../studentPermissionForm";
 
 export interface StudentData {
   name: string;
@@ -80,11 +80,13 @@ function GroupStudents({ groupId }: Props) {
   return (
     <>
       <StudentPermissionForm
-        page={page}
         open={openPermForm}
-        groupId={groupId}
-        studentSelected={studentSelected}
         handleClose={handlePermFormClose}
+        studentId={studentSelected?.studentId || ""}
+        kmitlId={studentSelected?.kmitlId || ""}
+        name={studentSelected?.name || ""}
+        page={page}
+        groupId={groupId}
       />
       <AddStudentForm
         open={openStudentFrom}
