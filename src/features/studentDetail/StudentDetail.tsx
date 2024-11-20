@@ -1,5 +1,5 @@
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
-import { IconButton, Typography } from "@material-tailwind/react";
+import { Card, IconButton, Typography } from "@material-tailwind/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import {
@@ -9,6 +9,7 @@ import {
 import { useEffect } from "react";
 import StudentSummary from "./components/StudentSummary";
 import { Bounce, toast } from "react-toastify";
+import ChapterListCard from "./components/ChapterListCard";
 
 function StudentDetail() {
   const dispatch = useAppDispatch();
@@ -50,6 +51,9 @@ function StudentDetail() {
         <Typography variant="h3">Student {studentInfo?.kmitl_id}</Typography>
       </div>
       <StudentSummary studentInfo={studentInfo} />
+      <Card className="border-[1px]  mt-8" shadow={false}>
+        <ChapterListCard />
+      </Card>
     </>
   );
 }
