@@ -22,7 +22,7 @@ function NotFoundPage() {
         <Button
           color="gray"
           className="w-full px-4 md:w-[8rem]"
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/my-groups")}
         >
           back home
         </Button>
