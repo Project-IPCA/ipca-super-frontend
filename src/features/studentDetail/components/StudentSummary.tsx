@@ -178,7 +178,6 @@ function StudentSummary({ studentInfo }: Props) {
             <Button
               size="sm"
               variant="outlined"
-              color="orange"
               onClick={() => handleResetOpen()}
             >
               Reset Password

@@ -1,14 +1,16 @@
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
-import { IconButton, Typography } from "@material-tailwind/react";
+import { Card, IconButton, Typography } from "@material-tailwind/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import {
+  fetchStudentChapterList,
   fetchStudentInfo,
   getStudentDetailState,
 } from "./redux/studentDetailSlice";
 import { useEffect } from "react";
 import StudentSummary from "./components/StudentSummary";
 import { Bounce, toast } from "react-toastify";
+import ChapterListCard from "./components/ChapterListCard";
 
 function StudentDetail() {
   const dispatch = useAppDispatch();
@@ -17,6 +19,7 @@ function StudentDetail() {
   const { studentId } = useParams();
 
   const studentInfo = studentState[String(studentId)]?.studentInfo;
+  const chapterList = studentState[String(studentId)]?.chapterList;
   const error = studentState[String(studentId)]?.error;
 
   useEffect(() => {
@@ -38,6 +41,7 @@ function StudentDetail() {
   useEffect(() => {
     if (studentId) {
       dispatch(fetchStudentInfo(studentId));
+      dispatch(fetchStudentChapterList(studentId));
     }
   }, [dispatch, studentId]);
 
@@ -50,6 +54,9 @@ function StudentDetail() {
         <Typography variant="h3">Student {studentInfo?.kmitl_id}</Typography>
       </div>
       <StudentSummary studentInfo={studentInfo} />
+      <Card className="border-[1px]  mt-8" shadow={false}>
+        <ChapterListCard chapterList={chapterList} />
+      </Card>
     </>
   );
 }
