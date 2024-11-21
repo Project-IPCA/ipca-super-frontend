@@ -70,7 +70,6 @@ function ProfileForm() {
 
   useEffect(() => {
     if (error) {
-      console.log(error);
       toast.error(error.error, {
         position: "bottom-right",
         autoClose: 3000,

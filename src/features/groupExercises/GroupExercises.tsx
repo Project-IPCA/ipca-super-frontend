@@ -2,11 +2,14 @@ import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import { useEffect, useMemo, useRef, useState } from "react";
 import GroupSummary from "./components/GroupSummary";
 import {
+  clearGroupExercisesError,
   fetchGroupExercises,
   getGroupExercise,
+  getGroupExerciseError,
 } from "./redux/groupExercisesSlice";
 import ExerciseTable from "./components/ExerciseTable";
 import PermissionForm from "../permissionForm/PermissionForm";
+import { Bounce, toast } from "react-toastify";
 interface Props {
   groupId: string;
 }
@@ -21,6 +24,7 @@ function GroupExercises({ groupId }: Props) {
   const initialized = useRef(false);
   const dispatch = useAppDispatch();
   const groupDetail = useAppSelector(getGroupExercise);
+  const error = useAppSelector(getGroupExerciseError);
   const [openAccessForm, setOpenAccessForm] = useState<boolean>(false);
   const [chapterSelected, setChapterSelected] = useState<ChapterData | null>(
     null,
@@ -47,6 +51,23 @@ function GroupExercises({ groupId }: Props) {
       ),
     [groupDetail],
   );
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.error, {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      dispatch(clearGroupExercisesError());
+    }
+  });
 
   return (
     <div>
