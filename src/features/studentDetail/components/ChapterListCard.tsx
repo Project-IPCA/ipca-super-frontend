@@ -1,17 +1,28 @@
 import { Button, Chip, Typography } from "@material-tailwind/react";
+import { GroupChapterPermission } from "../redux/studentDetailSlice";
+import { LockClosedIcon } from "@heroicons/react/24/solid";
 
-function ChapterListCard() {
+interface Props {
+  chapterList: GroupChapterPermission[];
+}
+
+function ChapterListCard({ chapterList }: Props) {
   return (
     <div className="divide-y divide-gray-200">
-      {Array.from({ length: 8 }, (_, index) => index).map((item) => (
+      {chapterList?.map((chapter) => (
         <div
-          className="flex justify-between items-center py-6 px-6 "
-          key={item}
+          className="flex justify-between items-center gap-x-4 py-6 px-6"
+          key={chapter.chapter_id}
         >
           <div>
-            <Typography variant="h6" className="mb-2">
-              {item + 1}. Introduction
-            </Typography>
+            <div className="flex items-center gap-x-2 mb-2">
+              {!chapter.allow_access ? (
+                <LockClosedIcon className="w-5 h-5 mb-1" />
+              ) : null}
+              <Typography variant="h6">
+                {chapter.chapter_idx}. {chapter.chapter_name}
+              </Typography>
+            </div>
             <div className="flex items-center gap-x-2">
               <Typography variant="paragraph" className="text-sm">
                 Allow Submit
@@ -19,21 +30,36 @@ function ChapterListCard() {
               <Chip
                 className="w-fit"
                 variant="ghost"
-                color="green"
+                color={chapter.allow_submit ? "green" : "red"}
                 size="sm"
-                value={"ALLOW"}
+                value={chapter.allow_submit ? "ALLOW" : "DENY"}
               />
             </div>
           </div>
-          <div className="flex gap-x-4">
-            {Array.from({ length: 5 }, (_, index) => index).map((item) => (
-              <Button color="green" size="sm" className="w-16 h-16 !p-3">
-                <span className="block mb-1">Item {item + 1}</span>
-                <span className="block">2/2</span>
+
+          <div className="flex items-center  gap-x-8 ">
+            {chapter.items.map((item) => (
+              <Button
+                color={item.marking === item.full_mark ? "green" : "gray"}
+                size="sm"
+                variant="outlined"
+                className="w-16 h-16 flex flex-col justify-center items-center !p-2"
+                key={`${item.chapter_idx}.${item.item_idx}`}
+              >
+                <span className="block mb-1">Item {item.item_idx}</span>
+                <span className="block">
+                  {item.marking}/{item.full_mark}
+                </span>
               </Button>
             ))}
+            <div className="text-center">
+              <Typography variant="h6">Score</Typography>
+              <Typography variant="h6">
+                {chapter.items.reduce((score, item) => score + item.marking, 0)}
+                /{chapter.chapter_full_mark}
+              </Typography>
+            </div>
           </div>
-          <Typography variant="h6">Score: 10/10</Typography>
         </div>
       ))}
     </div>
