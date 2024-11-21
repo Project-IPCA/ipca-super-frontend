@@ -17,16 +17,18 @@ import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 
 interface Props {
+  userId?: string;
   groups: Group[];
   handleNextPage: () => void;
   handlePrevPage: () => void;
-  handleFormOpen?: () => void;
-  handleSetGroupId?: (groupId: string | null) => void;
+  handleFormOpen: () => void;
+  handleSetGroupId: (groupId: string | null) => void;
   page: number;
   pages: number;
 }
 
 function GroupTable({
+  userId,
   groups,
   handleNextPage,
   handlePrevPage,
@@ -156,7 +158,13 @@ function GroupTable({
                   <td className="p-2">
                     <Menu placement="bottom-end">
                       <MenuHandler>
-                        <IconButton variant="text">
+                        <IconButton
+                          variant="text"
+                          disabled={
+                            !!userId &&
+                            group.instructor.supervisor_id !== userId
+                          }
+                        >
                           <EllipsisVerticalIcon className="w-5 h-5" />
                         </IconButton>
                       </MenuHandler>

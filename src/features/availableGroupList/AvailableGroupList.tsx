@@ -8,6 +8,11 @@ import {
 import { GroupTable } from "../groupTable";
 import GroupFilter from "./components/GroupFilter";
 import { ALL_VALUE } from "./constants";
+import {
+  fetchProfile,
+  getProfile,
+} from "../profileForm/redux/profileFormSlice";
+import { GroupForm } from "../groupForm";
 
 export interface FilterForm {
   instructorId: string;
@@ -28,7 +33,10 @@ function AvailableGroupList() {
   const initialized = useRef(false);
   const dispatch = useAppDispatch();
   const groups = useAppSelector(getAvailableGroups);
+  const profile = useAppSelector(getProfile);
   const [page, setPage] = useState<number>(1);
+  const [groupSelected, setGroupSelected] = useState<string | null>(null);
+  const [formOpen, setFormOpen] = useState<boolean>(false);
   const [filterForm, setFilterForm] = useState<FilterForm>({
     instructorId: ALL_VALUE,
     year: ALL_VALUE,
@@ -42,6 +50,22 @@ function AvailableGroupList() {
       [key]: value,
     }));
   };
+
+  const handleFormClose = () => {
+    setGroupSelected(null);
+    setFormOpen(false);
+  };
+
+  const handleFormOpen = () => setFormOpen(true);
+
+  const handleSetGroupId = (groupId: string | null) =>
+    setGroupSelected(groupId);
+
+  useEffect(() => {
+    if (!profile.profile.f_name) {
+      dispatch(fetchProfile());
+    }
+  }, [dispatch, profile]);
 
   useEffect(() => {
     if (!initialized.current) {
@@ -91,6 +115,11 @@ function AvailableGroupList() {
 
   return (
     <>
+      <GroupForm
+        open={formOpen}
+        onClose={handleFormClose}
+        groupId={groupSelected}
+      />
       <Typography variant="h3" className="pb-6">
         Available Groups
       </Typography>
@@ -100,9 +129,12 @@ function AvailableGroupList() {
         handleChangeForm={handleChangeForm}
       />
       <GroupTable
+        userId={profile.profile.user_id}
         groups={groups.available_groups}
         handleNextPage={handleNextPage}
         handlePrevPage={handlePrevPage}
+        handleFormOpen={handleFormOpen}
+        handleSetGroupId={handleSetGroupId}
         page={page}
         pages={groups.pagination.pages}
       />

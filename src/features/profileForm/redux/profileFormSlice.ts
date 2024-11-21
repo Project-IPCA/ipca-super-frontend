@@ -8,6 +8,7 @@ import { RootState } from "../../../store/store";
 const VITE_IPCA_API = import.meta.env.VITE_IPCA_API;
 
 interface ProfileInfo {
+  user_id: string;
   avatar: string;
   dept: Dept;
   dob: string;
@@ -43,6 +44,7 @@ interface ProfileState {
 const initialState: ProfileState = {
   data: {
     profile: {
+      user_id: "",
       avatar: "",
       dept: {
         dept_id: "",
