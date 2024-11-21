@@ -42,7 +42,7 @@ function GroupDetail({ groupId }: Props) {
   return (
     <>
       <div className="flex justify-start items-center pb-4 gap-x-2">
-        <IconButton variant="text" onClick={() => navigate("/my-groups")}>
+        <IconButton variant="text" onClick={() => navigate(-1)}>
           <ArrowLeftIcon className="w-5 h-5" />
         </IconButton>
         <Typography variant="h3">Group 25</Typography>
