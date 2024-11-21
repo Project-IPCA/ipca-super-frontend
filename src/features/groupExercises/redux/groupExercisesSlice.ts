@@ -81,6 +81,27 @@ export interface ChapterPermissionRequest {
   sync: boolean;
 }
 
+export const logoutAllStudents = createAsyncThunk(
+  "groupExercises/logoutAllStudents",
+  async (groupId: string, { rejectWithValue }) => {
+    try {
+      const token = getFreshAccessToken();
+      const response = await axios.put(
+        `${VITE_IPCA_API}/supervisor/logout_all_student/${groupId}`,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(resolveApiError(error));
+    }
+  },
+);
+
 export const fetchGroupExercises = createAsyncThunk(
   "groupExercises/fetchGroupExercises",
   async (groupId: string, { rejectWithValue }) => {
@@ -152,7 +173,11 @@ export const updateAllowGroupUploadProfile = createAsyncThunk(
 const groupDetailSlice = createSlice({
   name: "groupDetail",
   initialState,
-  reducers: {},
+  reducers: {
+    clearGroupExercisesError: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) =>
     builder
       .addCase(fetchGroupExercises.pending, (state) => {
@@ -165,10 +190,19 @@ const groupDetailSlice = createSlice({
       .addCase(fetchGroupExercises.rejected, (state, action) => {
         state.error = action.payload as API_ERROR_RESPONSE;
         state.isFetching = false;
+      })
+      .addCase(logoutAllStudents.rejected, (state, action) => {
+        state.error = action.payload as API_ERROR_RESPONSE;
+        state.isFetching = false;
       }),
 });
 
+export const { clearGroupExercisesError } = groupDetailSlice.actions;
+
 export const getGroupExercise = (state: RootState) =>
   state.groupExercise.groupDetail;
+
+export const getGroupExerciseError = (state: RootState) =>
+  state.groupExercise.error;
 
 export default groupDetailSlice.reducer;

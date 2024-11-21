@@ -8,6 +8,7 @@ import {
 } from "@material-tailwind/react";
 import {
   GroupData,
+  logoutAllStudents,
   updateAllowGroupLogin,
   updateAllowGroupUploadProfile,
 } from "../redux/groupExercisesSlice";
@@ -19,6 +20,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { useAppDispatch } from "../../../hooks/store";
 import { LabelValueText } from "../../../components";
+import { Bounce, toast } from "react-toastify";
 
 interface Props {
   groupData: GroupData | null;
@@ -29,6 +31,27 @@ function GroupSummary({ groupData }: Props) {
   const formatTime = (timeString: string) => {
     const [hours, minutes] = timeString.split(":");
     return `${parseInt(hours, 10)}:${minutes}`;
+  };
+
+  const handleLogoutAll = async () => {
+    if (groupData?.group_id) {
+      const resultAction = await dispatch(
+        logoutAllStudents(groupData.group_id),
+      );
+      if (logoutAllStudents.fulfilled.match(resultAction)) {
+        toast.success("Successfully logout all students.", {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
+    }
   };
 
   const onToggleAllowLogin = () => {
@@ -89,6 +112,7 @@ function GroupSummary({ groupData }: Props) {
           <Button
             fullWidth
             className="flex justify-center items-center gap-3 w-full"
+            onClick={() => handleLogoutAll()}
           >
             <ArrowRightStartOnRectangleIcon className="w-5 h-5" />
             Log out all
