@@ -57,6 +57,8 @@ export interface GroupChapterPermission {
 }
 
 interface Item {
+  is_access: boolean;
+  is_submit: boolean;
   chapter_idx: number;
   full_mark: number;
   item_idx: number;
