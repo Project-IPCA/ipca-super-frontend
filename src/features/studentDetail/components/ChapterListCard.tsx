@@ -7,6 +7,21 @@ interface Props {
 }
 
 function ChapterListCard({ chapterList }: Props) {
+  const getItemColor = (
+    isSubmit: boolean,
+    marking: number,
+    fullMark: number,
+  ) => {
+    if (isSubmit) {
+      if (marking === fullMark) {
+        return "green";
+      } else {
+        return "red";
+      }
+    }
+    return "gray";
+  };
+
   return (
     <div className="divide-y divide-gray-200">
       {chapterList?.map((chapter) => (
@@ -40,9 +55,14 @@ function ChapterListCard({ chapterList }: Props) {
           <div className="flex items-center  gap-x-8 ">
             {chapter.items.map((item) => (
               <Button
-                color={item.marking === item.full_mark ? "green" : "gray"}
+                disabled={!item.is_access}
+                color={getItemColor(
+                  item.is_submit,
+                  item.marking,
+                  item.full_mark,
+                )}
                 size="sm"
-                variant="outlined"
+                variant={item.is_submit ? "filled" : "outlined"}
                 className="w-16 h-16 flex flex-col justify-center items-center !p-2"
                 key={`${item.chapter_idx}.${item.item_idx}`}
               >
