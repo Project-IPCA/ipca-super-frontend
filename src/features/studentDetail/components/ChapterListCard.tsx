@@ -1,12 +1,21 @@
 import { Button, Chip, Typography } from "@material-tailwind/react";
 import { GroupChapterPermission } from "../redux/studentDetailSlice";
 import { LockClosedIcon } from "@heroicons/react/24/solid";
+import { ExerciseData } from "../StudentDetail";
 
 interface Props {
+  studentId: string;
   chapterList: GroupChapterPermission[];
+  handleExerciseOpen: () => void;
+  handleSetExercise: (exercise: ExerciseData) => void;
 }
 
-function ChapterListCard({ chapterList }: Props) {
+function ChapterListCard({
+  studentId,
+  chapterList,
+  handleExerciseOpen,
+  handleSetExercise,
+}: Props) {
   return (
     <div className="divide-y divide-gray-200">
       {chapterList?.map((chapter) => (
@@ -40,6 +49,14 @@ function ChapterListCard({ chapterList }: Props) {
           <div className="flex items-center  gap-x-8 ">
             {chapter.items.map((item) => (
               <Button
+                onClick={() => {
+                  handleSetExercise({
+                    studentId: studentId,
+                    chapterIdx: chapter.chapter_idx,
+                    itemId: item.item_idx,
+                  });
+                  handleExerciseOpen();
+                }}
                 color={item.marking === item.full_mark ? "green" : "gray"}
                 size="sm"
                 variant="outlined"
