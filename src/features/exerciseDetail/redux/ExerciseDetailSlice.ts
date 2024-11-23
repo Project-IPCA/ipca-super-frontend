@@ -13,7 +13,8 @@ interface ExerciseRequest {
   itemId: number;
 }
 
-interface AssignedExercise {
+export interface AssignedExercise {
+  chapter_name: string;
   chapter_id: string;
   chapter_index: number;
   content: string;
@@ -24,8 +25,23 @@ interface AssignedExercise {
   testcase: string;
 }
 
+export interface SubmissionHistory {
+  exercise_id: string;
+  is_loop: boolean;
+  marking: number;
+  output: string | null;
+  result: string;
+  sourcecode_filename: string;
+  status: string;
+  stu_id: string;
+  submission_id: string;
+  time_submit: string;
+  error_message: string;
+}
+
 interface AssignedExerciseState {
   exceriseDetail: AssignedExercise | null;
+  submissionHistory: SubmissionHistory[];
   isFetching: boolean;
   error: API_ERROR_RESPONSE | null;
 }
@@ -33,6 +49,53 @@ interface AssignedExerciseState {
 const initialState: {
   [key: string]: AssignedExerciseState;
 } = {};
+
+export const cancelStudentSubmission = createAsyncThunk(
+  "studentInfo/cancelStudentSubmission",
+  async (submissionId: string, { rejectWithValue }) => {
+    try {
+      const token = getFreshAccessToken();
+      const response = await axios.put(
+        `${VITE_IPCA_API}/supervisor/cancle_student_submission/${submissionId}`,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(resolveApiError(error));
+    }
+  },
+);
+
+export const fetchSubmissionHistory = createAsyncThunk(
+  "studentInfo/fetchSubmissionHistory",
+  async (request: ExerciseRequest, { rejectWithValue }) => {
+    try {
+      const token = getFreshAccessToken();
+      const params = {
+        stu_id: request.studentId,
+        chapter_idx: request.chapterIdx,
+        item_id: request.itemId,
+      };
+      const response = await axios.get(
+        `${VITE_IPCA_API}/common/student_submission`,
+        {
+          params: params,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(resolveApiError(error));
+    }
+  },
+);
 
 export const fetchAssignedExercise = createAsyncThunk(
   "studentInfo/fetchAssignedExercise",
@@ -72,6 +135,7 @@ const exerciseDetailSlice = createSlice({
         const existExercise = state[key];
         state[key] = {
           exceriseDetail: existExercise?.exceriseDetail || null,
+          submissionHistory: existExercise?.submissionHistory,
           isFetching: true,
           error: null,
         };
@@ -81,7 +145,8 @@ const exerciseDetailSlice = createSlice({
         const key = `${studentId}.${chapterIdx}.${itemId}`;
         const existExercise = state[key];
         state[key] = {
-          exceriseDetail: existExercise?.exceriseDetail || null,
+          exceriseDetail: action.payload,
+          submissionHistory: existExercise?.submissionHistory,
           isFetching: false,
           error: null,
         };
@@ -89,8 +154,43 @@ const exerciseDetailSlice = createSlice({
       .addCase(fetchAssignedExercise.rejected, (state, action) => {
         const { studentId, chapterIdx, itemId } = action.meta.arg;
         const key = `${studentId}.${chapterIdx}.${itemId}`;
+        const existExercise = state[key];
         state[key] = {
           exceriseDetail: null,
+          submissionHistory: existExercise?.submissionHistory,
+          isFetching: false,
+          error: action.payload as API_ERROR_RESPONSE,
+        };
+      })
+      .addCase(fetchSubmissionHistory.pending, (state, action) => {
+        const { studentId, chapterIdx, itemId } = action.meta.arg;
+        const key = `${studentId}.${chapterIdx}.${itemId}`;
+        const existExercise = state[key];
+        state[key] = {
+          exceriseDetail: existExercise?.exceriseDetail,
+          submissionHistory: existExercise?.submissionHistory,
+          isFetching: true,
+          error: null,
+        };
+      })
+      .addCase(fetchSubmissionHistory.fulfilled, (state, action) => {
+        const { studentId, chapterIdx, itemId } = action.meta.arg;
+        const key = `${studentId}.${chapterIdx}.${itemId}`;
+        const existExercise = state[key];
+        state[key] = {
+          exceriseDetail: existExercise?.exceriseDetail,
+          submissionHistory: action.payload,
+          isFetching: false,
+          error: null,
+        };
+      })
+      .addCase(fetchSubmissionHistory.rejected, (state, action) => {
+        const { studentId, chapterIdx, itemId } = action.meta.arg;
+        const key = `${studentId}.${chapterIdx}.${itemId}`;
+        const existExercise = state[key];
+        state[key] = {
+          exceriseDetail: existExercise?.exceriseDetail,
+          submissionHistory: existExercise?.submissionHistory,
           isFetching: false,
           error: action.payload as API_ERROR_RESPONSE,
         };

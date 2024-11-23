@@ -1,186 +1,122 @@
-import {
-  Input,
-  Option,
-  Select,
-  Button,
-  Dialog,
-  Textarea,
-  IconButton,
-  Typography,
-  DialogBody,
-  DialogHeader,
-  DialogFooter,
-} from "@material-tailwind/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { ExerciseData } from "../studentDetail/StudentDetail";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import {
+  Card,
+  CardBody,
+  IconButton,
+  Typography,
+} from "@material-tailwind/react";
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+import {
   fetchAssignedExercise,
+  fetchSubmissionHistory,
   getExerciseDetailSlice,
 } from "./redux/ExerciseDetailSlice";
 import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import SubmissionHistoryList from "./components/SubmissionHistoryList";
+import {
+  fetchStudentInfo,
+  getStudentDetailState,
+} from "../studentDetail/redux/studentDetailSlice";
+import { Bounce, toast } from "react-toastify";
 
-interface Props {
-  exerciseData: ExerciseData | null;
-  open: boolean;
-  handleClose: () => void;
-}
-
-function ExerciseDetail({ exerciseData, open, handleClose }: Props) {
+function ExerciseDetail() {
   const dispatch = useAppDispatch();
   const exerciseDetailState = useAppSelector(getExerciseDetailSlice);
-  const key = `${exerciseData?.studentId}.${exerciseData?.chapterIdx}.${exerciseData?.itemId}`;
+  const studentState = useAppSelector(getStudentDetailState);
+  const { studentId, chapterIdx, problemIdx } = useParams();
+  const navigate = useNavigate();
+  const key = `${studentId}.${chapterIdx}.${problemIdx}`;
 
+  const studentInfo = studentState[String(studentId)]?.studentInfo;
   const exerciseDetail = exerciseDetailState[key]?.exceriseDetail;
+  const submissionHistory = exerciseDetailState[key]?.submissionHistory;
+  const error = exerciseDetailState[key]?.error;
 
   useEffect(() => {
-    if (!exerciseDetail && exerciseData) {
+    if (error) {
+      toast.error(error.error, {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
+  }, [error, dispatch]);
+
+  useEffect(() => {
+    if (!exerciseDetail && studentId && chapterIdx && problemIdx) {
       dispatch(
         fetchAssignedExercise({
-          studentId: exerciseData?.studentId,
-          chapterIdx: exerciseData?.chapterIdx,
-          itemId: exerciseData?.itemId,
+          studentId: studentId,
+          chapterIdx: parseInt(chapterIdx),
+          itemId: parseInt(problemIdx),
         }),
       );
     }
-  }, [dispatch, exerciseDetail, exerciseData]);
+  }, [dispatch, exerciseDetail, studentId, chapterIdx, problemIdx]);
 
-  console.log(exerciseDetail);
+  useEffect(() => {
+    if (!studentInfo && studentId) {
+      dispatch(fetchStudentInfo(studentId));
+    }
+  }, [dispatch, studentId]);
+
+  useEffect(() => {
+    if (
+      !submissionHistory &&
+      exerciseDetail?.chapter_id &&
+      studentId &&
+      chapterIdx &&
+      problemIdx
+    ) {
+      dispatch(
+        fetchSubmissionHistory({
+          studentId: studentId,
+          chapterIdx: parseInt(chapterIdx),
+          itemId: parseInt(problemIdx),
+        }),
+      );
+    }
+  }, [
+    dispatch,
+    submissionHistory,
+    exerciseDetail,
+    studentId,
+    chapterIdx,
+    problemIdx,
+  ]);
+
   return (
     <>
-      <Dialog size="xl" open={open} handler={handleClose} className="p-4">
-        <DialogHeader className="relative m-0 block">
-          <Typography variant="h4" color="blue-gray">
-            Chapter 1 Introduction, Problem 1
+      <div className="flex justify-start items-center pb-4 gap-x-2">
+        <IconButton variant="text">
+          <ArrowLeftIcon className="w-5 h-5" onClick={() => navigate(-1)} />
+        </IconButton>
+        <Typography variant="h3">Exercise</Typography>
+      </div>
+      <Card className="border-[1px] mb-4">
+        <CardBody>
+          <Typography variant="small" className="font-medium">
+            Chapter {exerciseDetail?.chapter_index} Problem{" "}
+            {exerciseDetail?.level}
           </Typography>
-          <Typography className="mt-1 font-normal text-gray-600">
-            John Doe(64010003)
+          <Typography variant="h4" className="pt-1 pb-2">
+            {exerciseDetail?.name || ""}
           </Typography>
-          <IconButton
-            size="sm"
-            variant="text"
-            className="!absolute right-3.5 top-3.5"
-            onClick={handleClose}
-          >
-            <XMarkIcon className="h-4 w-4 stroke-2" />
-          </IconButton>
-        </DialogHeader>
-        <DialogBody className="space-y-4 pb-6">
-          <div>
-            <Typography
-              variant="small"
-              color="blue-gray"
-              className="mb-2 text-left font-medium"
-            >
-              Name
-            </Typography>
-            <Input
-              crossOrigin=""
-              color="gray"
-              size="lg"
-              placeholder="eg. White Shoes"
-              name="name"
-              className="placeholder:opacity-100 focus:!border-t-gray-900"
-              containerProps={{
-                className: "!min-w-full",
-              }}
-              labelProps={{
-                className: "hidden",
-              }}
-            />
-          </div>
-          <div>
-            <Typography
-              variant="small"
-              color="blue-gray"
-              className="mb-2 text-left font-medium"
-            >
-              Category
-            </Typography>
-            <Select
-              className="!w-full !border-[1.5px] !border-blue-gray-200/90 !border-t-blue-gray-200/90 bg-white text-gray-800 ring-4 ring-transparent placeholder:text-gray-600 focus:!border-primary focus:!border-t-blue-gray-900 group-hover:!border-primary"
-              placeholder="1"
-              labelProps={{
-                className: "hidden",
-              }}
-            >
-              <Option>Clothing</Option>
-              <Option>Fashion</Option>
-              <Option>Watches</Option>
-            </Select>
-          </div>
-          <div className="flex gap-4">
-            <div className="w-full">
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="mb-2 text-left font-medium"
-              >
-                Weight
-              </Typography>
-              <Input
-                crossOrigin=""
-                color="gray"
-                size="lg"
-                placeholder="eg. <8.8oz | 250g"
-                name="weight"
-                className="placeholder:opacity-100 focus:!border-t-gray-900"
-                containerProps={{
-                  className: "!min-w-full",
-                }}
-                labelProps={{
-                  className: "hidden",
-                }}
-              />
-            </div>
-            <div className="w-full">
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="mb-2 text-left font-medium"
-              >
-                Size
-              </Typography>
-              <Input
-                crossOrigin=""
-                color="gray"
-                size="lg"
-                placeholder="eg. US 8"
-                name="size"
-                className="placeholder:opacity-100 focus:!border-t-gray-900"
-                containerProps={{
-                  className: "!min-w-full",
-                }}
-                labelProps={{
-                  className: "hidden",
-                }}
-              />
-            </div>
-          </div>
-          <div>
-            <Typography
-              variant="small"
-              color="blue-gray"
-              className="mb-2 text-left font-medium"
-            >
-              Description (Optional)
-            </Typography>
-            <Textarea
-              rows={7}
-              placeholder="eg. This is a white shoes with a comfortable sole."
-              className="!w-full !border-[1.5px] !border-blue-gray-200/90 !border-t-blue-gray-200/90 bg-white text-gray-600 ring-4 ring-transparent focus:!border-primary focus:!border-t-blue-gray-900 group-hover:!border-primary"
-              labelProps={{
-                className: "hidden",
-              }}
-            />
-          </div>
-        </DialogBody>
-        <DialogFooter>
-          <Button className="ml-auto" onClick={handleClose}>
-            Add Product
-          </Button>
-        </DialogFooter>
-      </Dialog>
+          <Typography>{exerciseDetail?.content || ""}</Typography>
+        </CardBody>
+      </Card>
+      <SubmissionHistoryList
+        submissionHistory={submissionHistory}
+        exerciseDetail={exerciseDetail}
+        studentInfo={studentInfo}
+      />
     </>
   );
 }

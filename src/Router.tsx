@@ -21,6 +21,9 @@ const GroupDetailPage = lazy(
 const StudentDetailPage = lazy(
   () => import("./pages/studentDetailPage/StudentDetailPage"),
 );
+const ExerciseDetailPage = lazy(
+  () => import("./pages/exerciseDetailPage/ExerciseDetailPage"),
+);
 
 const router = createBrowserRouter([
   {
@@ -87,6 +90,14 @@ const router = createBrowserRouter([
             element: (
               <Suspense fallback={<SpinnerLoading />}>
                 <StudentDetailPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "/exercise/student/:studentId/chapter/:chapterIdx/problem/:problemIdx",
+            element: (
+              <Suspense fallback={<SpinnerLoading />}>
+                <ExerciseDetailPage />
               </Suspense>
             ),
           },

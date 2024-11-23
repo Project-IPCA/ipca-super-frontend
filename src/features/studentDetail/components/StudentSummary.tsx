@@ -84,7 +84,7 @@ function StudentSummary({ studentInfo }: Props) {
     <>
       <ConfirmModal
         open={openDelete}
-        title="Delete Student"
+        title="Delete Student?"
         description={
           <>
             Are you sure you want to delete student{" "}

@@ -1,21 +1,29 @@
 import { Button, Chip, Typography } from "@material-tailwind/react";
 import { GroupChapterPermission } from "../redux/studentDetailSlice";
 import { LockClosedIcon } from "@heroicons/react/24/solid";
-import { ExerciseData } from "../StudentDetail";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   studentId: string;
   chapterList: GroupChapterPermission[];
-  handleExerciseOpen: () => void;
-  handleSetExercise: (exercise: ExerciseData) => void;
 }
 
-function ChapterListCard({
-  studentId,
-  chapterList,
-  handleExerciseOpen,
-  handleSetExercise,
-}: Props) {
+function ChapterListCard({ chapterList, studentId }: Props) {
+  const navigate = useNavigate();
+  const getItemColor = (
+    isSubmit: boolean,
+    marking: number,
+    fullMark: number,
+  ) => {
+    if (isSubmit) {
+      if (marking === fullMark) {
+        return "green";
+      } else {
+        return "red";
+      }
+    }
+    return "gray";
+  };
   return (
     <div className="divide-y divide-gray-200">
       {chapterList?.map((chapter) => (
@@ -50,16 +58,18 @@ function ChapterListCard({
             {chapter.items.map((item) => (
               <Button
                 onClick={() => {
-                  handleSetExercise({
-                    studentId: studentId,
-                    chapterIdx: chapter.chapter_idx,
-                    itemId: item.item_idx,
-                  });
-                  handleExerciseOpen();
+                  navigate(
+                    `/exercise/student/${studentId}/chapter/${chapter.chapter_idx}/problem/${item.item_idx}`,
+                  );
                 }}
-                color={item.marking === item.full_mark ? "green" : "gray"}
+                disabled={!item.is_access}
+                color={getItemColor(
+                  item.is_submit,
+                  item.marking,
+                  item.full_mark,
+                )}
                 size="sm"
-                variant="outlined"
+                variant={item.is_submit ? "filled" : "outlined"}
                 className="w-16 h-16 flex flex-col justify-center items-center !p-2"
                 key={`${item.chapter_idx}.${item.item_idx}`}
               >
