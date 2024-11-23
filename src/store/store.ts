@@ -7,6 +7,8 @@ import groupExercisesReducer from "../features/groupExercises/redux/groupExercis
 import groupStudentsReducer from "../features/groupStudents/redux/GroupStudentsSlice";
 import profileFormReducer from "../features/profileForm/redux/profileFormSlice";
 import studentDetailSlice from "../features/studentDetail/redux/studentDetailSlice";
+import exerciseDetailSlice from "../features/exerciseDetail/redux/ExerciseDetailSlice";
+import codeDisplaySlice from "../features/codeDisplay/redux/CodeDisplaySlice";
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +20,8 @@ export const store = configureStore({
     groupStudent: groupStudentsReducer,
     profileForm: profileFormReducer,
     studentDetail: studentDetailSlice,
+    exerciseDetail: exerciseDetailSlice,
+    codeDisplay: codeDisplaySlice,
   },
 });
 

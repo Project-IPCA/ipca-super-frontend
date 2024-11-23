@@ -1,12 +1,15 @@
 import { Button, Chip, Typography } from "@material-tailwind/react";
 import { GroupChapterPermission } from "../redux/studentDetailSlice";
 import { LockClosedIcon } from "@heroicons/react/24/solid";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
+  studentId: string;
   chapterList: GroupChapterPermission[];
 }
 
-function ChapterListCard({ chapterList }: Props) {
+function ChapterListCard({ chapterList, studentId }: Props) {
+  const navigate = useNavigate();
   const getItemColor = (
     isSubmit: boolean,
     marking: number,
@@ -21,7 +24,6 @@ function ChapterListCard({ chapterList }: Props) {
     }
     return "gray";
   };
-
   return (
     <div className="divide-y divide-gray-200">
       {chapterList?.map((chapter) => (
@@ -55,6 +57,11 @@ function ChapterListCard({ chapterList }: Props) {
           <div className="flex items-center  gap-x-8 ">
             {chapter.items.map((item) => (
               <Button
+                onClick={() => {
+                  navigate(
+                    `/exercise/student/${studentId}/chapter/${chapter.chapter_idx}/problem/${item.item_idx}`,
+                  );
+                }}
                 disabled={!item.is_access}
                 color={getItemColor(
                   item.is_submit,

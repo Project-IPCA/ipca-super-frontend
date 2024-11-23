@@ -12,6 +12,12 @@ import StudentSummary from "./components/StudentSummary";
 import { Bounce, toast } from "react-toastify";
 import ChapterListCard from "./components/ChapterListCard";
 
+export interface ExerciseData {
+  studentId: string;
+  chapterIdx: number;
+  itemId: number;
+}
+
 function StudentDetail() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -55,7 +61,10 @@ function StudentDetail() {
       </div>
       <StudentSummary studentInfo={studentInfo} />
       <Card className="border-[1px]  mt-8" shadow={false}>
-        <ChapterListCard chapterList={chapterList} />
+        <ChapterListCard
+          studentId={String(studentId)}
+          chapterList={chapterList}
+        />
       </Card>
     </>
   );

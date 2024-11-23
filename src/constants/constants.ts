@@ -57,3 +57,11 @@ export const MONTHS = [
   "November",
   "December",
 ];
+
+export const SUBMISSION_STATUS = {
+  wrongAnswer: "WRONG_ANSWER",
+  accepted: "ACCEPTED",
+  error: "ERROR",
+  pending: "PENDING",
+  rejected: "REJECTED",
+};
