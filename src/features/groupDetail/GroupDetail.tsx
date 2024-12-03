@@ -13,6 +13,7 @@ import { useState } from "react";
 import { tabsValue } from "./constants";
 import { GroupExercises } from "../groupExercises";
 import GroupStudents from "../groupStudents/GroupStudents";
+import { GroupLogs } from "../groupLogs";
 
 interface Props {
   groupId: string;
@@ -35,7 +36,7 @@ function GroupDetail({ groupId }: Props) {
     {
       label: "Activity Logs",
       value: tabsValue.ACTIVITY_LOGS,
-      component: <div>hello</div>,
+      component: <GroupLogs groupId={groupId} />,
     },
   ];
 
