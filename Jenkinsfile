@@ -21,7 +21,7 @@ pipeline {
         stage('Build and Deploy') {
             agent { label agent_label }
             steps {
-                withCredentials([file(credentialsId: 'frontend-dev', variable: 'env_file')]) {
+                withCredentials([file(credentialsId: 'super-frontend-dev', variable: 'env_file')]) {
                     // Set environment variables
                     sh "cat ${env_file} > .env"
                     // Start services
