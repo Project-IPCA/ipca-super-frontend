@@ -16,6 +16,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { ChapterData } from "../GroupExercises";
 import { StatusChip } from "./StatusChip";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface Props {
   chapterList: GroupChapterPermission[] | [];
@@ -28,6 +29,8 @@ function ExerciseTable({
   handleSetChapter,
   handleAccessFormOpen,
 }: Props) {
+  const navigate = useNavigate();
+  const { groupId } = useParams();
   return (
     <div className="pt-8">
       <Card className="h-full w-full  shadow-none border-[1.5px]">
@@ -97,7 +100,14 @@ function ExerciseTable({
                         </IconButton>
                       </MenuHandler>
                       <MenuList>
-                        <MenuItem className="flex justify-start items-center gap-2">
+                        <MenuItem
+                          className="flex justify-start items-center gap-2"
+                          onClick={() =>
+                            navigate(
+                              `/exercise_pool/group/${groupId}/chapter/${exercise.chapter_index}`,
+                            )
+                          }
+                        >
                           <EyeIcon className="w-5 h-5" />
                           View
                         </MenuItem>

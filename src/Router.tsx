@@ -24,6 +24,9 @@ const StudentDetailPage = lazy(
 const ExerciseDetailPage = lazy(
   () => import("./pages/exerciseDetailPage/ExerciseDetailPage"),
 );
+const ExercisePoolPage = lazy(
+  () => import("./pages/ExercisePoolPage/ExercisePoolPage"),
+);
 
 const router = createBrowserRouter([
   {
@@ -98,6 +101,14 @@ const router = createBrowserRouter([
             element: (
               <Suspense fallback={<SpinnerLoading />}>
                 <ExerciseDetailPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "/exercise_pool/group/:groupId/chapter/:chapterIdx",
+            element: (
+              <Suspense fallback={<SpinnerLoading />}>
+                <ExercisePoolPage />
               </Suspense>
             ),
           },

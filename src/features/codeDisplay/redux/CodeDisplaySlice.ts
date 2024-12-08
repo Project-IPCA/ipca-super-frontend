@@ -38,8 +38,10 @@ const codeDisplaySlice = createSlice({
   extraReducers: (builder) =>
     builder
       .addCase(getCodeFromMinio.pending, (state, action) => {
+        const key = action.meta.arg;
+        const existCodeDisplay = state[key];
         state[action.meta.arg] = {
-          code: null,
+          code: existCodeDisplay?.code || null,
           isFetching: true,
           error: null,
         };
