@@ -1,6 +1,5 @@
 import { AsyncSelect } from "../../../components";
 import { Button, Chip, Option, Typography } from "@material-tailwind/react";
-import CodeDisplay from "../../codeDisplay/CodeDisplay";
 import { format } from "date-fns";
 import { SUBMISSION_STATUS } from "../../../constants/constants";
 import { SubmissionResult } from "./SubmissionHistoryList";
@@ -8,6 +7,7 @@ import TestCaseResult from "./TestCaseResult";
 import TestCaseOutput from "./TestCaseOutput";
 import { useMemo } from "react";
 import { SubmissionHistory } from "../redux/ExerciseDetailSlice";
+import { CodeDisplay } from "../../codeDisplay";
 
 interface Props {
   submissionId: string;
