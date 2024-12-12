@@ -1,13 +1,30 @@
-import { Card, CardBody, Checkbox, Typography } from "@material-tailwind/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  Checkbox,
+  Typography,
+} from "@material-tailwind/react";
 import { LabItem } from "../redux/ExercisesPoolSlice";
 
 interface Props {
   level: string;
   labItems: LabItem[];
+  chapterId: string;
   selectedItems: string[];
+  handleToggleForm: () => void;
+  handleSetFormUseData: (chapterId: string, level: string) => void;
 }
 
-function ExerciseCard({ level, labItems, selectedItems }: Props) {
+function ExerciseCard({
+  level,
+  labItems,
+  selectedItems,
+  chapterId,
+  handleToggleForm,
+  handleSetFormUseData,
+}: Props) {
   const getItemSelected = (exerciseId: string) => {
     return !!selectedItems.find((item) => item === exerciseId);
   };
@@ -20,7 +37,7 @@ function ExerciseCard({ level, labItems, selectedItems }: Props) {
           {labItems.map((item) => (
             <div
               className="border-b-[1px] px-8 py-1 flex justify-start gap-x-8 items-center"
-              key={item.item_id}
+              key={item.exercise_id}
             >
               <Checkbox
                 crossOrigin=""
@@ -31,6 +48,16 @@ function ExerciseCard({ level, labItems, selectedItems }: Props) {
           ))}
         </Card>
       </CardBody>
+      <CardFooter className="flex justify-end pt-0">
+        <Button
+          onClick={() => {
+            handleSetFormUseData(chapterId, level);
+            handleToggleForm();
+          }}
+        >
+          Add Exercise
+        </Button>
+      </CardFooter>
     </Card>
   );
 }

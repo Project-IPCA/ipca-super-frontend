@@ -6,17 +6,36 @@ import {
   fetchExercisesPool,
   getExercisesPoolState,
 } from "./redux/ExercisesPoolSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ExerciseCard from "./components/ExerciseCard";
+import { ExerciseForm } from "../exerciseForm";
+
+export interface FormUseData {
+  chapterId: string;
+  level: string;
+}
 
 function ExercisesPool() {
   const dispatch = useAppDispatch();
   const exercisesPoolState = useAppSelector(getExercisesPoolState);
   const navigate = useNavigate();
+  const [formOpen, setFormOpen] = useState<boolean>(false);
+  const [formUseData, setFormUseData] = useState<FormUseData>({
+    chapterId: "",
+    level: "",
+  });
   const { groupId, chapterIdx } = useParams();
   const key = `${groupId}.${chapterIdx}`;
 
   const exercisesPool = exercisesPoolState[key]?.chapterDetail;
+
+  const handleToggleForm = () => setFormOpen(!formOpen);
+
+  const handleSetFormUseData = (chapterId: string, level: string) =>
+    setFormUseData({
+      chapterId: chapterId,
+      level: level,
+    });
 
   useEffect(() => {
     if (!exercisesPool && groupId && chapterIdx) {
@@ -29,10 +48,13 @@ function ExercisesPool() {
     }
   }, [dispatch, exercisesPool, groupId, chapterIdx]);
 
-  console.log(exercisesPool);
-
   return (
     <>
+      <ExerciseForm
+        open={formOpen}
+        handleToggle={handleToggleForm}
+        formUseData={formUseData}
+      />
       <div className="flex justify-start items-center pb-4 gap-x-2">
         <IconButton variant="text">
           <ArrowLeftIcon className="w-5 h-5" onClick={() => navigate(-1)} />
@@ -47,8 +69,11 @@ function ExercisesPool() {
             <ExerciseCard
               key={level}
               level={level}
+              chapterId={exercisesPool?.chapter_id || ""}
               labItems={labItems}
               selectedItems={exercisesPool?.group_selected_labs[level] || []}
+              handleToggleForm={handleToggleForm}
+              handleSetFormUseData={handleSetFormUseData}
             />
           ),
         )}
