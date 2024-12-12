@@ -36,7 +36,7 @@ function GroupDetail({ groupId }: Props) {
     {
       label: "Activity Logs",
       value: tabsValue.ACTIVITY_LOGS,
-      component: <div>hello</div>,
+      component: <GroupLogs groupId={groupId} />,
     },
   ];
 

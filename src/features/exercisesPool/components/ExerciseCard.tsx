@@ -7,6 +7,7 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { LabItem } from "../redux/ExercisesPoolSlice";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface Props {
   level: string;
@@ -25,6 +26,8 @@ function ExerciseCard({
   handleToggleForm,
   handleSetFormUseData,
 }: Props) {
+  const navigate = useNavigate();
+  const { groupId, chapterIdx } = useParams();
   const getItemSelected = (exerciseId: string) => {
     return !!selectedItems.find((item) => item === exerciseId);
   };
@@ -43,7 +46,16 @@ function ExerciseCard({
                 crossOrigin=""
                 defaultChecked={getItemSelected(item.exercise_id)}
               />
-              <Typography>{item.name}</Typography>
+              <Typography
+                className="underline hover:text-gray-900 hover:decoration-gray-900 decoration-[1px] decoration-blue-gray-200 transition duration-300 cursor-pointer"
+                onClick={() =>
+                  navigate(
+                    `/exercise_pool/group/${groupId}/chapter/${chapterIdx}/level/${level}/exercise/${item.exercise_id}`,
+                  )
+                }
+              >
+                {item.name}
+              </Typography>
             </div>
           ))}
         </Card>
