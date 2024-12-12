@@ -218,7 +218,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
 
   return (
     <>
-      <Dialog size="sm" open={open} handler={onClose} className="p-4">
+      <Dialog size="sm" open={open} handler={onClose} className="p-4 !z-[500]">
         <DialogHeader className="relative m-0 block">
           <Typography variant="h4" color="blue-gray">
             {groupId ? "Edit Student Group" : "Create Student Group"}

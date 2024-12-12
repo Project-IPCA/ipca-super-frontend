@@ -10,6 +10,7 @@ import studentDetailSlice from "../features/studentDetail/redux/studentDetailSli
 import exerciseDetailSlice from "../features/exerciseDetail/redux/ExerciseDetailSlice";
 import codeDisplaySlice from "../features/codeDisplay/redux/CodeDisplaySlice";
 import exercisesPoolSlice from "../features/exercisesPool/redux/ExercisesPoolSlice";
+import exerciseFormSlice from "../features/exerciseForm/redux/exerciseFormSlice";
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
     exerciseDetail: exerciseDetailSlice,
     codeDisplay: codeDisplaySlice,
     exercisesPool: exercisesPoolSlice,
+    exerciseForm: exerciseFormSlice,
   },
 });
 
