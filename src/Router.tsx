@@ -25,7 +25,10 @@ const ExerciseDetailPage = lazy(
   () => import("./pages/exerciseDetailPage/ExerciseDetailPage"),
 );
 const ExercisePoolPage = lazy(
-  () => import("./pages/ExercisePoolPage/ExercisePoolPage"),
+  () => import("./pages/exercisePoolPage/ExercisePoolPage"),
+);
+const ExerciseInfoPage = lazy(
+  () => import("./pages/exerciseInfoPage/ExerciseInfoPage"),
 );
 
 const router = createBrowserRouter([
@@ -109,6 +112,14 @@ const router = createBrowserRouter([
             element: (
               <Suspense fallback={<SpinnerLoading />}>
                 <ExercisePoolPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "/exercise_pool/group/:groupId/chapter/:chapterIdx/level/:level/exercise/:exerciseId",
+            element: (
+              <Suspense fallback={<SpinnerLoading />}>
+                <ExerciseInfoPage />
               </Suspense>
             ),
           },

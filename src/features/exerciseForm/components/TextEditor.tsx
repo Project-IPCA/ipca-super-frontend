@@ -785,19 +785,35 @@ function ToolbarPlugin({
   onChange,
 }: {
   value: string;
-  onChange: (val: string) => void;
+  onChange?: (val: string) => void;
 }) {
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef<HTMLDivElement | null>(null);
   const initializedRef = useRef(false);
 
   useEffect(() => {
-    return editor.registerUpdateListener(({ editorState }) => {
-      editorState.read(() => {
-        const htmlString = $generateHtmlFromNodes(editor);
-        onChange(htmlString);
+    if (!onChange) {
+      editor.setEditable(false);
+      editor.update(() => {
+        const root = $getRoot();
+        const firstChild = root.getFirstChild();
+
+        if (firstChild) {
+          firstChild.remove();
+        }
       });
-    });
+    }
+  }, [editor, onChange]);
+
+  useEffect(() => {
+    if (onChange) {
+      return editor.registerUpdateListener(({ editorState }) => {
+        editorState.read(() => {
+          const htmlString = $generateHtmlFromNodes(editor);
+          onChange(htmlString);
+        });
+      });
+    }
   }, [editor]);
 
   const updateHTML = (editor: LexicalEditor, value: string, clear: boolean) => {
@@ -914,6 +930,10 @@ function ToolbarPlugin({
       editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
     }
   }, [editor, isLink]);
+
+  if (!onChange) {
+    return null;
+  }
 
   return (
     <div
@@ -1112,21 +1132,35 @@ function TextEditor({
   errors,
 }: {
   value: string;
-  onChange: (val: string) => void;
-  errors: any;
+  onChange?: (val: string) => void;
+  errors?: any;
 }) {
+  console.log(value);
+  const getEditorBorder = () => {
+    if (!onChange) {
+      return "border-none";
+    }
+    return errors.content
+      ? "!border-red-500 focus-within:!border-red-500"
+      : "focus-within:!border-gray-900 border-blue-gray-200";
+  };
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div
-        className={`z-[9999] relative overflow-hidden w-full rounded-xl border  focus-within:!border-2  border-blue-gray-200 bg-white text-left font-normal leading-5 text-gray-900 
-          ${errors.content ? "!border-red-500 focus-within:!border-red-500" : "focus-within:!border-gray-900 border-blue-gray-200"}
+        className={`z-[9999] relative overflow-hidden w-full ${!!onChange ? "rounded-xl" : "rounded-none"} border  focus-within:!border-2  border-blue-gray-200 bg-white text-left font-normal leading-5 text-gray-900 
+          ${getEditorBorder()}
           `}
       >
         <ToolbarPlugin onChange={onChange} value={value} />
-        <div className="relative rounded-b-lg border-opacity-5 bg-white h-[300px] overflow-scroll ">
+        <div
+          className={`relative ${!!onChange ? "rounded-b-lg" : "rounded-none"} border-opacity-5 bg-white h-[300px] overflow-scroll `}
+        >
           <RichTextPlugin
             contentEditable={
-              <ContentEditable className=" w-full lexical min-h-[280px] resize-none px-2.5 py-4 text-base caret-gray-900 outline-none" />
+              <ContentEditable
+                className={` w-full lexical min-h-[280px] resize-none  text-base caret-gray-900 outline-none
+                ${!!onChange ? "py-4 px-2.5" : "py-0 px-0"}`}
+              />
             }
             placeholder={<Placeholder />}
             ErrorBoundary={LexicalErrorBoundary}
