@@ -9,6 +9,7 @@ import {
   Input,
   Card,
 } from "@material-tailwind/react";
+import { v4 as uuidv4 } from "uuid";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
@@ -18,8 +19,11 @@ import KeywordConstraints from "./components/KeywordConstraints";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import {
   createExercise,
+  EditExerciseFormRequest,
   ExerciseFormRequest,
   getExerciseFormError,
+  updateExercise,
+  VITE_IPCA_RT,
 } from "./redux/exerciseFormSlice";
 import { Bounce, toast } from "react-toastify";
 import * as yup from "yup";
@@ -28,11 +32,17 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { fetchExercisesPool } from "../exercisesPool/redux/ExercisesPoolSlice";
 import { useParams } from "react-router-dom";
 import { FormUseData } from "../exercisesPool/ExercisesPool";
+import {
+  fetchExercisesInfo,
+  getExercisesInfoState,
+} from "../exerciseInfo/redux/exerciseInfoSlice";
 
 interface Props {
   open: boolean;
   handleToggle: () => void;
   formUseData: FormUseData;
+  exerciseId?: string;
+  handleToggleUpdated?: () => void;
 }
 
 interface Constraint {
@@ -67,10 +77,26 @@ const formDataSchema = yup.object({
 
 export type FormData = yup.InferType<typeof formDataSchema>;
 
-function ExerciseForm({ open, handleToggle, formUseData }: Props) {
+function ExerciseForm({
+  open,
+  handleToggle,
+  formUseData,
+  exerciseId,
+  handleToggleUpdated,
+}: Props) {
   const dispatch = useAppDispatch();
   const error = useAppSelector(getExerciseFormError);
+  const exerciseInfoState = useAppSelector(getExercisesInfoState);
+  const exerciseInfoKey = `${exerciseId}`;
+  const exercise = exerciseInfoState[exerciseInfoKey]?.exerciseInfo;
   const { groupId, chapterIdx } = useParams();
+  const [jobId, setJobId] = useState<string>();
+
+  useEffect(() => {
+    if (!exercise && exerciseId) {
+      dispatch(fetchExercisesInfo(exerciseId));
+    }
+  }, [dispatch, exercise, exerciseId]);
 
   const defaultForm = {
     name: "",
@@ -117,42 +143,77 @@ function ExerciseForm({ open, handleToggle, formUseData }: Props) {
   };
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    const request: ExerciseFormRequest = {
-      chapter_id: formUseData.chapterId,
+    const uuid = uuidv4();
+    const exerciseData = {
       name: data.name,
       sourcecode: data.sourecode,
       content: data.content,
-      level: formUseData.level,
       keyword_constraints: {
         suggested_constraints: null,
         user_defined_constraints: null,
       },
     };
+    const createRequest: ExerciseFormRequest = {
+      ...exerciseData,
+      chapter_id: formUseData.chapterId,
+      level: formUseData.level,
+    };
+
+    const updateRequest: EditExerciseFormRequest = {
+      ...createRequest,
+      job_id: uuid,
+      exercise_id: exerciseId || "",
+    };
+
+    setJobId(uuid);
 
     if (formUseData.level && formUseData.chapterId) {
-      const resultAction = await dispatch(createExercise(request));
-      if (createExercise.fulfilled.match(resultAction)) {
-        toast.success("Exercise has been created.", {
-          position: "bottom-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+      if (exerciseId) {
+        const resultAction = await dispatch(updateExercise(updateRequest));
+        if (updateExercise.fulfilled.match(resultAction)) {
+          toast.success("Exercise has been updated.", {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
+        }
+        if (handleToggleUpdated) {
+          handleToggleUpdated();
+        }
+      } else {
+        const resultAction = await dispatch(createExercise(createRequest));
+        if (createExercise.fulfilled.match(resultAction)) {
+          toast.success("Exercise has been created.", {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
+        }
       }
     }
 
     if (groupId && chapterIdx) {
-      dispatch(
+      await dispatch(
         fetchExercisesPool({
           groupId: groupId,
           chapterIdx: parseInt(chapterIdx),
         }),
       );
+    }
+    if (exerciseId) {
+      dispatch(fetchExercisesInfo(exerciseId));
     }
     handleToggleAndReset();
   };
@@ -172,19 +233,49 @@ function ExerciseForm({ open, handleToggle, formUseData }: Props) {
       });
     }
   }, [error]);
+
+  useEffect(() => {
+    if (exerciseId && exercise && !open) {
+      reset({
+        name: exercise.name,
+        content: exercise.content,
+        sourecode: exercise.sourcecode,
+      });
+    }
+  }, [reset, exerciseId, exercise, open]);
+
+  useEffect(() => {
+    if (jobId && exerciseId) {
+      const evtSource = new EventSource(
+        `${VITE_IPCA_RT}/testcase-result/${jobId}`,
+      );
+      evtSource.onmessage = (event) => {
+        if (event.data) {
+          if (!exercise && exerciseId) {
+            dispatch(fetchExercisesInfo(exerciseId));
+          }
+        }
+      };
+    }
+  }, [jobId, exerciseId]);
+
   return (
     <>
       <Dialog
         size="xl"
         open={open}
         handler={() => {
-          handleToggleAndReset();
+          if (exerciseId) {
+            handleToggle();
+          } else {
+            handleToggleAndReset();
+          }
         }}
         className="p-4 "
       >
         <DialogHeader className="relative m-0 block">
           <Typography variant="h4" color="blue-gray">
-            Add Exercise
+            {exerciseId ? "Edit Exercise" : "Add Exercise"}
           </Typography>
           <Typography className="mt-1 font-normal text-gray-600">
             {`Level ${formUseData.level}`}

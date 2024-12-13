@@ -783,30 +783,30 @@ function FloatingLinkEditor({ editor }: { editor: LexicalEditor }) {
 function ToolbarPlugin({
   value,
   onChange,
+  isUpdated,
+  handleToggleUpdated,
 }: {
   value: string;
   onChange?: (val: string) => void;
+  isUpdated?: boolean;
+  handleToggleUpdated?: () => void;
 }) {
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef<HTMLDivElement | null>(null);
   const initializedRef = useRef(false);
 
   useEffect(() => {
+    editor.update(() => {
+      const root = $getRoot();
+      const firstChild = root.getFirstChild();
+
+      if (firstChild) {
+        firstChild.remove();
+      }
+    });
     if (!onChange) {
       editor.setEditable(false);
-      editor.update(() => {
-        const root = $getRoot();
-        const firstChild = root.getFirstChild();
-
-        if (firstChild) {
-          firstChild.remove();
-        }
-      });
-    }
-  }, [editor, onChange]);
-
-  useEffect(() => {
-    if (onChange) {
+    } else {
       return editor.registerUpdateListener(({ editorState }) => {
         editorState.read(() => {
           const htmlString = $generateHtmlFromNodes(editor);
@@ -814,7 +814,7 @@ function ToolbarPlugin({
         });
       });
     }
-  }, [editor]);
+  }, [editor, onChange]);
 
   const updateHTML = (editor: LexicalEditor, value: string, clear: boolean) => {
     const root = $getRoot();
@@ -834,7 +834,18 @@ function ToolbarPlugin({
       });
       initializedRef.current = true;
     }
-  }, [value]);
+  }, [initializedRef, editor, value]);
+
+  useEffect(() => {
+    if (isUpdated && editor && value) {
+      editor.update(() => {
+        updateHTML(editor, value, true);
+      });
+      if (handleToggleUpdated) {
+        handleToggleUpdated();
+      }
+    }
+  }, [isUpdated, value, editor, handleToggleUpdated]);
 
   const [blockType, setBlockType] = useState<BlockType>("paragraph");
   const [selectedElementKey, setSelectedElementKey] = useState<string | null>(
@@ -1130,12 +1141,15 @@ function TextEditor({
   value,
   onChange,
   errors,
+  isUpdated,
+  handleToggleUpdated,
 }: {
   value: string;
   onChange?: (val: string) => void;
   errors?: any;
+  isUpdated?: boolean;
+  handleToggleUpdated?: () => void;
 }) {
-  console.log(value);
   const getEditorBorder = () => {
     if (!onChange) {
       return "border-none";
@@ -1151,7 +1165,12 @@ function TextEditor({
           ${getEditorBorder()}
           `}
       >
-        <ToolbarPlugin onChange={onChange} value={value} />
+        <ToolbarPlugin
+          onChange={onChange}
+          value={value}
+          isUpdated={isUpdated}
+          handleToggleUpdated={handleToggleUpdated}
+        />
         <div
           className={`relative ${!!onChange ? "rounded-b-lg" : "rounded-none"} border-opacity-5 bg-white h-[300px] overflow-scroll `}
         >
