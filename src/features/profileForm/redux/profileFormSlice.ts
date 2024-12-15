@@ -1,11 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { API_ERROR_RESPONSE } from "../../../constants/constants";
-import { getFreshAccessToken } from "../../../utils/service";
-import axios from "axios";
 import { resolveApiError } from "../../../utils/function";
 import { RootState } from "../../../store/store";
-
-const VITE_IPCA_API = import.meta.env.VITE_IPCA_API;
+import axiosInstance from "../../../utils/axios";
 
 interface ProfileInfo {
   user_id: string;
@@ -71,17 +68,12 @@ export const fetchProfile = createAsyncThunk(
   "profile/fetchProfile",
   async (_, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
-      const response = await axios.get(`${VITE_IPCA_API}/common/user_info`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axiosInstance.get(`/common/user_info`);
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const updateProfile = createAsyncThunk(
@@ -110,53 +102,38 @@ export const updateProfile = createAsyncThunk(
       tel: string | null;
       dept_id: string | null;
     },
-    { rejectWithValue },
+    { rejectWithValue }
   ) => {
     try {
-      const token = getFreshAccessToken();
       let avatarUrl: string | null = null;
       if (avatar) {
         const formData = new FormData();
         formData.append("file", avatar);
 
-        const response = await axios.post(
-          `${VITE_IPCA_API}/common/user_profile`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          },
+        const response = await axiosInstance.post(
+          `/common/user_profile`,
+          formData
         );
 
         avatarUrl = response.data.object_url;
       }
-      const response = await axios.put(
-        `${VITE_IPCA_API}/common/user_info`,
-        {
-          avatar: avatarUrl ? avatarUrl : null,
-          confirm_new_password: confirm_new_password,
-          current_password: current_password,
-          dob: dob,
-          email: email,
-          gender: gender,
-          new_password: new_password,
-          nickname: nickname,
-          tel: tel,
-          dept_id: dept_id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const response = await axiosInstance.put(`/common/user_info`, {
+        avatar: avatarUrl ? avatarUrl : null,
+        confirm_new_password: confirm_new_password,
+        current_password: current_password,
+        dob: dob,
+        email: email,
+        gender: gender,
+        new_password: new_password,
+        nickname: nickname,
+        tel: tel,
+        dept_id: dept_id,
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 const profileFormSlice = createSlice({

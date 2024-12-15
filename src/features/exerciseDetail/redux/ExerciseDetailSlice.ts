@@ -1,11 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getFreshAccessToken } from "../../../utils/service";
-import axios from "axios";
 import { resolveApiError } from "../../../utils";
 import { API_ERROR_RESPONSE } from "../../../constants/constants";
 import { RootState } from "../../../store/store";
-
-const VITE_IPCA_API = import.meta.env.VITE_IPCA_API;
+import axiosInstance from "../../../utils/axios";
 
 interface ExerciseRequest {
   studentId: string;
@@ -54,73 +51,55 @@ export const cancelStudentSubmission = createAsyncThunk(
   "studentInfo/cancelStudentSubmission",
   async (submissionId: string, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
-      const response = await axios.put(
-        `${VITE_IPCA_API}/supervisor/cancle_student_submission/${submissionId}`,
-        null,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      const response = await axiosInstance.put(
+        `/supervisor/cancle_student_submission/${submissionId}`
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const fetchSubmissionHistory = createAsyncThunk(
   "studentInfo/fetchSubmissionHistory",
   async (request: ExerciseRequest, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
       const params = {
         stu_id: request.studentId,
         chapter_idx: request.chapterIdx,
         item_id: request.itemId,
       };
-      const response = await axios.get(
-        `${VITE_IPCA_API}/common/student_submission`,
-        {
-          params: params,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const response = await axiosInstance.get(`/common/student_submission`, {
+        params: params,
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const fetchAssignedExercise = createAsyncThunk(
   "studentInfo/fetchAssignedExercise",
   async (request: ExerciseRequest, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
       const params = {
         stu_id: request.studentId,
         chapter_idx: request.chapterIdx,
         item_id: request.itemId,
       };
-      const response = await axios.get(
-        `${VITE_IPCA_API}/supervisor/assigned_student_exercise`,
+      const response = await axiosInstance.get(
+        `/supervisor/assigned_student_exercise`,
         {
           params: params,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        }
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 const exerciseDetailSlice = createSlice({

@@ -1,11 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { API_ERROR_RESPONSE, Pagination } from "../../../constants/constants";
-import { getFreshAccessToken } from "../../../utils/service";
-import axios from "axios";
 import { resolveApiError } from "../../../utils/function";
 import { RootState } from "../../../store/store";
-
-const VITE_IPCA_API = import.meta.env.VITE_IPCA_API;
+import axiosInstance from "../../../utils/axios";
 
 export interface Instructor {
   f_name: string;
@@ -67,28 +64,21 @@ export const fetchMyGroups = createAsyncThunk(
   "myGroups/fetchMyGroups",
   async (
     { year, page }: { year: string; page: number },
-    { rejectWithValue },
+    { rejectWithValue }
   ) => {
     try {
-      const token = getFreshAccessToken();
-      const response = await axios.get(
-        `${VITE_IPCA_API}/supervisor/my_groups`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params: {
-            year: year,
-            page: page,
-            pageSize: 10,
-          },
+      const response = await axiosInstance.get(`/supervisor/my_groups`, {
+        params: {
+          year: year,
+          page: page,
+          pageSize: 10,
         },
-      );
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 const myGroupsSlice = createSlice({
