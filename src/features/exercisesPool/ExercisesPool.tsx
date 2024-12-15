@@ -9,6 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import ExerciseCard from "./components/ExerciseCard";
 import { ExerciseForm } from "../exerciseForm";
+import { Bounce, toast } from "react-toastify";
 
 export interface FormUseData {
   chapterId: string;
@@ -28,6 +29,7 @@ function ExercisesPool() {
   const key = `${groupId}.${chapterIdx}`;
 
   const exercisesPool = exercisesPoolState[key]?.chapterDetail;
+  const error = exercisesPoolState[key]?.error;
 
   const handleToggleForm = () => setFormOpen(!formOpen);
 
@@ -47,6 +49,22 @@ function ExercisesPool() {
       );
     }
   }, [dispatch, exercisesPool, groupId, chapterIdx]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.error, {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
+  }, [error]);
 
   return (
     <>
