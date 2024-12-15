@@ -7,6 +7,14 @@ import { RootState } from "../../../store/store";
 
 const VITE_IPCA_API = import.meta.env.VITE_IPCA_API;
 
+export interface AssignedExerciseRequest {
+  chapter_id: string;
+  group_id: string;
+  item_id: number;
+  select_items: string[];
+  chapter_idx: number;
+}
+
 interface GroupSelectedLabs {
   [key: string]: string[];
 }
@@ -71,6 +79,37 @@ export const fetchExercisesPool = createAsyncThunk(
   },
 );
 
+export const updateAssignedExercise = createAsyncThunk(
+  "exercisePool/updateAssignedExercise",
+  async (request: AssignedExerciseRequest, { rejectWithValue }) => {
+    try {
+      const token = getFreshAccessToken();
+      const newRequest = {
+        chapter_id: request.chapter_id,
+        group_id: request.group_id,
+        item_id: request.item_id,
+        select_items: request.select_items,
+      };
+      const response = await axios.post(
+        `${VITE_IPCA_API}/supervisor/update_group_assigned_chapter_item`,
+        newRequest,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data);
+      } else {
+        return rejectWithValue(resolveApiError(error));
+      }
+    }
+  },
+);
+
 const exercisesPoolSlice = createSlice({
   name: "exercisesPoolSlice",
   initialState,
@@ -101,6 +140,16 @@ const exercisesPoolSlice = createSlice({
         const key = `${groupId}.${chapterIdx}`;
         state[key] = {
           chapterDetail: null,
+          isFetching: false,
+          error: action.payload as API_ERROR_RESPONSE,
+        };
+      })
+      .addCase(updateAssignedExercise.rejected, (state, action) => {
+        const { group_id, chapter_idx } = action.meta.arg;
+        const key = `${group_id}.${chapter_idx}`;
+        const existState = state[key];
+        state[key] = {
+          chapterDetail: existState?.chapterDetail || null,
           isFetching: false,
           error: action.payload as API_ERROR_RESPONSE,
         };
