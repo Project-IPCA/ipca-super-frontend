@@ -1,11 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { API_ERROR_RESPONSE } from "../../../constants/constants";
-import { getFreshAccessToken } from "../../../utils/service";
-import axios from "axios";
 import { resolveApiError } from "../../../utils";
 import { RootState } from "../../../store/store";
-
-const VITE_IPCA_API = import.meta.env.VITE_IPCA_API;
+import axiosInstance from "../../../utils/axios";
 
 interface Department {
   dept_id: string;
@@ -83,85 +80,62 @@ export const fetchStudentChapterList = createAsyncThunk(
   "studentInfo/fetchStudentChapterList",
   async (studentId: string, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
       const params = {
         studentId: studentId,
       };
-      const response = await axios.get(
-        `${VITE_IPCA_API}/supervisor/student_chapter_list`,
+      const response = await axiosInstance.get(
+        `/supervisor/student_chapter_list`,
         {
           params: params,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        }
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const deleteStudent = createAsyncThunk(
   "studentInfo/deleteStudent",
   async (studentId: string, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
-      const response = await axios.delete(
-        `${VITE_IPCA_API}/supervisor/student/${studentId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      const response = await axiosInstance.delete(
+        `/supervisor/student/${studentId}`
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const resetStudentPasword = createAsyncThunk(
   "studentInfo/resetStudentPassword",
   async (studentId: string, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
-      const response = await axios.put(
-        `${VITE_IPCA_API}/supervisor/reset_student_password/${studentId}`,
-        null,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      const response = await axiosInstance.put(
+        `/supervisor/reset_student_password/${studentId}`
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const fetchStudentInfo = createAsyncThunk(
   "studentInfo/fetchStudentInfo",
   async (studentId: string, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
-      const response = await axios.get(
-        `${VITE_IPCA_API}/supervisor/student_info/${studentId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      const response = await axiosInstance.get(
+        `/supervisor/student_info/${studentId}`
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 const studentDetailSlice = createSlice({

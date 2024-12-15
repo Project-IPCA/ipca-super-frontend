@@ -1,12 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getFreshAccessToken } from "../../../utils/service";
-import axios from "axios";
 import { resolveApiError } from "../../../utils";
 import { API_ERROR_RESPONSE, Pagination } from "../../../constants/constants";
 import { GroupStudent } from "..";
 import { RootState } from "../../../store/store";
-
-const VITE_IPCA_API = import.meta.env.VITE_IPCA_API;
+import axiosInstance from "../../../utils/axios";
 
 export interface LabInfo {
   chapter_id: string;
@@ -80,78 +77,62 @@ export const addStudents = createAsyncThunk(
   "groupStudents/addStudents",
   async ({ groupId, studentsList }: StudentsRequest, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
       const request = {
         group_id: groupId,
         students_data: studentsList,
       };
-      const response = await axios.post(
-        `${VITE_IPCA_API}/supervisor/students`,
-        request,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      const response = await axiosInstance.post(
+        `/supervisor/students`,
+        request
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const updateStudentCanSubmit = createAsyncThunk(
   "groupStudents/updateStudentCanSubmit",
   async (
     { studentId, canSubmit }: UpdateStudentCanSubmitRequest,
-    { rejectWithValue },
+    { rejectWithValue }
   ) => {
     try {
-      const token = getFreshAccessToken();
       const request = {
         can_submit: canSubmit,
       };
-      const response = await axios.put(
-        `${VITE_IPCA_API}/supervisor/student_can_submit/${studentId}`,
-        request,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      const response = await axiosInstance.put(
+        `/supervisor/student_can_submit/${studentId}`,
+        request
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const fetchGroupStudents = createAsyncThunk(
   "groupStudents/fetchGroupStudents",
   async ({ groupId, page }: GroupStudentRequest, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
       const params = {
         group_id: groupId,
         page: page,
         pageSize: 10,
       };
-      const response = await axios.get(
-        `${VITE_IPCA_API}/supervisor/get_student_group_list`,
+      const response = await axiosInstance.get(
+        `/supervisor/get_student_group_list`,
         {
           params,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        }
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 const groupStudentsSlice = createSlice({

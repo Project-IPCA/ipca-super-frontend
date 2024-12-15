@@ -1,11 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { API_ERROR_RESPONSE } from "../../../constants/constants";
-import { getFreshAccessToken } from "../../../utils/service";
-import axios from "axios";
 import { resolveApiError } from "../../../utils/function";
 import { RootState } from "../../../store/store";
-
-const VITE_IPCA_API = import.meta.env.VITE_IPCA_API;
+import axiosInstance from "../../../utils/axios";
 
 interface Permission {
   type: string;
@@ -85,89 +82,62 @@ export const logoutAllStudents = createAsyncThunk(
   "groupExercises/logoutAllStudents",
   async (groupId: string, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
-      const response = await axios.put(
-        `${VITE_IPCA_API}/supervisor/logout_all_student/${groupId}`,
-        null,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      const response = await axiosInstance.put(
+        `/supervisor/logout_all_student/${groupId}`
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const fetchGroupExercises = createAsyncThunk(
   "groupExercises/fetchGroupExercises",
   async (groupId: string, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
-      const response = await axios.get(
-        `${VITE_IPCA_API}/supervisor/group/${groupId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const response = await axiosInstance.get(`/supervisor/group/${groupId}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const updateAllowGroupLogin = createAsyncThunk(
   "groupExerciese/updateAllowGroupLogin",
   async ({ groupId, allow }: GroupAllowRequest, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
-      const response = await axios.post(
-        `${VITE_IPCA_API}/supervisor/set_allow_group_login`,
+      const response = await axiosInstance.post(
+        `/supervisor/set_allow_group_login`,
         {
           group_id: groupId,
           allow_login: allow,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        }
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const updateAllowGroupUploadProfile = createAsyncThunk(
   "groupExerciese/updateAllowGroupUploadProfile",
   async ({ groupId, allow }: GroupAllowRequest, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
-      const response = await axios.post(
-        `${VITE_IPCA_API}/supervisor/set_allow_group_upload_picture`,
+      const response = await axiosInstance.post(
+        `/supervisor/set_allow_group_upload_picture`,
         {
           group_id: groupId,
           allow_upload_picture: allow,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        }
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 const groupDetailSlice = createSlice({
