@@ -23,6 +23,7 @@ interface Props {
   pages: number;
   labInfo: LabInfo[];
   students: Student[];
+  onlineStudent: string[];
   handlePermFormOpen: () => void;
   handleSetStudent: (student: StudentData) => void;
   handleChangePage: (direction: "next" | "prev") => void;
@@ -33,6 +34,7 @@ function StudentTable({
   pages,
   labInfo,
   students,
+  onlineStudent,
   handlePermFormOpen,
   handleSetStudent,
   handleChangePage,
@@ -40,7 +42,7 @@ function StudentTable({
   const navigate = useNavigate();
   const getTableHeader = () => {
     const labs = labInfo.map(
-      (lab) => `Lab ${lab.chapter_idx} (${lab.full_mark})`,
+      (lab) => `Lab ${lab.chapter_idx} (${lab.full_mark})`
     );
     return [
       "Avatar",
@@ -90,12 +92,22 @@ function StudentTable({
                   <td className="p-4">
                     <Chip
                       variant="ghost"
-                      color={student.status ? "green" : "red"}
+                      color={
+                        onlineStudent.includes(student.stu_id) ? "green" : "red"
+                      }
                       size="sm"
-                      value={student.status ? "Online" : "Ofline"}
+                      value={
+                        onlineStudent.includes(student.stu_id)
+                          ? "Online"
+                          : "Ofline"
+                      }
                       icon={
                         <span
-                          className={`mx-auto mt-1 block h-2 w-2 rounded-full ${student.status ? "bg-green-900 " : "bg-red-500"} content-['']`}
+                          className={`mx-auto mt-1 block h-2 w-2 rounded-full ${
+                            onlineStudent.includes(student.stu_id)
+                              ? "bg-green-900 "
+                              : "bg-red-500"
+                          } content-['']`}
                         />
                       }
                     />
@@ -146,7 +158,7 @@ function StudentTable({
                     >
                       {Object.values(student.chapter_score).reduce(
                         (total, value) => total + value,
-                        0,
+                        0
                       )}
                     </Typography>
                   </td>
