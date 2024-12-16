@@ -24,6 +24,8 @@ import KeywordConstraints from "../exerciseForm/components/KeywordConstraints";
 import TextEditor from "../exerciseForm/components/TextEditor";
 import { ExerciseForm } from "../exerciseForm";
 import { FormUseData } from "../exercisesPool/ExercisesPool";
+import TestcaseForm from "./components/TestcaseForm";
+import TestcaseInfo from "./components/TestcaseInfo";
 
 function ExerciseInfo() {
   const { groupId, chapterIdx, exerciseId, level } = useParams();
@@ -36,6 +38,7 @@ function ExerciseInfo() {
   const exerciseInfoKey = `${exerciseId}`;
   const exercise = exerciseInfoState[exerciseInfoKey]?.exerciseInfo;
   const [formOpen, setFormOpen] = useState<boolean>(false);
+  const [testcaseFormOpen, setTestcaseFormOpen] = useState<boolean>(false);
   const [formUseData, setFormUseData] = useState<FormUseData>({
     chapterId: "",
     level: "",
@@ -45,6 +48,8 @@ function ExerciseInfo() {
   const handleToggleUpdated = () => setIsUpdated(!isUpdated);
 
   const handleToggleForm = () => setFormOpen(!formOpen);
+
+  const handleToggleTestcaseForm = () => setTestcaseFormOpen(!testcaseFormOpen);
 
   useEffect(() => {
     if (!exercisesPool && groupId && chapterIdx) {
@@ -83,6 +88,12 @@ function ExerciseInfo() {
   };
   return (
     <>
+      <TestcaseForm
+        exerciseId={exerciseId ?? ""}
+        open={testcaseFormOpen}
+        handleToggle={handleToggleTestcaseForm}
+        testcaseList={exercise?.testcase_list || []}
+      />
       <ExerciseForm
         open={formOpen}
         handleToggle={handleToggleForm}
@@ -179,15 +190,26 @@ function ExerciseInfo() {
               Testcases
             </Typography>
             <div className="flex gap-x-2">
-              <Button size="sm" variant="outlined">
-                Run Testcases
+              <Button size="sm" onClick={() => handleToggleTestcaseForm()}>
+                Edit Testcase
               </Button>
-              <Button size="sm">Edit</Button>
             </div>
           </div>
-          <Alert variant="ghost">
-            <span>No testcase available.</span>
-          </Alert>
+          {exercise && exercise?.testcase_list.length < 0 ? (
+            <Alert variant="ghost">
+              <span>No testcase available.</span>
+            </Alert>
+          ) : (
+            exercise &&
+            exercise.testcase_list.map((testcase, index) => (
+              <TestcaseInfo
+                readOnly={true}
+                key={index}
+                index={index}
+                testcase={testcase}
+              />
+            ))
+          )}
         </CardBody>
       </Card>
     </>

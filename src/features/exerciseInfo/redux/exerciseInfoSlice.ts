@@ -6,17 +6,18 @@ import { API_ERROR_RESPONSE } from "../../../constants/constants";
 import { RootState } from "../../../store/store";
 
 const VITE_IPCA_API = import.meta.env.VITE_IPCA_API;
+export const VITE_IPCA_RT = import.meta.env.VITE_IPCA_RT;
 
-interface Testcase {
-  excerise_id: string;
+export interface Testcase {
+  exercise_id: string;
   is_active: boolean;
   is_ready: string;
   show_to_student: boolean;
   testcase_content: string;
-  testcase_error: string;
-  testcase_id: string;
-  testcase_note: string;
-  testcase_output: string;
+  testcase_error: string | null;
+  testcase_id: string | null;
+  testcase_note: string | null;
+  testcase_output: string | null;
 }
 
 interface LabExercise {
@@ -41,6 +42,13 @@ const initialState: {
   [key: string]: ExerciseInfoState;
 } = {};
 
+interface ExerciseTestcaseRequest {
+  exercise_id: string;
+  job_id: string;
+  removed_list: string[];
+  testcase_list: Testcase[];
+}
+
 export const fetchExercisesInfo = createAsyncThunk(
   "exerciseInfo/fetchExerciseInfo",
   async (exerciseId: string, { rejectWithValue }) => {
@@ -48,6 +56,27 @@ export const fetchExercisesInfo = createAsyncThunk(
       const token = getFreshAccessToken();
       const response = await axios.get(
         `${VITE_IPCA_API}/supervisor/get_exercise_data/${exerciseId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(resolveApiError(error));
+    }
+  },
+);
+
+export const updateExerciseTestcase = createAsyncThunk(
+  "exerciseInfo/updateExerciseTestcase",
+  async (request: ExerciseTestcaseRequest, { rejectWithValue }) => {
+    try {
+      const token = getFreshAccessToken();
+      const response = await axios.post(
+        `${VITE_IPCA_API}/supervisor/save_exercise_testcase`,
+        request,
         {
           headers: {
             Authorization: `Bearer ${token}`,
