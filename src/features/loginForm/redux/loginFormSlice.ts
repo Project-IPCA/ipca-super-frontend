@@ -1,10 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { API_ERROR_RESPONSE } from "../../../constants/constants";
-import axios from "axios";
 import { RootState } from "../../../store/store";
 import { resolveApiError } from "../../../utils/function";
-
-const VITE_IPCA_API = import.meta.env.VITE_IPCA_API;
+import axiosInstance from "../../../utils/axios";
 
 interface LoginState {
   token: string;
@@ -28,7 +26,7 @@ export const loginUser = createAsyncThunk(
   "login/loginUser",
   async ({ username, password }: UserRequest, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${VITE_IPCA_API}/auth/login`, {
+      const response = await axiosInstance.post(`/auth/login`, {
         username: username,
         password: password,
       });
@@ -44,7 +42,7 @@ export const loginUser = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 const loginSlice = createSlice({

@@ -1,12 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getFreshAccessToken } from "../../../utils/service";
-import axios from "axios";
 import { resolveApiError } from "../../../utils";
 import { API_ERROR_RESPONSE } from "../../../constants/constants";
 import { RootState } from "../../../store/store";
 
 const VITE_IPCA_API = import.meta.env.VITE_IPCA_API;
 export const VITE_IPCA_RT = import.meta.env.VITE_IPCA_RT;
+import axiosInstance from "../../../utils/axios";
 
 export interface Testcase {
   exercise_id: string;
@@ -53,14 +52,8 @@ export const fetchExercisesInfo = createAsyncThunk(
   "exerciseInfo/fetchExerciseInfo",
   async (exerciseId: string, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
-      const response = await axios.get(
-        `${VITE_IPCA_API}/supervisor/get_exercise_data/${exerciseId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      const response = await axiosInstance.get(
+        `/supervisor/get_exercise_data/${exerciseId}`,
       );
       return response.data;
     } catch (error) {
@@ -73,15 +66,9 @@ export const updateExerciseTestcase = createAsyncThunk(
   "exerciseInfo/updateExerciseTestcase",
   async (request: ExerciseTestcaseRequest, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `${VITE_IPCA_API}/supervisor/save_exercise_testcase`,
         request,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
       );
       return response.data;
     } catch (error) {

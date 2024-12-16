@@ -1,12 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { API_ERROR_RESPONSE } from "../../../constants/constants";
-import { getFreshAccessToken } from "../../../utils/service";
 import axios from "axios";
 import { resolveApiError } from "../../../utils/function";
 import { RootState } from "../../../store/store";
 import { Group } from "../../myGroupsList/redux/myGroupListSlice";
-
-const VITE_IPCA_API = import.meta.env.VITE_IPCA_API;
+import axiosInstance from "../../../utils/axios";
 
 export interface FormRequest {
   name: string;
@@ -51,70 +49,45 @@ export const fetchGroupInfo = createAsyncThunk(
   "groupForm/fetchGroupInfo",
   async (groupId: string, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
-      const response = await axios.get(
-        `${VITE_IPCA_API}/supervisor/my_group_info/${groupId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      const response = await axiosInstance.get(
+        `/supervisor/my_group_info/${groupId}`
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const fetchDepartments = createAsyncThunk(
   "groupForm/fetchDepartments",
   async (_, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
-      const response = await axios.get(`${VITE_IPCA_API}/common/departments`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axiosInstance.get(`/common/departments`);
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const fetchStaffs = createAsyncThunk(
   "groupForm/fetchStaffs",
   async (_, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
-      const response = await axios.get(`${VITE_IPCA_API}/common/staffs`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axiosInstance.get(`/common/staffs`);
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const createStudentGroup = createAsyncThunk(
   "groupForm/createStudentGroup",
   async (request: FormRequest, { rejectWithValue }) => {
     try {
-      const token = getFreshAccessToken();
-      const response = await axios.post(
-        `${VITE_IPCA_API}/supervisor/group`,
-        request,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const response = await axiosInstance.post(`/supervisor/group`, request);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -123,25 +96,19 @@ export const createStudentGroup = createAsyncThunk(
         return rejectWithValue(resolveApiError(error));
       }
     }
-  },
+  }
 );
 
 export const updateStudentGroup = createAsyncThunk(
   "groupForm/updateStudentGroup",
   async (
     { request, groupId }: { request: FormRequest; groupId: string },
-    { rejectWithValue },
+    { rejectWithValue }
   ) => {
     try {
-      const token = getFreshAccessToken();
-      const response = await axios.put(
-        `${VITE_IPCA_API}/supervisor/my_group_info/${groupId}`,
-        request,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      const response = await axiosInstance.put(
+        `/supervisor/my_group_info/${groupId}`,
+        request
       );
       return response.data;
     } catch (error) {
@@ -151,7 +118,7 @@ export const updateStudentGroup = createAsyncThunk(
         return rejectWithValue(resolveApiError(error));
       }
     }
-  },
+  }
 );
 
 const groupFormSlice = createSlice({
