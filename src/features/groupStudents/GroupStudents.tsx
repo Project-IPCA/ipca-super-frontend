@@ -6,6 +6,9 @@ import {
   fetchGroupStudents,
   getGroupStudents,
   getGroupStudentsError,
+  setOnlineStudents,
+  getOnlineStudents,
+  VITE_IPCA_RT,
 } from "./redux/GroupStudentsSlice";
 import AddStudentForm from "./components/AddStudentForm";
 import { Bounce, toast } from "react-toastify";
@@ -26,11 +29,12 @@ function GroupStudents({ groupId }: Props) {
   const dispatch = useAppDispatch();
   const groupStudent = useAppSelector(getGroupStudents);
   const groupStudentError = useAppSelector(getGroupStudentsError);
+  const onlineStudent = useAppSelector(getOnlineStudents);
   const [page, setPage] = useState<number>(1);
   const [openPermForm, setOpenPermForm] = useState<boolean>(false);
   const [openStudentFrom, setOpenStudentForm] = useState<boolean>(false);
   const [studentSelected, setStudentSelected] = useState<StudentData | null>(
-    null,
+    null
   );
 
   const handlePermFormClose = () => setOpenPermForm(false);
@@ -77,6 +81,21 @@ function GroupStudents({ groupId }: Props) {
     dispatch(fetchGroupStudents({ groupId: groupId, page: page }));
   }, [dispatch, groupId, page]);
 
+  useEffect(() => {
+    const evtSource = new EventSource(
+      `${VITE_IPCA_RT}/online-students/${groupId}`
+    );
+    evtSource.onmessage = (event) => {
+      if (event.data) {
+        const rawData = JSON.parse(event.data);
+        dispatch(setOnlineStudents(rawData));
+      }
+    };
+    return () => {
+      evtSource.close();
+    };
+  }, []);
+
   return (
     <>
       <StudentPermissionForm
@@ -98,17 +117,17 @@ function GroupStudents({ groupId }: Props) {
           <div className="flex items-center gap-x-1">
             <span className="mx-auto mb-1 block h-3 w-3 rounded-full bg-green-900 content-['']" />
             <Typography variant="h6" color="blue-gray">
-              {`Online: ${groupStudent.student_list.reduce((total, student) => total + Number(student.status), 0)}`}
+              {`Online: ${onlineStudent.length}`}
             </Typography>
           </div>
           <div className="flex items-center gap-x-1">
             <span className="mx-auto mb-1 block h-3 w-3 rounded-full bg-red-900 content-['']" />
             <Typography variant="h6" color="blue-gray">
-              {`Ofline: ${groupStudent.student_list.reduce((total, student) => total + Number(!student.status), 0)}`}
+              {`Ofline: ${groupStudent.total_student - onlineStudent.length}`}
             </Typography>
           </div>
           <Typography variant="h6" color="blue-gray">
-            {`Total: ${groupStudent.student_list.length}`}
+            {`Total: ${groupStudent.total_student}`}
           </Typography>
         </div>
         <Button size="md" onClick={() => setOpenStudentForm(true)}>
@@ -120,6 +139,7 @@ function GroupStudents({ groupId }: Props) {
         pages={groupStudent.pagination.pages}
         labInfo={groupStudent.lab_info}
         students={groupStudent.student_list}
+        onlineStudent={onlineStudent}
         handlePermFormOpen={handlePermFormOpen}
         handleSetStudent={handleSetStudent}
         handleChangePage={handleChangePage}

@@ -1,9 +1,11 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { resolveApiError } from "../../../utils";
 import { API_ERROR_RESPONSE, Pagination } from "../../../constants/constants";
 import { GroupStudent } from "..";
 import { RootState } from "../../../store/store";
 import axiosInstance from "../../../utils/axios";
+
+export const VITE_IPCA_RT = import.meta.env.VITE_IPCA_RT;
 
 export interface LabInfo {
   chapter_id: string;
@@ -35,10 +37,12 @@ interface GroupStudent {
   lab_info: LabInfo[];
   student_list: Student[];
   pagination: Pagination;
+  total_student: number;
 }
 
 interface GroupStudentState {
   groupStudent: GroupStudent;
+  onlineStudents: string[];
   isFetching: boolean;
   error: API_ERROR_RESPONSE | null;
 }
@@ -53,7 +57,9 @@ const initialState: GroupStudentState = {
       pageSize: 10,
       pages: 10,
     },
+    total_student: 0,
   },
+  onlineStudents: [],
   isFetching: false,
   error: null,
 };
@@ -142,6 +148,9 @@ const groupStudentsSlice = createSlice({
     clearGroupStudentsError: (state) => {
       state.error = null;
     },
+    setOnlineStudents: (state, action: PayloadAction<string[]>) => {
+      state.onlineStudents = action.payload;
+    },
   },
   extraReducers: (builder) =>
     builder
@@ -161,9 +170,12 @@ const groupStudentsSlice = createSlice({
       }),
 });
 
-export const { clearGroupStudentsError } = groupStudentsSlice.actions;
+export const { clearGroupStudentsError, setOnlineStudents } =
+  groupStudentsSlice.actions;
 export const getGroupStudents = (state: RootState) =>
   state.groupStudent.groupStudent;
+export const getOnlineStudents = (state: RootState) =>
+  state.groupStudent.onlineStudents;
 export const getGroupStudentsStatus = (state: RootState) =>
   state.groupStudent.isFetching;
 export const getGroupStudentsError = (state: RootState) =>
