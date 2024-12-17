@@ -32,7 +32,7 @@ function TestcaseForm({ open, handleToggle, exerciseId, testcaseList }: Props) {
   const [jobId, setJobId] = useState<string>();
   const defaultTestcase = {
     exercise_id: exerciseId,
-    is_active: false,
+    is_active: true,
     is_ready: "no",
     show_to_student: false,
     testcase_content: "",
