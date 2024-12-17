@@ -63,7 +63,7 @@ function MyGroupsList() {
 
   const yearOptions = [
     "All",
-    ...myGroups.filters.year.map((year) => year.toString()),
+    ...(myGroups.filters.year || []).map((year) => year.toString()),
   ];
 
   return (
