@@ -107,7 +107,13 @@ function TestcaseInfo({
           </Typography>
           <div className="w-full h-40 bg-blue-gray-50 text-black whitespace-nowrap p-2 overflow-x-scroll">
             {!testcase.testcase_error
-              ? testcase.testcase_output
+              ? (testcase?.testcase_output ?? "")
+                  .split("\n")
+                  .map((line, index) => (
+                    <Typography variant="small" key={index}>
+                      {line}
+                    </Typography>
+                  ))
               : testcase.testcase_error}
           </div>
         </div>
