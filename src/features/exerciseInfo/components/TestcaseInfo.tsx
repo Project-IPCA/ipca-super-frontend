@@ -82,7 +82,13 @@ function TestcaseInfo({
           </Typography>
           {readOnly ? (
             <div className="w-full h-40 bg-blue-gray-50 text-black whitespace-nowrap p-2 overflow-x-scroll">
-              {testcase.testcase_content}
+              {(testcase?.testcase_content ?? "")
+                .split("\n")
+                .map((line, index) => (
+                  <Typography variant="small" key={index}>
+                    {line}
+                  </Typography>
+                ))}
             </div>
           ) : (
             <textarea
