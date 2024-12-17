@@ -26,7 +26,10 @@ const formDataSchema = yup.object({
   studentsList: yup
     .string()
     .required("Students is required.")
-    .matches(/^(\d+\s\d{8}\s\w+\s\w+\n?)+$/, "Incorrect students format."),
+    .matches(
+      /^(\d+\s\d{8}\s[\u0E00-\u0E7F\w]+\s[\u0E00-\u0E7F\w]+\n?)+$/,
+      "Incorrect students format.",
+    ),
 });
 
 export type FormData = yup.InferType<typeof formDataSchema>;
