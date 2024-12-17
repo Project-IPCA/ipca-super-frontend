@@ -60,7 +60,10 @@ function StudentDetail() {
         <Typography variant="h3">Student {studentInfo?.kmitl_id}</Typography>
       </div>
       <StudentSummary studentInfo={studentInfo} />
-      <Card className="border-[1px]  mt-8" shadow={false}>
+      <Card
+        className="border-[1px]  mt-8 sm:mb-0 md:mb-44 lg:mb-0"
+        shadow={false}
+      >
         <ChapterListCard
           studentId={String(studentId)}
           chapterList={chapterList}

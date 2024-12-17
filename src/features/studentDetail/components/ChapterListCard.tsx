@@ -25,13 +25,13 @@ function ChapterListCard({ chapterList, studentId }: Props) {
     return "gray";
   };
   return (
-    <div className="divide-y divide-gray-200">
+    <div className="divide-y divide-gray-200 min-h-screen">
       {chapterList?.map((chapter) => (
         <div
-          className="flex justify-between items-center gap-x-4 py-6 px-6"
+          className="flex justify-between lg:items-center gap-x-4 py-6 px-6 lg:flex-row flex-col "
           key={chapter.chapter_id}
         >
-          <div>
+          <div className="md:mb-0 mb-4">
             <div className="flex items-center gap-x-2 mb-2">
               {!chapter.allow_access ? (
                 <LockClosedIcon className="w-5 h-5 mb-1" />
@@ -40,7 +40,7 @@ function ChapterListCard({ chapterList, studentId }: Props) {
                 {chapter.chapter_idx}. {chapter.chapter_name}
               </Typography>
             </div>
-            <div className="flex items-center gap-x-2">
+            <div className="flex items-center gap-x-2 lg:mb-0 mb-4">
               <Typography variant="paragraph" className="text-sm">
                 Allow Submit
               </Typography>
@@ -54,7 +54,7 @@ function ChapterListCard({ chapterList, studentId }: Props) {
             </div>
           </div>
 
-          <div className="flex items-center  gap-x-8 ">
+          <div className="flex items-center  md:gap-x-8 gap-x-2 md:flex-nowrap flex-wrap md:gap-y-0 gap-y-2 ">
             {chapter.items.map((item) => (
               <Button
                 onClick={() => {
@@ -79,7 +79,7 @@ function ChapterListCard({ chapterList, studentId }: Props) {
                 </span>
               </Button>
             ))}
-            <div className="text-center">
+            <div className="text-center ml-auto md:block hidden">
               <Typography variant="h6">Score</Typography>
               <Typography variant="h6">
                 {chapter.items.reduce((score, item) => score + item.marking, 0)}

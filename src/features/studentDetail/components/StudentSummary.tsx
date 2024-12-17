@@ -128,8 +128,8 @@ function StudentSummary({ studentInfo }: Props) {
         groupId={studentInfo?.group.group_id || ""}
       />
       <div className="flex lg:flex-row flex-col gap-x-4 lg:gap-y-0 gap-y-3 w-full">
-        <Card className="border-[1px] w-3/5 relative">
-          <CardBody className="flex gap-x-6 ">
+        <Card className="border-[1px] lg:w-3/5 w-full relative">
+          <CardBody className="flex md:flex-row flex-col md:gap-y-0 gap-y-5 gap-x-6 ">
             <Avatar
               src={studentInfo?.avatar || profileNone}
               alt="avatar"
@@ -184,7 +184,7 @@ function StudentSummary({ studentInfo }: Props) {
             </Button>
           </CardFooter>
         </Card>
-        <Card className="border-[1px]   w-2/5">
+        <Card className="border-[1px]   lg:w-2/5 w-full">
           <CardBody className="min-h-36 space-y-2">
             <LabelValueText
               label="Group Name"
