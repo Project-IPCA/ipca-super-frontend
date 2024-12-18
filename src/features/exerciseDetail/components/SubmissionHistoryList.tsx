@@ -90,6 +90,8 @@ function SubmissionHistoryList({
     }
   };
 
+  console.log(submissionHistory);
+
   useEffect(() => {
     if (submissionHistory) {
       const initSubmission =
@@ -130,52 +132,69 @@ function SubmissionHistoryList({
             <Typography variant="h4" className="pt-1 ">
               Submission History
             </Typography>
-            <div className="lg:w-80 w-full">
-              <Tabs value={tabSelected}>
-                <TabsHeader>
-                  {TABS_MENU.map(({ label, value }) => (
-                    <Tab
-                      key={value}
-                      value={value}
-                      onClick={() => setTabSelected(value)}
-                    >
-                      <Typography variant="small">{label}</Typography>
-                    </Tab>
-                  ))}
-                </TabsHeader>
-              </Tabs>
-            </div>
+            {submissionHistory && submissionHistory.length !== 0 && (
+              <div className="lg:w-80 w-full">
+                <Tabs value={tabSelected}>
+                  <TabsHeader>
+                    {TABS_MENU.map(({ label, value }) => (
+                      <Tab
+                        key={value}
+                        value={value}
+                        onClick={() => setTabSelected(value)}
+                      >
+                        <Typography variant="small">{label}</Typography>
+                      </Tab>
+                    ))}
+                  </TabsHeader>
+                </Tabs>
+              </div>
+            )}
           </div>
-          {tabSelected === TABS_VALUE.single && (
-            <SubmissionView
-              submissionId={submissionSelected.first}
-              onSelect={(val) =>
-                setSubmissionSelected((prev) => ({ ...prev, first: val }))
-              }
-              submissions={reversedSubmissions}
-              handleOpenConfirm={handleOpenConfirm}
-            />
-          )}
-          {tabSelected === TABS_VALUE.compare && (
-            <div className="w-full flex lg:flex-row flex-col gap-x-10">
-              <SubmissionView
-                submissionId={submissionSelected.first}
-                onSelect={(val) =>
-                  setSubmissionSelected((prev) => ({ ...prev, first: val }))
-                }
-                submissions={reversedSubmissions}
-                handleOpenConfirm={handleOpenConfirm}
-              />
-              <SubmissionView
-                submissionId={submissionSelected.second}
-                onSelect={(val) =>
-                  setSubmissionSelected((prev) => ({ ...prev, second: val }))
-                }
-                submissions={reversedSubmissions}
-                handleOpenConfirm={handleOpenConfirm}
-              />
-            </div>
-          )}
+          {submissionHistory &&
+            (submissionHistory.length === 0 ? (
+              <>
+                <Typography>No submissions found at the moment.</Typography>
+              </>
+            ) : (
+              <>
+                {tabSelected === TABS_VALUE.single && (
+                  <SubmissionView
+                    submissionId={submissionSelected.first}
+                    onSelect={(val) =>
+                      setSubmissionSelected((prev) => ({ ...prev, first: val }))
+                    }
+                    submissions={reversedSubmissions}
+                    handleOpenConfirm={handleOpenConfirm}
+                  />
+                )}
+                {tabSelected === TABS_VALUE.compare && (
+                  <div className="w-full flex lg:flex-row flex-col gap-x-10">
+                    <SubmissionView
+                      submissionId={submissionSelected.first}
+                      onSelect={(val) =>
+                        setSubmissionSelected((prev) => ({
+                          ...prev,
+                          first: val,
+                        }))
+                      }
+                      submissions={reversedSubmissions}
+                      handleOpenConfirm={handleOpenConfirm}
+                    />
+                    <SubmissionView
+                      submissionId={submissionSelected.second}
+                      onSelect={(val) =>
+                        setSubmissionSelected((prev) => ({
+                          ...prev,
+                          second: val,
+                        }))
+                      }
+                      submissions={reversedSubmissions}
+                      handleOpenConfirm={handleOpenConfirm}
+                    />
+                  </div>
+                )}
+              </>
+            ))}
         </CardBody>
       </Card>
     </>
