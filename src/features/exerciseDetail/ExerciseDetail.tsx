@@ -19,6 +19,7 @@ import {
   getStudentDetailState,
 } from "../studentDetail/redux/studentDetailSlice";
 import { Bounce, toast } from "react-toastify";
+import TextEditor from "../exerciseForm/components/TextEditor";
 
 function ExerciseDetail() {
   const dispatch = useAppDispatch();
@@ -109,7 +110,7 @@ function ExerciseDetail() {
           <Typography variant="h4" className="pt-1 pb-2">
             {exerciseDetail?.name || ""}
           </Typography>
-          <Typography>{exerciseDetail?.content || ""}</Typography>
+          <TextEditor value={exerciseDetail?.content ?? ""} />
         </CardBody>
       </Card>
       <SubmissionHistoryList
