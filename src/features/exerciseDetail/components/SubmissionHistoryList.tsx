@@ -93,7 +93,7 @@ function SubmissionHistoryList({
   console.log(submissionHistory);
 
   useEffect(() => {
-    if (submissionHistory) {
+    if (submissionHistory && submissionHistory.length > 0) {
       const initSubmission =
         submissionHistory[submissionHistory.length - 1].submission_id;
       setSubmissionSelected({
