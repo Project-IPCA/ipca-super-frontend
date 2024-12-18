@@ -90,8 +90,6 @@ function SubmissionHistoryList({
     }
   };
 
-  console.log(submissionHistory);
-
   useEffect(() => {
     if (submissionHistory && submissionHistory.length > 0) {
       const initSubmission =
