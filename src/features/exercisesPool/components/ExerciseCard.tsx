@@ -71,7 +71,6 @@ function ExerciseCard({
     return labItems;
   }, [filter, labItems, selectedItemsSet]);
 
-  // console.log(`${level}:`, tempSelected);
   const handleUpdatedAssingedExercise = async () => {
     if (groupId && chapterIdx) {
       const request: AssignedExerciseRequest = {
