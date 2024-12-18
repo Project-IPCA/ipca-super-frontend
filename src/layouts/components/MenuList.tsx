@@ -37,10 +37,6 @@ function MenuList() {
         },
       ],
     },
-    {
-      label: "Student",
-      icon: UserGroupIcon,
-    },
   ];
 
   return (
