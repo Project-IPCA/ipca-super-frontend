@@ -20,6 +20,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Bounce, toast } from "react-toastify";
 import { useState } from "react";
 import { StudentPermissionForm } from "../../studentPermissionForm";
+import { format } from "date-fns";
 
 interface Props {
   studentInfo: StudentInfo | null;
@@ -156,7 +157,14 @@ function StudentSummary({ studentInfo }: Props) {
                   value={capitalize(studentInfo?.gender)}
                 />
               </div>
-              <LabelValueText label="Date of Birth" value={studentInfo?.dob} />
+              <LabelValueText
+                label="Date of Birth"
+                value={
+                  studentInfo?.dob
+                    ? format(studentInfo.dob, "MMMM dd, yyyy")
+                    : ""
+                }
+              />
               <div className="flex justify-start flex-wrap items-center gap-x-4">
                 <LabelValueText label="Tel" value={studentInfo?.tel} />
                 <LabelValueText
