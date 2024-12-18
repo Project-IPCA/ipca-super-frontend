@@ -44,8 +44,6 @@ function GroupLogs({ groupId }: Props) {
         if (event.data) {
           const rawData = JSON.parse(event.data);
 
-          console.log(rawData);
-
           const processData = (log: ActivityLog): ActivityLog => {
             if (log.page_name === pageName.ExerciseSubmit) {
               return {
@@ -80,8 +78,6 @@ function GroupLogs({ groupId }: Props) {
       }, 100);
     }
   }, [logs]);
-
-  console.log(logs);
 
   return (
     <div>
