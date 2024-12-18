@@ -18,9 +18,10 @@ import {
   LockClosedIcon,
   PhotoIcon,
 } from "@heroicons/react/24/solid";
-import { useAppDispatch } from "../../../hooks/store";
+import { useAppDispatch, useAppSelector } from "../../../hooks/store";
 import { LabelValueText } from "../../../components";
 import { Bounce, toast } from "react-toastify";
+import { getGroupStudents, getOnlineStudents } from "../../groupStudents/redux/GroupStudentsSlice";
 
 interface Props {
   groupData: GroupData | null;
@@ -32,6 +33,8 @@ function GroupSummary({ groupData }: Props) {
     const [hours, minutes] = timeString.split(":");
     return `${parseInt(hours, 10)}:${minutes}`;
   };
+  const groupStudent = useAppSelector(getGroupStudents);
+  const onlineStudent = useAppSelector(getOnlineStudents);
 
   const handleLogoutAll = async () => {
     if (groupData?.group_id) {
@@ -104,9 +107,9 @@ function GroupSummary({ groupData }: Props) {
           <LabelValueText label={"Department"} value={groupData?.department} />
           <LabelValueText
             label={"All Student"}
-            value={groupData?.student_amount}
+            value={groupStudent.total_student}
           />
-          <LabelValueText label={"Online Student"} value={20} />
+          <LabelValueText label={"Online Student"} value={onlineStudent.length} />
         </CardBody>
         <CardFooter className="absolute bottom-0 w-full">
           <Button
