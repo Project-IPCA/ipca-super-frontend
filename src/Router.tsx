@@ -7,7 +7,6 @@ import {
 import Layout from "./layouts/Layout";
 import { AnonymousRoutes, ProtectedRoutes, SpinnerLoading } from "./components";
 
-const DemoPage = lazy(() => import("./pages/demoPage/DemoPage"));
 const ProfilePage = lazy(() => import("./pages/profilePage/ProfilePage"));
 const LoginPage = lazy(() => import("./pages/loginPage/LoginPage"));
 const NotFoundPage = lazy(() => import("./pages/notFoundPage/NotFoundPage"));
@@ -51,14 +50,6 @@ const router = createBrowserRouter([
       {
         element: <Layout />,
         children: [
-          {
-            path: "/",
-            element: (
-              <Suspense fallback={<SpinnerLoading />}>
-                <DemoPage />
-              </Suspense>
-            ),
-          },
           {
             path: "/profile",
             element: (
@@ -134,6 +125,10 @@ const router = createBrowserRouter([
         <NotFoundPage />
       </Suspense>
     ),
+  },
+  {
+    path: "/",
+    element: <Navigate to="/my-groups" replace />,
   },
   {
     path: "*",
