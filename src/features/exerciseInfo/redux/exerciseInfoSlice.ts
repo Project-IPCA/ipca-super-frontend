@@ -6,6 +6,10 @@ import { RootState } from "../../../store/store";
 const VITE_IPCA_API = import.meta.env.VITE_IPCA_API;
 export const VITE_IPCA_RT = import.meta.env.VITE_IPCA_RT;
 import axiosInstance from "../../../utils/axios";
+import {
+  SuggestedConstraint,
+  UserConstraint,
+} from "../../exerciseForm/ExerciseForm";
 
 export interface Testcase {
   exercise_id: string;
@@ -26,9 +30,9 @@ interface LabExercise {
   exercise_id: string;
   name: string;
   sourcecode: string;
-  suggested_constraints: number[];
+  suggested_constraints: SuggestedConstraint;
   testcase_list: Testcase[];
-  user_defined_constraints: number[];
+  user_defined_constraints: UserConstraint;
 }
 
 interface ExerciseInfoState {
@@ -53,13 +57,13 @@ export const fetchExercisesInfo = createAsyncThunk(
   async (exerciseId: string, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(
-        `/supervisor/get_exercise_data/${exerciseId}`,
+        `/supervisor/get_exercise_data/${exerciseId}`
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const updateExerciseTestcase = createAsyncThunk(
@@ -68,13 +72,13 @@ export const updateExerciseTestcase = createAsyncThunk(
     try {
       const response = await axiosInstance.post(
         `${VITE_IPCA_API}/supervisor/save_exercise_testcase`,
-        request,
+        request
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 const exerciseInfoSlice = createSlice({

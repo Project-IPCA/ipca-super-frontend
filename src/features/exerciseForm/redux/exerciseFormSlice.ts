@@ -4,8 +4,7 @@ import { resolveApiError } from "../../../utils";
 import { API_ERROR_RESPONSE } from "../../../constants/constants";
 import { RootState } from "../../../store/store";
 import axiosInstance from "../../../utils/axios";
-
-const VITE_IPCA_API = import.meta.env.VITE_IPCA_API;
+import { UserConstraint } from "../ExerciseForm";
 
 export const VITE_IPCA_RT = import.meta.env.VITE_IPCA_RT;
 
@@ -19,8 +18,8 @@ interface Constraints {
   functions: Constraint[];
   imports: Constraint[];
   methods: Constraint[];
-  reverse_words: Constraint[];
-  variablse: Constraint[];
+  reserved_words: Constraint[];
+  variables: Constraint[];
 }
 
 export interface ExerciseDataRequest {
@@ -41,6 +40,11 @@ export interface ExerciseFormRequest extends ExerciseDataRequest {
 export interface EditExerciseFormRequest extends ExerciseDataRequest {
   job_id: string;
   exercise_id: string;
+}
+
+export interface CheckKeywordRequest {
+  exercise_kw_list: UserConstraint;
+  sourcecode: string;
 }
 
 interface ExerciseFormState {

@@ -36,6 +36,8 @@ import {
   fetchExercisesInfo,
   getExercisesInfoState,
 } from "../exerciseInfo/redux/exerciseInfoSlice";
+import axiosInstance from "../../utils/axios";
+import axios from "axios";
 
 interface Props {
   open: boolean;
@@ -45,23 +47,39 @@ interface Props {
   handleToggleUpdated?: () => void;
 }
 
-interface Constraint {
+export interface SuggestedConstraintData {
   keyword: string;
   limit: number;
 }
 
-export interface Constraints {
-  classes: Constraint[];
-  functions: Constraint[];
-  imports: Constraint[];
-  methods: Constraint[];
-  reverse_words: Constraint[];
-  variablse: Constraint[];
+export interface UserConstraintData {
+  keyword: string;
+  limit: number;
+  active: boolean;
+  type: string;
 }
 
-interface KeywordConstraints {
-  suggested_constraints: Constraints;
-  user_defined_constraints: Constraints;
+export interface SuggestedConstraint {
+  classes: SuggestedConstraintData[];
+  functions: SuggestedConstraintData[];
+  imports: SuggestedConstraintData[];
+  methods: SuggestedConstraintData[];
+  reserved_words: SuggestedConstraintData[];
+  variables: SuggestedConstraintData[];
+}
+
+export interface UserConstraint {
+  classes: UserConstraintData[];
+  functions: UserConstraintData[];
+  imports: UserConstraintData[];
+  methods: UserConstraintData[];
+  reserved_words: UserConstraintData[];
+  variables: UserConstraintData[];
+}
+
+export interface IKeywordConstraints {
+  suggested_constraints: SuggestedConstraint;
+  user_defined_constraints: UserConstraint;
 }
 
 const formDataSchema = yup.object({
@@ -76,6 +94,26 @@ const formDataSchema = yup.object({
 });
 
 export type FormData = yup.InferType<typeof formDataSchema>;
+export type UserConstraintAction = "add" | "delete" | "update";
+
+const defaultConstraints: IKeywordConstraints = {
+  suggested_constraints: {
+    classes: [],
+    functions: [],
+    reserved_words: [],
+    methods: [],
+    variables: [],
+    imports: [],
+  },
+  user_defined_constraints: {
+    classes: [],
+    functions: [],
+    reserved_words: [],
+    methods: [],
+    variables: [],
+    imports: [],
+  },
+};
 
 function ExerciseForm({
   open,
@@ -118,104 +156,134 @@ function ExerciseForm({
 
   const formData = watch();
 
-  const [constraints, setConstraints] = useState<KeywordConstraints>({
-    suggested_constraints: {
-      reverse_words: [],
-      functions: [],
-      methods: [],
-      variablse: [],
-      imports: [],
-      classes: [],
-    },
-    user_defined_constraints: {
-      reverse_words: [],
-      functions: [],
-      methods: [],
-      variablse: [],
-      imports: [],
-      classes: [],
-    },
-  });
+  const [constraints, setConstraints] =
+    useState<IKeywordConstraints>(defaultConstraints);
+
+  useEffect(() => {
+    if (exercise) {
+      setConstraints(() => {
+        return {
+          suggested_constraints: exercise?.suggested_constraints,
+          user_defined_constraints: exercise?.user_defined_constraints,
+        };
+      });
+    }
+  }, [exercise]);
 
   const handleToggleAndReset = () => {
     handleToggle();
     reset(defaultForm);
+    setConstraints(defaultConstraints);
   };
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    const uuid = uuidv4();
-    const exerciseData = {
-      name: data.name,
-      sourcecode: data.sourecode,
-      content: data.content,
-      keyword_constraints: {
-        suggested_constraints: null,
-        user_defined_constraints: null,
-      },
-    };
-    const createRequest: ExerciseFormRequest = {
-      ...exerciseData,
-      chapter_id: formUseData.chapterId,
-      level: formUseData.level,
-    };
+    try {
+      const response = await axiosInstance.post("/common/keyword_check", {
+        exercise_kw_list: constraints.user_defined_constraints,
+        sourcecode: data.sourecode,
+      });
+      if (response.data.status == "failed") {
+        toast.error("Recheck your constraints", {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        return;
+      }
+      const uuid = uuidv4();
+      const exerciseData = {
+        name: data.name,
+        sourcecode: data.sourecode,
+        content: data.content,
+        keyword_constraints: {
+          suggested_constraints: constraints.suggested_constraints,
+          user_defined_constraints: constraints.user_defined_constraints,
+        },
+      };
+      const createRequest: ExerciseFormRequest = {
+        ...exerciseData,
+        chapter_id: formUseData.chapterId,
+        level: formUseData.level,
+      };
 
-    const updateRequest: EditExerciseFormRequest = {
-      ...createRequest,
-      job_id: uuid,
-      exercise_id: exerciseId || "",
-    };
+      const updateRequest: EditExerciseFormRequest = {
+        ...createRequest,
+        job_id: uuid,
+        exercise_id: exerciseId || "",
+      };
 
-    setJobId(uuid);
+      setJobId(uuid);
 
-    if (formUseData.level && formUseData.chapterId) {
-      if (exerciseId) {
-        const resultAction = await dispatch(updateExercise(updateRequest));
-        if (updateExercise.fulfilled.match(resultAction)) {
-          toast.success("Exercise has been updated.", {
-            position: "bottom-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
-          });
-        }
-        if (handleToggleUpdated) {
-          handleToggleUpdated();
-        }
-      } else {
-        const resultAction = await dispatch(createExercise(createRequest));
-        if (createExercise.fulfilled.match(resultAction)) {
-          toast.success("Exercise has been created.", {
-            position: "bottom-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
-          });
+      if (formUseData.level && formUseData.chapterId) {
+        if (exerciseId) {
+          const resultAction = await dispatch(updateExercise(updateRequest));
+          if (updateExercise.fulfilled.match(resultAction)) {
+            toast.success("Exercise has been updated.", {
+              position: "bottom-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              transition: Bounce,
+            });
+          }
+          if (handleToggleUpdated) {
+            handleToggleUpdated();
+          }
+        } else {
+          const resultAction = await dispatch(createExercise(createRequest));
+          if (createExercise.fulfilled.match(resultAction)) {
+            toast.success("Exercise has been created.", {
+              position: "bottom-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              transition: Bounce,
+            });
+          }
         }
       }
-    }
 
-    if (groupId && chapterIdx) {
-      await dispatch(
-        fetchExercisesPool({
-          groupId: groupId,
-          chapterIdx: parseInt(chapterIdx),
-        }),
-      );
+      if (groupId && chapterIdx) {
+        await dispatch(
+          fetchExercisesPool({
+            groupId: groupId,
+            chapterIdx: parseInt(chapterIdx),
+          })
+        );
+      }
+      if (exerciseId) {
+        dispatch(fetchExercisesInfo(exerciseId));
+      }
+      handleToggleAndReset();
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        toast.error(err.response?.data?.error, {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
     }
-    if (exerciseId) {
-      dispatch(fetchExercisesInfo(exerciseId));
-    }
-    handleToggleAndReset();
   };
 
   useEffect(() => {
@@ -247,7 +315,7 @@ function ExerciseForm({
   useEffect(() => {
     if (jobId && exerciseId) {
       const evtSource = new EventSource(
-        `${VITE_IPCA_RT}/testcase-result/${jobId}`,
+        `${VITE_IPCA_RT}/testcase-result/${jobId}`
       );
       evtSource.onmessage = (event) => {
         if (event.data) {
@@ -258,6 +326,86 @@ function ExerciseForm({
       };
     }
   }, [jobId, exerciseId]);
+
+  const handleUserConstraints = (
+    key: keyof UserConstraint,
+    action: UserConstraintAction,
+    data?: UserConstraintData,
+    index?: number
+  ) => {
+    const currentItems = [...constraints.user_defined_constraints[key]];
+
+    switch (action) {
+      case "add":
+        if (data !== undefined) {
+          setConstraints((prev) => {
+            return {
+              ...prev,
+              user_defined_constraints: {
+                ...prev.user_defined_constraints,
+                [key]: [...currentItems, data],
+              },
+            };
+          });
+        }
+        break;
+      case "update":
+        if (index !== undefined && data !== undefined) {
+          currentItems[index] = data;
+          return setConstraints((prev) => {
+            return {
+              ...prev,
+              user_defined_constraints: {
+                ...prev.user_defined_constraints,
+                [key]: currentItems,
+              },
+            };
+          });
+        }
+        break;
+      case "delete":
+        if (index !== undefined) {
+          currentItems.splice(index, 1);
+          return setConstraints((prev) => {
+            return {
+              ...prev,
+              user_defined_constraints: {
+                ...prev.user_defined_constraints,
+                [key]: currentItems,
+              },
+            };
+          });
+        }
+        break;
+    }
+  };
+
+  const analyzeKeywordList: SubmitHandler<FormData> = async (data) => {
+    try {
+      const response = await axiosInstance.post("/common/get_keyword_list", {
+        sourcecode: data.sourecode,
+      });
+      setConstraints((constraint) => {
+        return { ...constraint, suggested_constraints: response.data.data };
+      });
+    } catch (err) {
+      let errorMessage = "An unexpected error occurred";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.message;
+      }
+      toast.error(errorMessage, {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
+  };
 
   return (
     <>
@@ -305,7 +453,11 @@ function ExerciseForm({
               size="lg"
               placeholder="Group Name"
               error={!!errors.name}
-              className={`  ${errors.name ? "!border-t-red-500 focus:!border-t-red-500" : "focus:!border-t-gray-900 !border-t-blue-gray-200"} `}
+              className={`  ${
+                errors.name
+                  ? "!border-t-red-500 focus:!border-t-red-500"
+                  : "focus:!border-t-gray-900 !border-t-blue-gray-200"
+              } `}
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
@@ -354,13 +506,21 @@ function ExerciseForm({
               >
                 Source Code
               </Typography>
-              <Button size="sm" variant="outlined">
+              <Button
+                size="sm"
+                variant="outlined"
+                onClick={handleSubmit(analyzeKeywordList)}
+              >
                 Analyze Code
               </Button>
             </div>
             <Card
               className={`border-[1px] focus-within:border-2  overflow-hidden 
-                ${errors.sourecode ? "!border-red-500 focus-within:!border-red-500" : "focus-within:!border-gray-900 !border-blue-gray-200"}`}
+                ${
+                  errors.sourecode
+                    ? "!border-red-500 focus-within:!border-red-500"
+                    : "focus-within:!border-gray-900 !border-blue-gray-200"
+                }`}
               shadow={false}
             >
               <CodeMirror
@@ -390,10 +550,13 @@ function ExerciseForm({
                 Suggested Keyword Constraints
               </Typography>
               <KeywordConstraints
+                constraintsType="suggested"
                 constraints={constraints.suggested_constraints}
+                handleUserConstraints={handleUserConstraints}
+                isEdit={true}
               />
             </div>
-            <div>
+            <div className=" relative">
               <Typography
                 variant="small"
                 color="blue-gray"
@@ -402,7 +565,10 @@ function ExerciseForm({
                 User defined Keyword Constraints
               </Typography>
               <KeywordConstraints
+                constraintsType="user"
                 constraints={constraints.user_defined_constraints}
+                handleUserConstraints={handleUserConstraints}
+                isEdit={true}
               />
             </div>
           </div>

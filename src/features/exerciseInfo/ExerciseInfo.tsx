@@ -26,6 +26,7 @@ import { ExerciseForm } from "../exerciseForm";
 import { FormUseData } from "../exercisesPool/ExercisesPool";
 import TestcaseForm from "./components/TestcaseForm";
 import TestcaseInfo from "./components/TestcaseInfo";
+import { IKeywordConstraints } from "../exerciseForm/ExerciseForm";
 
 function ExerciseInfo() {
   const { groupId, chapterIdx, exerciseId, level } = useParams();
@@ -51,13 +52,43 @@ function ExerciseInfo() {
 
   const handleToggleTestcaseForm = () => setTestcaseFormOpen(!testcaseFormOpen);
 
+  const [constraints, setConstraints] = useState<IKeywordConstraints>({
+    suggested_constraints: {
+      classes: [],
+      functions: [],
+      reserved_words: [],
+      methods: [],
+      variables: [],
+      imports: [],
+    },
+    user_defined_constraints: {
+      classes: [],
+      functions: [],
+      reserved_words: [],
+      methods: [],
+      variables: [],
+      imports: [],
+    },
+  });
+
+  useEffect(() => {
+    if (exercise) {
+      setConstraints(() => {
+        return {
+          suggested_constraints: exercise?.suggested_constraints,
+          user_defined_constraints: exercise?.user_defined_constraints,
+        };
+      });
+    }
+  }, [exercise]);
+
   useEffect(() => {
     if (!exercisesPool && groupId && chapterIdx) {
       dispatch(
         fetchExercisesPool({
           groupId: groupId,
           chapterIdx: parseInt(chapterIdx),
-        }),
+        })
       );
     }
   }, [dispatch, exercisesPool, groupId, chapterIdx]);
@@ -68,24 +99,6 @@ function ExerciseInfo() {
     }
   }, [dispatch, exercise, exerciseId]);
 
-  const mockConstraints = {
-    suggested_constraints: {
-      reverse_words: [],
-      functions: [],
-      methods: [],
-      variablse: [],
-      imports: [],
-      classes: [],
-    },
-    user_defined_constraints: {
-      reverse_words: [],
-      functions: [],
-      methods: [],
-      variablse: [],
-      imports: [],
-      classes: [],
-    },
-  };
   return (
     <>
       <TestcaseForm
@@ -169,7 +182,9 @@ function ExerciseInfo() {
                 Suggested Keyword Constraints
               </Typography>
               <KeywordConstraints
-                constraints={mockConstraints.suggested_constraints}
+                constraintsType="suggested"
+                constraints={constraints.suggested_constraints}
+                isEdit={false}
               />
             </div>
             <div>
@@ -177,7 +192,9 @@ function ExerciseInfo() {
                 User defined Keyword Constraints
               </Typography>
               <KeywordConstraints
-                constraints={mockConstraints.user_defined_constraints}
+                constraintsType="user"
+                constraints={constraints.user_defined_constraints}
+                isEdit={false}
               />
             </div>
           </div>
