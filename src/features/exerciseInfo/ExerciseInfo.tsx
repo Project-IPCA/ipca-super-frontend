@@ -174,7 +174,7 @@ function ExerciseInfo() {
               placeholder="Put your code here..."
             />
           </Card>
-          <div className="grid grid-cols-2 gap-6 mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <div>
               <Typography color="blue-gray" className="mb-2">
                 Suggested Keyword Constraints

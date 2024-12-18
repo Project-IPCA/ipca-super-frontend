@@ -432,7 +432,13 @@ function ExerciseForm({
             size="sm"
             variant="text"
             className="!absolute right-3.5 top-3.5"
-            onClick={() => handleToggleAndReset()}
+            onClick={() => {
+              if (exerciseId) {
+                handleToggle();
+              } else {
+                handleToggleAndReset();
+              }
+            }}
           >
             <XMarkIcon className="h-4 w-4 stroke-2" />
           </IconButton>
@@ -540,7 +546,7 @@ function ExerciseForm({
               {errors.sourecode ? errors.sourecode.message : ""}
             </Typography>
           </div>
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <Typography
                 variant="small"
@@ -556,7 +562,7 @@ function ExerciseForm({
                 isEdit={true}
               />
             </div>
-            <div className=" relative">
+            <div className="relative">
               <Typography
                 variant="small"
                 color="blue-gray"
