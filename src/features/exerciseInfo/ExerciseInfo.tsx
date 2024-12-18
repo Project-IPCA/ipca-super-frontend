@@ -126,7 +126,7 @@ function ExerciseInfo() {
       </div>
       <Card className="border-[1px] mb-4">
         <CardBody>
-          <div className="w-full border-b-[1px]">
+          <div className="w-full ">
             <Typography variant="small" className="pt-4 font-medium">
               Level {level ?? ""}
             </Typography>
@@ -134,13 +134,11 @@ function ExerciseInfo() {
               {exercise?.name ?? ""}
             </Typography>
           </div>
-          <div className="pt-4">
-            <TextEditor
-              value={exercise?.content ?? ""}
-              isUpdated={isUpdated}
-              handleToggleUpdated={handleToggleUpdated}
-            />
-          </div>
+          <TextEditor
+            value={exercise?.content ?? ""}
+            isUpdated={isUpdated}
+            handleToggleUpdated={handleToggleUpdated}
+          />
         </CardBody>
       </Card>
       <Card className="border-[1px] mb-4">

@@ -1172,12 +1172,12 @@ function TextEditor({
           handleToggleUpdated={handleToggleUpdated}
         />
         <div
-          className={`relative ${!!onChange ? "rounded-b-lg" : "rounded-none"} border-opacity-5 bg-white h-[300px] overflow-scroll `}
+          className={`relative ${!!onChange ? "rounded-b-lg" : "rounded-none"} border-opacity-5 bg-white ${!!onChange ? "h-[300px]" : ""} overflow-scroll `}
         >
           <RichTextPlugin
             contentEditable={
               <ContentEditable
-                className={` w-full lexical min-h-[280px] resize-none  text-base caret-gray-900 outline-none
+                className={` w-full lexical ${!!onChange ? "min-h-[280px]" : ""} resize-none  text-base caret-gray-900 outline-none
                 ${!!onChange ? "py-4 px-2.5" : "py-0 px-0"}`}
               />
             }
