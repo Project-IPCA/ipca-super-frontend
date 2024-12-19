@@ -56,7 +56,7 @@ export interface UserConstraintData {
   keyword: string;
   limit: number;
   active: boolean;
-  type: string;
+  type: ConstraintType
 }
 
 export interface SuggestedConstraint {
@@ -81,6 +81,26 @@ export interface IKeywordConstraints {
   suggested_constraints: SuggestedConstraint;
   user_defined_constraints: UserConstraint;
 }
+
+interface CheckUserConstraintData extends UserConstraintData{
+  is_passed : boolean
+}
+
+interface CheckUserConstraint {
+  classes: CheckUserConstraintData[];
+  functions: CheckUserConstraintData[];
+  imports: CheckUserConstraintData[];
+  methods: CheckUserConstraintData[];
+  reserved_words: CheckUserConstraintData[];
+  variables: CheckUserConstraintData[];
+}
+
+interface CheckKeywordReponse {
+  status: string;
+  keyword_constraint: CheckUserConstraint;
+}
+
+type ConstraintType = "eq" | "me" | "le" | "na";
 
 const formDataSchema = yup.object({
   name: yup.string().required("Name is required."),
@@ -182,17 +202,38 @@ function ExerciseForm({
         exercise_kw_list: constraints.user_defined_constraints,
         sourcecode: data.sourecode,
       });
-      if (response.data.status == "failed") {
-        toast.error("Recheck your constraints", {
-          position: "bottom-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
+      const responseData: CheckKeywordReponse = response.data;
+      if (responseData.status == "failed") {
+        const errConstraints = Object.entries(responseData.keyword_constraint)
+          .filter(
+            ([, val]) =>
+              val.length > 0 &&
+              val.some((item: CheckUserConstraintData) => !item.is_passed)
+          )
+          .reduce(
+            (acc, [key, val]) => ({
+              ...acc,
+              [key]: val.filter((item: CheckUserConstraintData) => !item.is_passed),
+            }),
+            {} as Record<string, CheckUserConstraintData[]>
+          );
+        Object.entries(errConstraints).map(([key, val]) => {
+          val.map((data: CheckUserConstraintData) => {
+            toast.error(
+              `recheck your ${key} ${data.keyword}`,
+              {
+                position: "bottom-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+              }
+            );
+          });
         });
         return;
       }

@@ -219,31 +219,38 @@ function KeywordConstraints({
                           disabled={!isEdit}
                         >
                           <Option value="eq">= Equal</Option>
-                          <Option value="me">≥ More than or equal</Option>
-                          <Option value="le">≤ Less than or equal</Option>
+                          <Option value="me">≥ More than equal</Option>
+                          <Option value="le">≤ Less than equal</Option>
                           <Option value="na">✕ Not apprear</Option>
                         </Select>
                       </div>
-                      <div className="col-span-2">
-                        <Input
-                          label="Limit"
-                          value={item.limit}
-                          crossOrigin=""
-                          type="number"
-                          containerProps={{ className: "!min-w-0" }}
-                          onKeyDown={(e) => {
-                            if (e.key !== "ArrowUp" && e.key !== "ArrowDown") {
-                              e.preventDefault();
+                      {item.type != "na" ? (
+                        <div className="col-span-2">
+                          <Input
+                            label="Limit"
+                            value={item.limit}
+                            crossOrigin=""
+                            type="number"
+                            containerProps={{ className: "!min-w-0" }}
+                            onKeyDown={(e) => {
+                              if (
+                                e.key !== "ArrowUp" &&
+                                e.key !== "ArrowDown"
+                              ) {
+                                e.preventDefault();
+                              }
+                            }}
+                            onChange={(e) =>
+                              onUserConstraintChange(key, "limit", item, idx, e)
                             }
-                          }}
-                          onChange={(e) =>
-                            onUserConstraintChange(key, "limit", item, idx, e)
-                          }
-                          disabled={!isEdit}
-                          required
-                          min={1}
-                        />
-                      </div>
+                            disabled={!isEdit}
+                            required
+                            min={1}
+                          />
+                        </div>
+                      ) : (
+                        ""
+                      )}
                       {isEdit ? (
                         <div className="col-span-1 self-center">
                           {" "}
