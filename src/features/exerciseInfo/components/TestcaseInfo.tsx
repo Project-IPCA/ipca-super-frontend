@@ -8,7 +8,7 @@ interface Props {
   updateTestcaseField?: (
     index: number,
     field: keyof Testcase,
-    value: any,
+    value: any
   ) => void;
   removeTestcase?: (index: number) => void;
   handleSubmitRun?: (testcase: Testcase) => void;
@@ -26,8 +26,8 @@ function TestcaseInfo({
 }: Props) {
   return (
     <Card className="px-5 py-3 bg-white border-[1px] shadow-none mb-4">
-      <div className="flex items-center w-full pb-2  border-b-[1px]  justify-between">
-        <div className="flex justify-start gap-x-4 items-center">
+      <div className="flex flex-col sm:flex-row items-center w-full pb-2  border-b-[1px]  justify-between">
+        <div className="flex justify-between sm:justify-start gap-x-4 items-center border-red-500 border-solid w-full sm:w-fit">
           <Typography variant="h6">Testcase: {index + 1}</Typography>
           <Checkbox
             crossOrigin=""
@@ -39,14 +39,14 @@ function TestcaseInfo({
                 updateTestcaseField(
                   index,
                   "show_to_student",
-                  !testcase.show_to_student,
+                  !testcase.show_to_student
                 );
               }
             }}
           />
         </div>
         {!readOnly && (
-          <div className="flex items-center gap-x-2">
+          <div className="flex flex-row-reverse sm:flex-row justify-between w-full sm:w-fit items-center gap-x-2">
             <Button
               size="sm"
               variant="text"
@@ -99,7 +99,7 @@ function TestcaseInfo({
                   updateTestcaseField(
                     index,
                     "testcase_content",
-                    e.target.value,
+                    e.target.value
                   );
                 }
               }}

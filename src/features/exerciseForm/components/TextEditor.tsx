@@ -617,7 +617,7 @@ function FloatingLinkEditor({ editor }: { editor: LexicalEditor }) {
   const [linkUrl, setLinkUrl] = useState("");
   const [isEditMode, setEditMode] = useState(false);
   const [lastSelection, setLastSelection] = useState<BaseSelection | null>(
-    null,
+    null
   );
 
   const updateLinkEditor = useCallback(() => {
@@ -689,8 +689,8 @@ function FloatingLinkEditor({ editor }: { editor: LexicalEditor }) {
           updateLinkEditor();
           return true;
         },
-        LowPriority,
-      ),
+        LowPriority
+      )
     );
   }, [editor, updateLinkEditor]);
 
@@ -849,7 +849,7 @@ function ToolbarPlugin({
 
   const [blockType, setBlockType] = useState<BlockType>("paragraph");
   const [selectedElementKey, setSelectedElementKey] = useState<string | null>(
-    null,
+    null
   );
   const [showBlockOptionsDropDown, setShowBlockOptionsDropDown] =
     useState(false);
@@ -914,8 +914,8 @@ function ToolbarPlugin({
           updateToolbar();
           return false;
         },
-        LowPriority,
-      ),
+        LowPriority
+      )
     );
   }, [editor, updateToolbar]);
 
@@ -931,7 +931,7 @@ function ToolbarPlugin({
         }
       });
     },
-    [editor, selectedElementKey],
+    [editor, selectedElementKey]
   );
 
   const insertLink = useCallback(() => {
@@ -983,7 +983,7 @@ function ToolbarPlugin({
                 toolbarRef={toolbarRef}
                 setShowBlockOptionsDropDown={setShowBlockOptionsDropDown}
               />,
-              document.body,
+              document.body
             )}
           <Divider />
         </>
@@ -1161,7 +1161,9 @@ function TextEditor({
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div
-        className={`z-[9999] relative overflow-hidden w-full ${!!onChange ? "rounded-xl" : "rounded-none"} border  focus-within:!border-2  border-blue-gray-200 bg-white text-left font-normal leading-5 text-gray-900 
+        className={`z-[999] relative overflow-hidden w-full ${
+          !!onChange ? "rounded-xl" : "rounded-none"
+        } border  focus-within:!border-2  border-blue-gray-200 bg-white text-left font-normal leading-5 text-gray-900 
           ${getEditorBorder()}
           `}
       >
@@ -1172,12 +1174,18 @@ function TextEditor({
           handleToggleUpdated={handleToggleUpdated}
         />
         <div
-          className={`relative ${!!onChange ? "rounded-b-lg" : "rounded-none"} border-opacity-5 bg-white ${!!onChange ? "h-[300px]" : ""} overflow-scroll `}
+          className={`relative ${
+            !!onChange ? "rounded-b-lg" : "rounded-none"
+          } border-opacity-5 bg-white ${
+            !!onChange ? "h-[300px]" : ""
+          } overflow-scroll `}
         >
           <RichTextPlugin
             contentEditable={
               <ContentEditable
-                className={` w-full lexical ${!!onChange ? "min-h-[280px]" : ""} resize-none  text-base caret-gray-900 outline-none
+                className={` w-full lexical ${
+                  !!onChange ? "min-h-[280px]" : ""
+                } resize-none  text-base caret-gray-900 outline-none
                 ${!!onChange ? "py-4 px-2.5" : "py-0 px-0"}`}
               />
             }
