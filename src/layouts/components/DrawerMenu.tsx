@@ -35,8 +35,9 @@ function DrawerMenu({
         profileImage={profileImage}
         firstName={firstName}
         lastName={lastName}
+        handleCloseDrawer={onClose}
       />
-      <MenuList />
+      <MenuList handleCloseDrawer={onClose} />
       <Footer />
     </Drawer>
   );

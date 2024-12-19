@@ -40,11 +40,12 @@ function Layout() {
           profileImage={profile.profile.avatar}
           firstName={profile.profile.f_name}
           lastName={profile.profile.l_name}
+          handleCloseDrawer={handleCloseDrawer}
         />
-        <MenuList />
+        <MenuList handleCloseDrawer={handleCloseDrawer} />
         <Footer />
       </Card>
-      <Navbar className="fixed top-0 z-10 h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4 lg:hidden block">
+      <Navbar className="fixed top-0 z-[1000] h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4 lg:hidden block">
         <div className="flex text-blue-gray-900  h-full">
           <IconButton
             size="sm"

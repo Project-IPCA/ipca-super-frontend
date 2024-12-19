@@ -11,7 +11,11 @@ import React, { createElement, useState } from "react";
 import { UserGroupIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 
-function MenuList() {
+interface Props {
+  handleCloseDrawer: () => void;
+}
+
+function MenuList({ handleCloseDrawer }: Props) {
   const [open, setOpen] = useState(0);
   const navigate = useNavigate();
 
@@ -62,7 +66,9 @@ function MenuList() {
                   </Typography>
                   <ChevronDownIcon
                     strokeWidth={3}
-                    className={`ml-auto h-4 w-4 text-gray-500 transition-transform ${open === index + 1 ? "rotate-180" : ""}`}
+                    className={`ml-auto h-4 w-4 text-gray-500 transition-transform ${
+                      open === index + 1 ? "rotate-180" : ""
+                    }`}
                   />
                 </ListItem>
                 <AccordionBody className="py-1">
@@ -71,7 +77,10 @@ function MenuList() {
                       <ListItem
                         className={`px-12 ${LIST_ITEM_STYLES}`}
                         key={subItem.label}
-                        onClick={() => navigate(subItem.path)}
+                        onClick={() => {
+                          handleCloseDrawer();
+                          navigate(subItem.path);
+                        }}
                       >
                         {subItem.label}
                       </ListItem>
