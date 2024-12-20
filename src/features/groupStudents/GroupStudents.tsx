@@ -112,7 +112,7 @@ function GroupStudents({ groupId }: Props) {
         handleClose={handleStudentFormClose}
         groupId={groupId}
       />
-      <div className="flex justify-between items-center pb-4">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 justify-between items-center pb-4">
         <div className="flex gap-x-5">
           <div className="flex items-center gap-x-1">
             <span className="mx-auto mb-1 block h-3 w-3 rounded-full bg-green-900 content-['']" />
@@ -130,7 +130,11 @@ function GroupStudents({ groupId }: Props) {
             {`Total: ${groupStudent.total_student}`}
           </Typography>
         </div>
-        <Button size="md" onClick={() => setOpenStudentForm(true)}>
+        <Button
+          className="w-full sm:w-fit"
+          size="md"
+          onClick={() => setOpenStudentForm(true)}
+        >
           Add Student
         </Button>
       </div>

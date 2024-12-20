@@ -130,12 +130,13 @@ function StudentSummary({ studentInfo }: Props) {
       />
       <div className="flex lg:flex-row flex-col gap-x-4 lg:gap-y-0 gap-y-3 w-full">
         <Card className="border-[1px] lg:w-3/5 w-full relative">
-          <CardBody className="flex md:flex-row flex-col md:gap-y-0 gap-y-5 gap-x-6 ">
+          <CardBody className="flex md:flex-row flex-col items-center md:gap-y-0 gap-y-5 gap-x-6 ">
             <Avatar
               src={studentInfo?.avatar || profileNone}
               alt="avatar"
               className="h-[7.7rem] w-[7.7rem]"
             />
+
             <div className="h-full space-y-2">
               <div className="flex justify-start flex-wrap items-center gap-x-4">
                 <LabelValueText
@@ -174,7 +175,7 @@ function StudentSummary({ studentInfo }: Props) {
               </div>
             </div>
           </CardBody>
-          <CardFooter className="flex gap-x-2 justify-end pt-0">
+          <CardFooter className="flex flex-col sm:flex-row gap-x-2 justify-evenly md:justify-end pt-0">
             <Button
               size="sm"
               variant="text"
@@ -213,7 +214,9 @@ function StudentSummary({ studentInfo }: Props) {
                 value={studentInfo?.is_online ? "Online" : "Ofline"}
                 icon={
                   <span
-                    className={`mx-auto mt-1 block h-2 w-2 rounded-full ${studentInfo?.is_online ? "bg-green-900 " : "bg-red-500"} content-['']`}
+                    className={`mx-auto mt-1 block h-2 w-2 rounded-full ${
+                      studentInfo?.is_online ? "bg-green-900 " : "bg-red-500"
+                    } content-['']`}
                   />
                 }
               />
@@ -230,8 +233,12 @@ function StudentSummary({ studentInfo }: Props) {
               />
             </div>
           </CardBody>
-          <CardFooter className="flex justify-end pt-0">
-            <Button size="sm" onClick={() => handlePermFormOpen()}>
+          <CardFooter className="flex justify-center sm:justify-end pt-0">
+            <Button
+              className="w-full sm:w-fit"
+              size="sm"
+              onClick={() => handlePermFormOpen()}
+            >
               Set Permission
             </Button>
           </CardFooter>

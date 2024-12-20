@@ -43,7 +43,7 @@ function PersonalInfo({ register, setValue, formData }: Props) {
       </div>
       <div>
         <Typography variant="h5">Gender</Typography>
-        <div className="flex w-max gap-4">
+        <div className="flex flex-col sm:flex-row w-max gap-4">
           <Radio
             crossOrigin=""
             label="Male"

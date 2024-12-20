@@ -76,8 +76,8 @@ function MyGroupsList() {
       <Typography variant="h3" className="pb-6">
         My Groups
       </Typography>
-      <div className="flex justify-between items-center pb-4">
-        <div className="w-36">
+      <div className="flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-0 items-center pb-4">
+        <div className="w-full sm:w-36">
           <AsyncSelect
             label="Year"
             value={selectedYear ? selectedYear : "All"}
@@ -90,7 +90,11 @@ function MyGroupsList() {
             ))}
           </AsyncSelect>
         </div>
-        <Button size="md" onClick={() => setFormOpen(true)}>
+        <Button
+          className="w-full sm:w-fit"
+          size="md"
+          onClick={() => setFormOpen(true)}
+        >
           Add Group
         </Button>
       </div>
