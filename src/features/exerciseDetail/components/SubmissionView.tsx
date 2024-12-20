@@ -25,7 +25,7 @@ function SubmissionView({
   const submission = useMemo(
     () =>
       submissions?.find((sub) => sub.submission_id === submissionId) || null,
-    [submissions, submissionId],
+    [submissions, submissionId]
   );
 
   const result: SubmissionResult[] =
@@ -36,7 +36,7 @@ function SubmissionView({
       submissions
         ? submissions.findIndex((sub) => sub.result === submissionId) + 1
         : 0,
-    [submissions, submissionId],
+    [submissions, submissionId]
   );
 
   const convertStatus = (status: string) => {
@@ -84,13 +84,14 @@ function SubmissionView({
       </div>
       {submission && (
         <>
-          <div className="flex justify-between items-center pt-4">
+          <div className="flex flex-col sm:flex-row sm:justify-between items-center pt-4">
             <Typography variant="h5">
               Submission {submissions.length - attempt + 1}
             </Typography>
             {submission.submission_id === submissions[0].submission_id &&
               submission.status === SUBMISSION_STATUS.accepted && (
                 <Button
+                  className="w-full sm:w-fit"
                   variant="outlined"
                   size="sm"
                   color="red"
