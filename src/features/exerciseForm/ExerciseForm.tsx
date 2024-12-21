@@ -487,7 +487,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
             <XMarkIcon className="h-4 w-4 stroke-2" />
           </IconButton>
         </DialogHeader>
-        <DialogBody className="md:h-[42rem] h-[30rem] overflow-scroll space-y-4">
+        <DialogBody className="md:h-[42rem] h-[20rem] overflow-scroll space-y-4">
           <div>
             <Typography
               variant="small"
