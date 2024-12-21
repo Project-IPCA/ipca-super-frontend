@@ -18,9 +18,9 @@ import SubmissionView from "./SubmissionView";
 import { ConfirmModal } from "../../../components";
 import { StudentInfo } from "../../studentDetail/redux/studentDetailSlice";
 import { useAppDispatch } from "../../../hooks/store";
-import { Bounce, toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { parseInt } from "lodash";
+import { showToast } from "../../../utils/toast";
 
 export interface SubmissionResult {
   actual: string;
@@ -65,16 +65,9 @@ function SubmissionHistoryList({
         cancelStudentSubmission(reversedSubmissions[0].submission_id),
       );
       if (cancelStudentSubmission.fulfilled.match(resultAction)) {
-        toast.success("Submission has rejected.", {
-          position: "bottom-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
+        showToast({
+          variant: "success",
+          message: "Submission has rejected.",
         });
       }
       if (studentId && chapterIdx && problemIdx && exerciseDetail) {

@@ -20,8 +20,11 @@ import {
 } from "@heroicons/react/24/solid";
 import { useAppDispatch, useAppSelector } from "../../../hooks/store";
 import { LabelValueText } from "../../../components";
-import { Bounce, toast } from "react-toastify";
-import { getGroupStudents, getOnlineStudents } from "../../groupStudents/redux/GroupStudentsSlice";
+import {
+  getGroupStudents,
+  getOnlineStudents,
+} from "../../groupStudents/redux/GroupStudentsSlice";
+import { showToast } from "../../../utils/toast";
 
 interface Props {
   groupData: GroupData | null;
@@ -42,16 +45,9 @@ function GroupSummary({ groupData }: Props) {
         logoutAllStudents(groupData.group_id),
       );
       if (logoutAllStudents.fulfilled.match(resultAction)) {
-        toast.success("Successfully logout all students.", {
-          position: "bottom-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
+        showToast({
+          variant: "success",
+          message: "Successfully logout all students.",
         });
       }
     }
@@ -109,7 +105,10 @@ function GroupSummary({ groupData }: Props) {
             label={"All Student"}
             value={groupStudent.total_student}
           />
-          <LabelValueText label={"Online Student"} value={onlineStudent.length} />
+          <LabelValueText
+            label={"Online Student"}
+            value={onlineStudent.length}
+          />
         </CardBody>
         <CardFooter className="absolute bottom-0 w-full">
           <Button

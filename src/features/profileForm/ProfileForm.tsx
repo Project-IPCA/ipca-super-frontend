@@ -2,19 +2,18 @@ import { Card, Input, Typography, Button } from "@material-tailwind/react";
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Bounce, toast } from "react-toastify";
 import PersonalInfo from "./components/PersonalInfo";
 import Contact from "./components/Contact";
 import ResetPassword from "./components/ResetPassword";
 import ProfileImage from "./components/ProfileImage";
 import {
-  clearProfileError,
   fetchProfile,
   getProfile,
   getProfileError,
   getProfileUpdateStatus,
   updateProfile,
 } from "./redux/profileFormSlice";
+import { showToast } from "../../utils/toast";
 
 export interface ProfileInfo {
   avatar: string;
@@ -69,20 +68,10 @@ function ProfileForm() {
   }, [reset, data]);
 
   useEffect(() => {
-    if (error) {
-      toast.error(error.error, {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-      dispatch(clearProfileError());
-    }
+    showToast({
+      variant: "error",
+      message: error?.error,
+    });
   }, [error, dispatch]);
 
   const onSubmit: SubmitHandler<ProfileInfo> = async (data) => {
@@ -103,16 +92,9 @@ function ProfileForm() {
       }),
     );
     if (updateProfile.fulfilled.match(resultAction)) {
-      toast.success("Updated user profile", {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
+      showToast({
+        variant: "success",
+        message: "Updated user profile.",
       });
     }
     setValue("confirm_new_password", "");

@@ -10,11 +10,11 @@ import {
 } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
-import { Bounce, toast } from "react-toastify";
 import { useAppDispatch } from "../../hooks/store";
 import { updateStudentCanSubmit } from "./redux/StudentPermissionFormSlice";
 import { fetchGroupStudents } from "../groupStudents/redux/GroupStudentsSlice";
 import { fetchStudentInfo } from "../studentDetail/redux/studentDetailSlice";
+import { showToast } from "../../utils/toast";
 
 interface Props {
   open: boolean;
@@ -45,16 +45,9 @@ function StudentPermissionForm({
           canSubmit: submitPerm,
         }),
       );
-      toast.success("Permission has been updated.", {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
+      showToast({
+        variant: "success",
+        message: "Permission has been updated.",
       });
     }
     if (groupId) {

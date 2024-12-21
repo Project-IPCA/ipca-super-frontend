@@ -17,10 +17,10 @@ import { ConfirmModal, LabelValueText } from "../../../components";
 import { capitalize } from "lodash";
 import { useAppDispatch } from "../../../hooks/store";
 import { useNavigate, useParams } from "react-router-dom";
-import { Bounce, toast } from "react-toastify";
 import { useState } from "react";
 import { StudentPermissionForm } from "../../studentPermissionForm";
 import { format } from "date-fns";
+import { showToast } from "../../../utils/toast";
 
 interface Props {
   studentInfo: StudentInfo | null;
@@ -45,16 +45,9 @@ function StudentSummary({ studentInfo }: Props) {
     if (studentId) {
       const resultAction = await dispatch(resetStudentPasword(studentId));
       if (resetStudentPasword.fulfilled.match(resultAction)) {
-        toast.success(`Student password has been reset.`, {
-          position: "bottom-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
+        showToast({
+          variant: "success",
+          message: `Student password has been reset.`,
         });
       }
     }
@@ -65,16 +58,9 @@ function StudentSummary({ studentInfo }: Props) {
     if (studentId) {
       const resultAction = await dispatch(deleteStudent(studentId));
       if (deleteStudent.fulfilled.match(resultAction)) {
-        toast.success("Student has been deleted.", {
-          position: "bottom-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
+        showToast({
+          variant: "success",
+          message: "Student has been deleted.",
         });
       }
     }

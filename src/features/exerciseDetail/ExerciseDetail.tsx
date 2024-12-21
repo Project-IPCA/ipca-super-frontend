@@ -18,8 +18,8 @@ import {
   fetchStudentInfo,
   getStudentDetailState,
 } from "../studentDetail/redux/studentDetailSlice";
-import { Bounce, toast } from "react-toastify";
 import TextEditor from "../exerciseForm/components/TextEditor";
+import { showToast } from "../../utils/toast";
 
 function ExerciseDetail() {
   const dispatch = useAppDispatch();
@@ -36,16 +36,9 @@ function ExerciseDetail() {
 
   useEffect(() => {
     if (error) {
-      toast.error(error.error, {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
+      showToast({
+        variant: "error",
+        message: error.error,
       });
     }
   }, [error, dispatch]);

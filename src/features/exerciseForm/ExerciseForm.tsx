@@ -25,7 +25,6 @@ import {
   updateExercise,
   VITE_IPCA_RT,
 } from "./redux/exerciseFormSlice";
-import { Bounce, toast } from "react-toastify";
 import * as yup from "yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -38,6 +37,7 @@ import {
 } from "../exerciseInfo/redux/exerciseInfoSlice";
 import axiosInstance from "../../utils/axios";
 import axios from "axios";
+import { showToast } from "../../utils/toast";
 
 interface Props {
   open: boolean;
@@ -214,16 +214,9 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
           );
         Object.entries(errConstraints).map(([key, val]) => {
           val.map((data: CheckUserConstraintData) => {
-            toast.error(`recheck your ${key} ${data.keyword}`, {
-              position: "bottom-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              transition: Bounce,
+            showToast({
+              variant: "error",
+              message: `Recheck your ${key} ${data.keyword}`,
             });
           });
         });
@@ -257,31 +250,17 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
         if (exerciseId) {
           const resultAction = await dispatch(updateExercise(updateRequest));
           if (updateExercise.fulfilled.match(resultAction)) {
-            toast.success("Exercise has been updated.", {
-              position: "bottom-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              transition: Bounce,
+            showToast({
+              variant: "success",
+              message: "Exercise has been updated.",
             });
           }
         } else {
           const resultAction = await dispatch(createExercise(createRequest));
           if (createExercise.fulfilled.match(resultAction)) {
-            toast.success("Exercise has been created.", {
-              position: "bottom-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              transition: Bounce,
+            showToast({
+              variant: "success",
+              message: "Exercise has been created.",
             });
           }
         }
@@ -301,16 +280,9 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
       handleToggleAndReset();
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.error, {
-          position: "bottom-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
+        showToast({
+          variant: "error",
+          message: err.response?.data?.error,
         });
       }
     }
@@ -318,16 +290,9 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
 
   useEffect(() => {
     if (error) {
-      toast.error(error.error, {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
+      showToast({
+        variant: "error",
+        message: error.error,
       });
     }
   }, [error]);
@@ -421,32 +386,18 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
         });
         return;
       }
-      toast.error(response.data.message, {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
+      showToast({
+        variant: "error",
+        message: response.data.message,
       });
     } catch (err) {
       let errorMessage = "An unexpected error occurred";
       if (axios.isAxiosError(err)) {
         errorMessage = err.response?.data?.message;
       }
-      toast.error(errorMessage, {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
+      showToast({
+        variant: "error",
+        message: errorMessage,
       });
     }
   };

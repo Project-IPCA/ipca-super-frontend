@@ -1,6 +1,5 @@
 import { Button, Input, Typography } from "@material-tailwind/react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Bounce, toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import {
   clearErrorState,
@@ -9,6 +8,7 @@ import {
 } from "./redux/loginFormSlice";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { showToast } from "../../utils/toast";
 
 type LoginInput = {
   username: string;
@@ -36,16 +36,9 @@ function LoginForm() {
   useEffect(() => {
     if (loginState.error !== null) {
       setPendingLogin(false);
-      toast.error(loginState.error.error, {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
+      showToast({
+        variant: "error",
+        message: loginState.error.error,
       });
 
       dispatch(clearErrorState());

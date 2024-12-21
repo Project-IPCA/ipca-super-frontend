@@ -11,8 +11,8 @@ import {
   VITE_IPCA_RT,
 } from "./redux/GroupStudentsSlice";
 import AddStudentForm from "./components/AddStudentForm";
-import { Bounce, toast } from "react-toastify";
 import { StudentPermissionForm } from "../studentPermissionForm";
+import { showToast } from "../../utils/toast";
 
 export interface StudentData {
   name: string;
@@ -34,7 +34,7 @@ function GroupStudents({ groupId }: Props) {
   const [openPermForm, setOpenPermForm] = useState<boolean>(false);
   const [openStudentFrom, setOpenStudentForm] = useState<boolean>(false);
   const [studentSelected, setStudentSelected] = useState<StudentData | null>(
-    null
+    null,
   );
 
   const handlePermFormClose = () => setOpenPermForm(false);
@@ -52,16 +52,9 @@ function GroupStudents({ groupId }: Props) {
 
   useEffect(() => {
     if (groupStudentError) {
-      toast.error(groupStudentError.error, {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
+      showToast({
+        variant: "error",
+        message: groupStudentError.error,
       });
     }
   }, [dispatch, groupStudentError]);
@@ -83,7 +76,7 @@ function GroupStudents({ groupId }: Props) {
 
   useEffect(() => {
     const evtSource = new EventSource(
-      `${VITE_IPCA_RT}/online-students/${groupId}`
+      `${VITE_IPCA_RT}/online-students/${groupId}`,
     );
     evtSource.onmessage = (event) => {
       if (event.data) {

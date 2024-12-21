@@ -9,8 +9,8 @@ import {
 } from "./redux/studentDetailSlice";
 import { useEffect } from "react";
 import StudentSummary from "./components/StudentSummary";
-import { Bounce, toast } from "react-toastify";
 import ChapterListCard from "./components/ChapterListCard";
+import { showToast } from "../../utils/toast";
 
 export interface ExerciseData {
   studentId: string;
@@ -30,16 +30,9 @@ function StudentDetail() {
 
   useEffect(() => {
     if (error) {
-      toast.error(error.error, {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
+      showToast({
+        variant: "error",
+        message: error.error,
       });
     }
   }, [error]);

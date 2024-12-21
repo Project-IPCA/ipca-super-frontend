@@ -24,7 +24,7 @@ import { useAppDispatch } from "../../hooks/store";
 import { ALLOW_TYPE, PERMISIION_PREFIX } from "../../constants/constants";
 import { fetchGroupExercises } from "../groupExercises/redux/groupExercisesSlice";
 import SinglePermission from "./components/SinglePermission";
-import { Bounce, toast } from "react-toastify";
+import { showToast } from "../../utils/toast";
 
 export interface ChapterPermission {
   timeDuration?: number | null;
@@ -215,16 +215,9 @@ function PermissionForm({ open, handleClose, chapterSelected }: Props) {
         resetPermissionType(setSubmitPerm);
         break;
     }
-    toast.success("Permission has been updated.", {
-      position: "bottom-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      transition: Bounce,
+    showToast({
+      variant: "success",
+      message: "Permission has been updated.",
     });
     if (groupId) {
       dispatch(fetchGroupExercises(groupId));
