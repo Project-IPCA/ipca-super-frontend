@@ -27,7 +27,7 @@ import {
 } from "./redux/exerciseFormSlice";
 import { Bounce, toast } from "react-toastify";
 import * as yup from "yup";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { fetchExercisesPool } from "../exercisesPool/redux/ExercisesPoolSlice";
 import { useParams } from "react-router-dom";
@@ -135,13 +135,7 @@ const defaultConstraints: IKeywordConstraints = {
   },
 };
 
-function ExerciseForm({
-  open,
-  handleToggle,
-  formUseData,
-  exerciseId,
-  handleToggleUpdated,
-}: Props) {
+function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
   const dispatch = useAppDispatch();
   const error = useAppSelector(getExerciseFormError);
   const exerciseInfoState = useAppSelector(getExercisesInfoState);
@@ -159,7 +153,7 @@ function ExerciseForm({
   const defaultForm = {
     name: "",
     sourecode: "",
-    content: "<p><br></p>",
+    content: "",
   };
   const {
     formState: { errors },
@@ -168,7 +162,6 @@ function ExerciseForm({
     reset,
     setValue,
     watch,
-    control,
   } = useForm<FormData>({
     resolver: yupResolver(formDataSchema),
     defaultValues: defaultForm,
@@ -275,9 +268,6 @@ function ExerciseForm({
               theme: "light",
               transition: Bounce,
             });
-          }
-          if (handleToggleUpdated) {
-            handleToggleUpdated();
           }
         } else {
           const resultAction = await dispatch(createExercise(createRequest));
@@ -538,16 +528,10 @@ function ExerciseForm({
             >
               Description
             </Typography>
-            <Controller
-              name="content"
-              control={control}
-              render={({ field }) => (
-                <TextEditor
-                  value={field.value}
-                  onChange={field.onChange}
-                  errors={errors}
-                />
-              )}
+            <TextEditor
+              value={formData.content}
+              onChange={(val) => setValue("content", val)}
+              errors={errors}
             />
             <Typography
               variant="small"

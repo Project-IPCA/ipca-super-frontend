@@ -44,9 +44,6 @@ function ExerciseInfo() {
     chapterId: "",
     level: "",
   });
-  const [isUpdated, setIsUpdated] = useState<boolean>(false);
-
-  const handleToggleUpdated = () => setIsUpdated(!isUpdated);
 
   const handleToggleForm = () => setFormOpen(!formOpen);
 
@@ -88,7 +85,7 @@ function ExerciseInfo() {
         fetchExercisesPool({
           groupId: groupId,
           chapterIdx: parseInt(chapterIdx),
-        })
+        }),
       );
     }
   }, [dispatch, exercisesPool, groupId, chapterIdx]);
@@ -112,7 +109,6 @@ function ExerciseInfo() {
         handleToggle={handleToggleForm}
         formUseData={formUseData}
         exerciseId={exercise?.exercise_id}
-        handleToggleUpdated={handleToggleUpdated}
       />
       <div className="flex justify-start items-center pb-4 gap-x-2">
         <IconButton variant="text">
@@ -147,11 +143,7 @@ function ExerciseInfo() {
               {exercise?.name ?? ""}
             </Typography>
           </div>
-          <TextEditor
-            value={exercise?.content ?? ""}
-            isUpdated={isUpdated}
-            handleToggleUpdated={handleToggleUpdated}
-          />
+          <TextEditor value={exercise?.content ?? ""} />
         </CardBody>
       </Card>
       <Card className="border-[1px] mb-4">
