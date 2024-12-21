@@ -31,6 +31,7 @@ import {
   LexicalEditor,
   BaseSelection,
   $getRoot,
+  $insertNodes,
 } from "lexical";
 import {
   $isListNode,
@@ -617,7 +618,7 @@ function FloatingLinkEditor({ editor }: { editor: LexicalEditor }) {
   const [linkUrl, setLinkUrl] = useState("");
   const [isEditMode, setEditMode] = useState(false);
   const [lastSelection, setLastSelection] = useState<BaseSelection | null>(
-    null
+    null,
   );
 
   const updateLinkEditor = useCallback(() => {
@@ -689,8 +690,8 @@ function FloatingLinkEditor({ editor }: { editor: LexicalEditor }) {
           updateLinkEditor();
           return true;
         },
-        LowPriority
-      )
+        LowPriority,
+      ),
     );
   }, [editor, updateLinkEditor]);
 
@@ -780,76 +781,13 @@ function FloatingLinkEditor({ editor }: { editor: LexicalEditor }) {
   );
 }
 
-function ToolbarPlugin({
-  value,
-  onChange,
-  isUpdated,
-  handleToggleUpdated,
-}: {
-  value: string;
-  onChange?: (val: string) => void;
-  isUpdated?: boolean;
-  handleToggleUpdated?: () => void;
-}) {
+function ToolbarPlugin({ onChange }: { onChange?: (val: string) => void }) {
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef<HTMLDivElement | null>(null);
-  const initializedRef = useRef(false);
-
-  useEffect(() => {
-    editor.update(() => {
-      const root = $getRoot();
-      const firstChild = root.getFirstChild();
-
-      if (firstChild) {
-        firstChild.remove();
-      }
-    });
-    if (!onChange) {
-      editor.setEditable(false);
-    } else {
-      return editor.registerUpdateListener(({ editorState }) => {
-        editorState.read(() => {
-          const htmlString = $generateHtmlFromNodes(editor);
-          onChange(htmlString);
-        });
-      });
-    }
-  }, [editor, onChange]);
-
-  const updateHTML = (editor: LexicalEditor, value: string, clear: boolean) => {
-    const root = $getRoot();
-    const parser = new DOMParser();
-    const dom = parser.parseFromString(value, "text/html");
-    const nodes = $generateNodesFromDOM(editor, dom);
-    if (clear) {
-      root.clear();
-    }
-    root.append(...nodes);
-  };
-
-  useEffect(() => {
-    if (!initializedRef.current && editor && value) {
-      editor.update(() => {
-        updateHTML(editor, value, false);
-      });
-      initializedRef.current = true;
-    }
-  }, [initializedRef, editor, value]);
-
-  useEffect(() => {
-    if (isUpdated && editor && value) {
-      editor.update(() => {
-        updateHTML(editor, value, true);
-      });
-      if (handleToggleUpdated) {
-        handleToggleUpdated();
-      }
-    }
-  }, [isUpdated, value, editor, handleToggleUpdated]);
 
   const [blockType, setBlockType] = useState<BlockType>("paragraph");
   const [selectedElementKey, setSelectedElementKey] = useState<string | null>(
-    null
+    null,
   );
   const [showBlockOptionsDropDown, setShowBlockOptionsDropDown] =
     useState(false);
@@ -914,8 +852,8 @@ function ToolbarPlugin({
           updateToolbar();
           return false;
         },
-        LowPriority
-      )
+        LowPriority,
+      ),
     );
   }, [editor, updateToolbar]);
 
@@ -931,7 +869,7 @@ function ToolbarPlugin({
         }
       });
     },
-    [editor, selectedElementKey]
+    [editor, selectedElementKey],
   );
 
   const insertLink = useCallback(() => {
@@ -983,7 +921,7 @@ function ToolbarPlugin({
                 toolbarRef={toolbarRef}
                 setShowBlockOptionsDropDown={setShowBlockOptionsDropDown}
               />,
-              document.body
+              document.body,
             )}
           <Divider />
         </>
@@ -1120,36 +1058,81 @@ function ToolbarPlugin({
   );
 }
 
-const editorConfig = {
-  namespace: "MyEditor",
-  onError(error: Error) {
-    throw error;
-  },
-  nodes: [
-    HeadingNode,
-    ListNode,
-    ListItemNode,
-    QuoteNode,
-    CodeNode,
-    CodeHighlightNode,
-    AutoLinkNode,
-    LinkNode,
-  ],
-};
+function MyOnChangePlugin({
+  onChange,
+  value,
+}: {
+  onChange?: (val: string) => void;
+  value: string;
+}) {
+  const [editor] = useLexicalComposerContext();
+  useEffect(() => {
+    if (!!onChange) {
+      return editor.registerUpdateListener(({ editorState }) => {
+        editorState.read(() => {
+          const htmlString = $generateHtmlFromNodes(editor);
+          onChange(htmlString);
+        });
+      });
+    } else {
+      editor.setEditable(false);
+    }
+  }, [editor, onChange]);
+
+  const updateHTML = (editor: LexicalEditor, value: string) => {
+    const parser = new DOMParser();
+    const dom = parser.parseFromString(value, "text/html");
+    const nodes = $generateNodesFromDOM(editor, dom);
+    $getRoot().clear();
+    $getRoot().select();
+    $insertNodes(nodes);
+  };
+
+  useEffect(() => {
+    if (editor && !onChange) {
+      editor.update(() => {
+        updateHTML(editor, value);
+      });
+    }
+  }, [value, editor, onChange]);
+
+  return null;
+}
 
 function TextEditor({
   value,
   onChange,
   errors,
-  isUpdated,
-  handleToggleUpdated,
 }: {
   value: string;
   onChange?: (val: string) => void;
   errors?: any;
-  isUpdated?: boolean;
-  handleToggleUpdated?: () => void;
 }) {
+  const editorConfig = {
+    namespace: "MyEditor",
+    onError(error: Error) {
+      throw error;
+    },
+    nodes: [
+      HeadingNode,
+      ListNode,
+      ListItemNode,
+      QuoteNode,
+      CodeNode,
+      CodeHighlightNode,
+      AutoLinkNode,
+      LinkNode,
+    ],
+    editorState: (editor: LexicalEditor) => {
+      const parser = new DOMParser();
+      const dom = parser.parseFromString(value, "text/html");
+      const nodes = $generateNodesFromDOM(editor, dom);
+      $getRoot().clear();
+      $getRoot().select();
+      $insertNodes(nodes);
+    },
+  };
+
   const getEditorBorder = () => {
     if (!onChange) {
       return "border-none";
@@ -1158,6 +1141,7 @@ function TextEditor({
       ? "!border-red-500 focus-within:!border-red-500"
       : "focus-within:!border-gray-900 border-blue-gray-200";
   };
+
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div
@@ -1167,12 +1151,7 @@ function TextEditor({
           ${getEditorBorder()}
           `}
       >
-        <ToolbarPlugin
-          onChange={onChange}
-          value={value}
-          isUpdated={isUpdated}
-          handleToggleUpdated={handleToggleUpdated}
-        />
+        <ToolbarPlugin onChange={onChange} />
         <div
           className={`relative ${
             !!onChange ? "rounded-b-lg" : "rounded-none"
@@ -1192,6 +1171,7 @@ function TextEditor({
             placeholder={<Placeholder />}
             ErrorBoundary={LexicalErrorBoundary}
           />
+          <MyOnChangePlugin onChange={onChange} value={value} />
           <AutoFocusPlugin />
           <ListPlugin />
           <LinkPlugin />
