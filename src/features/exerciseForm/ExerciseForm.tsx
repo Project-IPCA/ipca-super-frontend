@@ -425,8 +425,22 @@ function ExerciseForm({
       const response = await axiosInstance.post("/common/get_keyword_list", {
         sourcecode: data.sourecode,
       });
-      setConstraints((constraint) => {
-        return { ...constraint, suggested_constraints: response.data.data };
+      if (response.data.status !== "error") {
+        setConstraints((constraint) => {
+          return { ...constraint, suggested_constraints: response.data.data };
+        });
+        return;
+      }
+      toast.error(response.data.message, {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
       });
     } catch (err) {
       let errorMessage = "An unexpected error occurred";
@@ -459,7 +473,7 @@ function ExerciseForm({
             handleToggleAndReset();
           }
         }}
-        className="p-4 "
+        className="p-4"
       >
         <DialogHeader className="relative m-0 block">
           <Typography variant="h4" color="blue-gray">
