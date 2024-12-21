@@ -208,16 +208,16 @@ function ExerciseForm({
           .filter(
             ([, val]) =>
               val.length > 0 &&
-              val.some((item: CheckUserConstraintData) => !item.is_passed)
+              val.some((item: CheckUserConstraintData) => !item.is_passed),
           )
           .reduce(
             (acc, [key, val]) => ({
               ...acc,
               [key]: val.filter(
-                (item: CheckUserConstraintData) => !item.is_passed
+                (item: CheckUserConstraintData) => !item.is_passed,
               ),
             }),
-            {} as Record<string, CheckUserConstraintData[]>
+            {} as Record<string, CheckUserConstraintData[]>,
           );
         Object.entries(errConstraints).map(([key, val]) => {
           val.map((data: CheckUserConstraintData) => {
@@ -302,7 +302,7 @@ function ExerciseForm({
           fetchExercisesPool({
             groupId: groupId,
             chapterIdx: parseInt(chapterIdx),
-          })
+          }),
         );
       }
       if (exerciseId) {
@@ -355,7 +355,7 @@ function ExerciseForm({
   useEffect(() => {
     if (jobId && exerciseId) {
       const evtSource = new EventSource(
-        `${VITE_IPCA_RT}/testcase-result/${jobId}`
+        `${VITE_IPCA_RT}/testcase-result/${jobId}`,
       );
       evtSource.onmessage = (event) => {
         if (event.data) {
@@ -371,7 +371,7 @@ function ExerciseForm({
     key: keyof UserConstraint,
     action: UserConstraintAction,
     data?: UserConstraintData,
-    index?: number
+    index?: number,
   ) => {
     const currentItems = [...constraints.user_defined_constraints[key]];
 
@@ -429,7 +429,7 @@ function ExerciseForm({
         setConstraints((constraint) => {
           return { ...constraint, suggested_constraints: response.data.data };
         });
-        return
+        return;
       }
       toast.error(response.data.message, {
         position: "bottom-right",
@@ -600,7 +600,7 @@ function ExerciseForm({
               {errors.sourecode ? errors.sourecode.message : ""}
             </Typography>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
               <Typography
                 variant="small"
