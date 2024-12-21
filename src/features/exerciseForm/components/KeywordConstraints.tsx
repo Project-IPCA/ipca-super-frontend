@@ -244,6 +244,14 @@ function KeywordConstraints({
                             crossOrigin=""
                             type="number"
                             containerProps={{ className: "!min-w-0" }}
+                            onKeyDown={(e) => {
+                              if (
+                                e.key !== "ArrowUp" &&
+                                e.key !== "ArrowDown"
+                              ) {
+                                e.preventDefault();
+                              }
+                            }}
                             onChange={(e) => {
                               onUserConstraintChange(
                                 key,
