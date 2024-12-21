@@ -14,7 +14,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppDispatch } from "../../../hooks/store";
 import { addStudents, fetchGroupStudents } from "../redux/GroupStudentsSlice";
-import { Bounce, toast } from "react-toastify";
+import { showToast } from "../../../utils/toast";
 
 interface Props {
   open: boolean;
@@ -57,16 +57,9 @@ function AddStudentForm({ open, handleClose, groupId }: Props) {
         }),
       );
       if (addStudents.fulfilled.match(resultAction)) {
-        toast.success("Students has been added.", {
-          position: "bottom-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
+        showToast({
+          variant: "success",
+          message: "Students has been added.",
         });
       }
     }

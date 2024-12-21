@@ -9,7 +9,7 @@ import {
 } from "./redux/groupExercisesSlice";
 import ExerciseTable from "./components/ExerciseTable";
 import PermissionForm from "../permissionForm/PermissionForm";
-import { Bounce, toast } from "react-toastify";
+import { showToast } from "../../utils/toast";
 interface Props {
   groupId: string;
 }
@@ -54,16 +54,9 @@ function GroupExercises({ groupId }: Props) {
 
   useEffect(() => {
     if (error) {
-      toast.error(error.error, {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
+      showToast({
+        variant: "error",
+        message: error.error,
       });
       dispatch(clearGroupExercisesError());
     }

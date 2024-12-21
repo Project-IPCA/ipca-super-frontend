@@ -35,8 +35,8 @@ import {
 } from "./redux/groupFormSlice";
 import { useEffect, useRef } from "react";
 import MultiSelect from "./components/MultiSelect";
-import { Bounce, toast } from "react-toastify";
 import { fetchMyGroups } from "../myGroupsList/redux/myGroupListSlice";
+import { showToast } from "../../utils/toast";
 
 interface Props {
   open: boolean;
@@ -148,16 +148,9 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
 
   useEffect(() => {
     if (groupFormError) {
-      toast.error(groupFormError.error, {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
+      showToast({
+        variant: "error",
+        message: "groupFormError.error",
       });
       dispatch(clearGroupFormError());
     }
@@ -182,32 +175,18 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
         updateStudentGroup({ request: request, groupId: groupId }),
       );
       if (updateStudentGroup.fulfilled.match(resultAction)) {
-        toast.success("Student group has been updated.", {
-          position: "bottom-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
+        showToast({
+          variant: "success",
+          message: "Student group has been updated.",
         });
         dispatch(fetchGroupInfo(groupId));
       }
     } else {
       const resultAction = await dispatch(createStudentGroup(request));
       if (createStudentGroup.fulfilled.match(resultAction)) {
-        toast.success("Student group has been created.", {
-          position: "bottom-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
+        showToast({
+          variant: "success",
+          message: "Student group has been created.",
         });
       }
     }

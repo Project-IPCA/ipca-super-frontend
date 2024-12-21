@@ -18,7 +18,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { OPTIONS, OPTIONS_VALUE } from "../constants";
 import { useMemo, useState } from "react";
 import { useAppDispatch } from "../../../hooks/store";
-import { Bounce, toast } from "react-toastify";
+import { showToast } from "../../../utils/toast";
 
 interface Props {
   level: string;
@@ -82,16 +82,9 @@ function ExerciseCard({
       };
       const resultAction = await dispatch(updateAssignedExercise(request));
       if (updateAssignedExercise.fulfilled.match(resultAction)) {
-        toast.success("Exercise has been updated.", {
-          position: "bottom-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
+        showToast({
+          variant: "success",
+          message: "Exercise has been updated.",
         });
       }
     }

@@ -17,8 +17,8 @@ import {
   VITE_IPCA_RT,
 } from "../redux/exerciseInfoSlice";
 import { useAppDispatch } from "../../../hooks/store";
-import { Bounce, toast } from "react-toastify";
 import TestcaseInfo from "./TestcaseInfo";
+import { showToast } from "../../../utils/toast";
 
 interface Props {
   open: boolean;
@@ -79,16 +79,9 @@ function TestcaseForm({ open, handleToggle, exerciseId, testcaseList }: Props) {
     };
     const resultAction = await dispatch(updateExerciseTestcase(request));
     if (updateExerciseTestcase.fulfilled.match(resultAction)) {
-      toast.success("Exercise has been updated.", {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
+      showToast({
+        variant: "success",
+        message: "Exercise has been updated.",
       });
     }
     setJobId(uuid);
