@@ -143,7 +143,7 @@ function TestcaseForm({ open, handleToggle, exerciseId, testcaseList }: Props) {
             <XMarkIcon className="h-4 w-4 stroke-2" />
           </IconButton>
         </DialogHeader>
-        <DialogBody className="h-[42rem] overflow-scroll">
+        <DialogBody className="lg:h-[42rem] h-[14rem] overflow-scroll">
           {testcases.map((testcase, index) => (
             <TestcaseInfo
               readOnly={false}
