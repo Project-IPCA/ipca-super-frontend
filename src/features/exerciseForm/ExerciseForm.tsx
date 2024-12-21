@@ -463,7 +463,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
             handleToggleAndReset();
           }
         }}
-        className="p-4"
+        className="p-4 lg:mb-0 mb-12"
       >
         <DialogHeader className="relative m-0 block">
           <Typography variant="h4" color="blue-gray">
