@@ -532,6 +532,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
               value={formData.content}
               onChange={(val) => setValue("content", val)}
               errors={errors}
+              exerciseId={exerciseId}
             />
             <Typography
               variant="small"

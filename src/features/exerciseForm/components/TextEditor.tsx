@@ -1103,10 +1103,12 @@ function TextEditor({
   value,
   onChange,
   errors,
+  exerciseId,
 }: {
   value: string;
   onChange?: (val: string) => void;
   errors?: any;
+  exerciseId?: string;
 }) {
   const editorConfig = {
     namespace: "MyEditor",
@@ -1123,14 +1125,16 @@ function TextEditor({
       AutoLinkNode,
       LinkNode,
     ],
-    editorState: (editor: LexicalEditor) => {
-      const parser = new DOMParser();
-      const dom = parser.parseFromString(value, "text/html");
-      const nodes = $generateNodesFromDOM(editor, dom);
-      $getRoot().clear();
-      $getRoot().select();
-      $insertNodes(nodes);
-    },
+    editorState: exerciseId
+      ? (editor: LexicalEditor) => {
+          const parser = new DOMParser();
+          const dom = parser.parseFromString(value, "text/html");
+          const nodes = $generateNodesFromDOM(editor, dom);
+          $getRoot().clear();
+          $getRoot().select();
+          $insertNodes(nodes);
+        }
+      : undefined,
   };
 
   const getEditorBorder = () => {
