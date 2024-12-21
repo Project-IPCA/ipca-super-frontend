@@ -35,7 +35,7 @@ interface Props {
     key: keyof UserConstraint,
     action: UserConstraintAction,
     data?: UserConstraintData,
-    index?: number
+    index?: number,
   ) => void;
   isEdit: boolean;
 }
@@ -58,7 +58,7 @@ function KeywordConstraints({
 
   const addUserConstraintBySuggested = (
     key: keyof SuggestedConstraint,
-    data?: SuggestedConstraintData
+    data?: SuggestedConstraintData,
   ) => {
     if (handleUserConstraints) {
       let sendData: UserConstraintData;
@@ -86,17 +86,19 @@ function KeywordConstraints({
     key: keyof UserConstraintData,
     item: UserConstraintData,
     index: number,
-    e: React.ChangeEvent<HTMLInputElement> | string | undefined
+    e: React.ChangeEvent<HTMLInputElement> | string | undefined,
   ) => {
     if (handleUserConstraints) {
       const value =
         key === "type"
           ? e
           : key === "active"
-          ? (e as React.ChangeEvent<HTMLInputElement>).target.checked
-          : key === "limit"
-          ? parseInt((e as React.ChangeEvent<HTMLInputElement>).target.value)
-          : (e as React.ChangeEvent<HTMLInputElement>).target.value;
+            ? (e as React.ChangeEvent<HTMLInputElement>).target.checked
+            : key === "limit"
+              ? parseInt(
+                  (e as React.ChangeEvent<HTMLInputElement>).target.value,
+                )
+              : (e as React.ChangeEvent<HTMLInputElement>).target.value;
       const newItem = {
         ...item,
         [key]: value,
@@ -120,12 +122,12 @@ function KeywordConstraints({
       {(
         Object.entries(constraints) as [
           keyof (SuggestedConstraint | UserConstraint),
-          (SuggestedConstraintData | UserConstraintData)[]
+          (SuggestedConstraintData | UserConstraintData)[],
         ][]
       ).map(([key, value]) => (
         <Accordion
           open={openKeys.includes(key)}
-          className="mb-2 rounded-lg border border-blue-gray-100 px-4 overflow-visible"
+          className="mb-2 rounded-lg border border-blue-gray-100 px-4 "
           key={key}
           icon={
             <ChevronDownIcon
@@ -143,7 +145,9 @@ function KeywordConstraints({
               {startCase(key)} ({Array.isArray(value) ? value.length : 0})
             </Typography>
           </AccordionHeader>
-          <AccordionBody className="pt-0 text-base font-normal px-4 ">
+          <AccordionBody
+            className={`pt-0 text-base font-normal  ${constraintsType === "suggested" ? "px-4" : "md:px-2"}`}
+          >
             {constraintsType === "suggested" ? (
               value.length ? (
                 (value as SuggestedConstraintData[]).map((item, idx) => (
@@ -184,6 +188,7 @@ function KeywordConstraints({
                         } self-center`}
                       >
                         <Checkbox
+                          className={`${openKeys.includes(key) ? "" : "hidden"}`}
                           color="blue"
                           checked={item.active}
                           crossOrigin=""
@@ -193,12 +198,14 @@ function KeywordConstraints({
                           disabled={!isEdit}
                         />
                       </div>
-                      <div className="col-span-4">
+                      <div
+                        className={` absolute md:w-32 w-20  md:left-[4rem] left-[3.5rem] ${openKeys.includes(key) ? "" : "hidden"}`}
+                      >
                         <Input
                           label="Keyword"
                           value={item.keyword}
                           crossOrigin=""
-                          className="w-full"
+                          className="w-full !absolute !z-[9999]"
                           containerProps={{ className: "!min-w-0" }}
                           onChange={(e) =>
                             onUserConstraintChange(key, "keyword", item, idx, e)
@@ -207,7 +214,9 @@ function KeywordConstraints({
                           required
                         />
                       </div>
-                      <div className="col-span-4">
+                      <div
+                        className={`col-span-4 absolute md:!w-16 w-[3.3rem] ${openKeys.includes(key) ? "md:left-[12.5rem] left-[8.7rem]" : "hidden"} w-40`}
+                      >
                         <Select
                           label="Type"
                           value={item.type}
@@ -215,34 +224,35 @@ function KeywordConstraints({
                           onChange={(e) =>
                             onUserConstraintChange(key, "type", item, idx, e)
                           }
-                          menuProps={{ className: "z-[999]" }}
+                          className=""
+                          menuProps={{ className: "!z-[9999]" }}
                           disabled={!isEdit}
                         >
-                          <Option value="eq">= Equal</Option>
-                          <Option value="me">≥ More than equal</Option>
-                          <Option value="le">≤ Less than equal</Option>
-                          <Option value="na">✕ Not apprear</Option>
+                          <Option value="eq">=</Option>
+                          <Option value="me">≥</Option>
+                          <Option value="le">≤</Option>
+                          <Option value="na">✕</Option>
                         </Select>
                       </div>
                       {item.type != "na" ? (
-                        <div className="col-span-2">
+                        <div
+                          className={`absolute lg:!w-16 w-[3.5rem]  ${openKeys.includes(key) ? "md:left-[17rem] left-[12.2rem]" : "hidden"}`}
+                        >
                           <Input
                             label="Limit"
                             value={item.limit}
                             crossOrigin=""
                             type="number"
                             containerProps={{ className: "!min-w-0" }}
-                            onKeyDown={(e) => {
-                              if (
-                                e.key !== "ArrowUp" &&
-                                e.key !== "ArrowDown"
-                              ) {
-                                e.preventDefault();
-                              }
+                            onChange={(e) => {
+                              onUserConstraintChange(
+                                key,
+                                "limit",
+                                item,
+                                idx,
+                                e,
+                              );
                             }}
-                            onChange={(e) =>
-                              onUserConstraintChange(key, "limit", item, idx, e)
-                            }
                             disabled={!isEdit}
                             required
                             min={1}
@@ -252,8 +262,9 @@ function KeywordConstraints({
                         ""
                       )}
                       {isEdit ? (
-                        <div className="col-span-1 self-center">
-                          {" "}
+                        <div
+                          className={`absolute md:!w-16 ${openKeys.includes(key) ? "md:left-[21.6rem] left-[16rem]" : "hidden"}`}
+                        >
                           <IconButton
                             variant="text"
                             className="text-red-400"
@@ -263,7 +274,7 @@ function KeywordConstraints({
                                   key,
                                   "delete",
                                   undefined,
-                                  idx
+                                  idx,
                                 );
                               }
                             }}
