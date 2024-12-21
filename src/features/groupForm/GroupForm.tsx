@@ -235,7 +235,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
             <XMarkIcon className="h-4 w-4 stroke-2" />
           </IconButton>
         </DialogHeader>
-        <DialogBody className="space-y-4 pb-6 lg:h-full  h-[42rem] lg:overflow-y-visible overflow-y-scroll">
+        <DialogBody className="space-y-4 pb-6 lg:h-full  h-[14rem] lg:overflow-y-visible overflow-y-scroll">
           <div>
             <Typography
               variant="small"
