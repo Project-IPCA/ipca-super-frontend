@@ -211,7 +211,6 @@ function KeywordConstraints({
                             onUserConstraintChange(key, "keyword", item, idx, e)
                           }
                           disabled={!isEdit}
-                          required
                         />
                       </div>
                       <div
@@ -240,18 +239,10 @@ function KeywordConstraints({
                         >
                           <Input
                             label="Limit"
-                            value={item.limit}
+                            value={item.limit ? item.limit : ""}
                             crossOrigin=""
                             type="number"
                             containerProps={{ className: "!min-w-0" }}
-                            onKeyDown={(e) => {
-                              if (
-                                e.key !== "ArrowUp" &&
-                                e.key !== "ArrowDown"
-                              ) {
-                                e.preventDefault();
-                              }
-                            }}
                             onChange={(e) => {
                               onUserConstraintChange(
                                 key,
@@ -262,7 +253,6 @@ function KeywordConstraints({
                               );
                             }}
                             disabled={!isEdit}
-                            required
                             min={1}
                           />
                         </div>
