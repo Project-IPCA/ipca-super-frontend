@@ -4,13 +4,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
+      args:
+        VITE_IPCA_API: ${VITE_IPCA_API}
+        VITE_IPCA_RT: ${VITE_IPCA_RT}
+        VITE_IPCA_STUDENT_CODE_MINIO: ${VITE_IPCA_STUDENT_CODE_MINIO}
     restart: unless-stopped
     networks:
       - ipca-stack
-    args:
-      VITE_IPCA_API: ${VITE_IPCA_API}
-      VITE_IPCA_RT: ${VITE_IPCA_RT}
-      VITE_IPCA_STUDENT_CODE_MINIO: ${VITE_IPCA_STUDENT_CODE_MINIO}
 
 networks:
   ipca-stack:
