@@ -1,0 +1,13 @@
+services:
+  ipca-frontend:
+    container_name: ipca-super-frontend
+    build: .
+    restart: on-failure
+    networks:
+      - ipca-stack
+    env_file:
+      - .env
+
+networks:
+  ipca-stack:
+    external: true
