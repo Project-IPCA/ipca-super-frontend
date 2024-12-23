@@ -23,13 +23,16 @@ function GroupFilter({ filters, filterForm, handleChangeForm }: Props) {
       },
       ...filters.instructors.map((instructor) => instructor),
     ],
-    [filters.instructors],
+    [filters.instructors]
   );
 
-  const yearOptions = useMemo(
-    () => [ALL_VALUE, ...filters.years.map((year) => year.toString())],
-    [filters.years],
-  );
+  const yearOptions = useMemo(() => {
+    if (filters.years != null && filters.years.length) {
+      return [ALL_VALUE, ...filters.years.map((year) => year.toString())];
+    } else {
+      return [ALL_VALUE];
+    }
+  }, [filters.years]);
 
   const semesterOptions = [
     ALL_VALUE,
