@@ -1,0 +1,33 @@
+# Use the official Node.js image as the base image
+FROM node:21-alpine AS build
+
+ARG VITE_IPCA_API
+ARG VITE_IPCA_RT
+ARG VITE_IPCA_STUDENT_CODE_MINIO
+
+ENV VITE_IPCA_API $VITE_IPCA_API
+ENV VITE_IPCA_RT $VITE_IPCA_RT
+ENV VITE_IPCA_STUDENT_CODE_MINIO $VITE_IPCA_STUDENT_CODE_MINIO
+
+# Set the working directory
+WORKDIR /app
+
+# Copy package.json and yarn.lock
+COPY package.json yarn.lock ./
+
+# Install dependencies
+RUN yarn install
+
+# Copy the rest of the application code
+COPY . .
+
+RUN yarn build
+
+FROM nginx:1.25.4-alpine3.18 AS production
+
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /var/www/html/
+
+EXPOSE 80
+
+ENTRYPOINT ["nginx","-g","daemon off;"]
