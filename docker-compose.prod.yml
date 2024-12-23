@@ -7,8 +7,10 @@ services:
     restart: unless-stopped
     networks:
       - ipca-stack
-    env_file:
-      - .env
+    args:
+      VITE_IPCA_API: ${VITE_IPCA_API}
+      VITE_IPCA_RT: ${VITE_IPCA_RT}
+      VITE_IPCA_STUDENT_CODE_MINIO: ${VITE_IPCA_STUDENT_CODE_MINIO}
 
 networks:
   ipca-stack:
