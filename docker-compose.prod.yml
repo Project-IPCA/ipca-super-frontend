@@ -1,5 +1,5 @@
 services:
-  ipca-frontend:
+  ipca-super-frontend:
     container_name: ipca-super-frontend
     build:
       context: .
@@ -9,8 +9,12 @@ services:
         VITE_IPCA_RT: ${VITE_IPCA_RT}
         VITE_IPCA_STUDENT_CODE_MINIO: ${VITE_IPCA_STUDENT_CODE_MINIO}
     restart: unless-stopped
+    environment:
+      - TZ=Asia/Bangkok
     networks:
       - ipca-stack
+    depends_on:
+      - ipca-api
 
 networks:
   ipca-stack:
