@@ -140,6 +140,20 @@ export const updateAllowGroupUploadProfile = createAsyncThunk(
   }
 );
 
+export const deleteGroup = createAsyncThunk(
+  "groupForm/deleteGroup",
+  async (groupId: string, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.delete(
+        `supervisor/group/${groupId}`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(resolveApiError(error));
+    }
+  }
+);
+
 const groupDetailSlice = createSlice({
   name: "groupDetail",
   initialState,
@@ -164,6 +178,9 @@ const groupDetailSlice = createSlice({
       .addCase(logoutAllStudents.rejected, (state, action) => {
         state.error = action.payload as API_ERROR_RESPONSE;
         state.isFetching = false;
+      })
+      .addCase(deleteGroup.rejected, (state, action) => {
+        state.error = action.payload as API_ERROR_RESPONSE;
       }),
 });
 
