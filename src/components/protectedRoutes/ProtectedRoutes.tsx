@@ -3,6 +3,7 @@ import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../hooks/store";
 import { getLoginState } from "../../features/loginForm/redux/loginFormSlice";
 import { setLogoutState } from "../../features/loginForm/redux/loginFormSlice";
+import { resetState } from "../../store/store";
 
 const VITE_IPCA_RT = import.meta.env.VITE_IPCA_RT;
 
@@ -27,6 +28,7 @@ function ProtectedRoutes() {
             localStorage.removeItem("access_token");
             localStorage.removeItem("refresh_token");
             navigate("/login");
+            dispatch(resetState());
           }
         }
       };

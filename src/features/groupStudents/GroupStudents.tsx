@@ -34,7 +34,7 @@ function GroupStudents({ groupId }: Props) {
   const [openPermForm, setOpenPermForm] = useState<boolean>(false);
   const [openStudentFrom, setOpenStudentForm] = useState<boolean>(false);
   const [studentSelected, setStudentSelected] = useState<StudentData | null>(
-    null,
+    null
   );
 
   const handlePermFormClose = () => setOpenPermForm(false);
@@ -52,10 +52,20 @@ function GroupStudents({ groupId }: Props) {
 
   useEffect(() => {
     if (groupStudentError) {
-      showToast({
-        variant: "error",
-        message: groupStudentError.error,
-      });
+      const addStudents = groupStudentError.error?.split("\n");
+      if (addStudents?.length) {
+        addStudents.forEach((err) => {
+          showToast({
+            variant: "error",
+            message: err,
+          });
+        });
+      } else {
+        showToast({
+          variant: "error",
+          message: groupStudentError.error,
+        });
+      }
     }
   }, [dispatch, groupStudentError]);
 
@@ -76,7 +86,7 @@ function GroupStudents({ groupId }: Props) {
 
   useEffect(() => {
     const evtSource = new EventSource(
-      `${VITE_IPCA_RT}/online-students/${groupId}`,
+      `${VITE_IPCA_RT}/online-students/${groupId}`
     );
     evtSource.onmessage = (event) => {
       if (event.data) {
