@@ -13,7 +13,7 @@ export const DAY_OF_WEEK = [
   "MONDAY",
   "TUESDAY",
   "WEDNESDAY",
-  "THIRSDAY",
+  "THURSDAY",
   "FRIDAY",
   "SATURDAY",
   "SUNDAY",

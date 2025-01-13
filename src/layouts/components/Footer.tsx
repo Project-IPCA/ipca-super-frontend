@@ -6,6 +6,7 @@ import { setLogoutState } from "../../features/loginForm/redux/loginFormSlice";
 import { logout } from "../redux/layoutSlice";
 import { useNavigate } from "react-router-dom";
 import { createElement } from "react";
+import { resetState } from "../../store/store";
 
 function Footer() {
   const LIST_ITEM_STYLES =
@@ -23,6 +24,7 @@ function Footer() {
         dispatch(setLogoutState());
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
+        dispatch(resetState());
       },
     },
   ];

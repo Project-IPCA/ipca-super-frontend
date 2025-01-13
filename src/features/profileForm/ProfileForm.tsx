@@ -68,11 +68,13 @@ function ProfileForm() {
   }, [reset, data]);
 
   useEffect(() => {
-    showToast({
-      variant: "error",
-      message: error?.error,
-    });
-  }, [error, dispatch]);
+    if (error) {
+      showToast({
+        variant: "error",
+        message: error?.error,
+      });
+    }
+  }, [error]);
 
   const onSubmit: SubmitHandler<ProfileInfo> = async (data) => {
     const resultAction = await dispatch(
@@ -89,7 +91,7 @@ function ProfileForm() {
         current_password: data.current_password ? data.current_password : null,
         new_password: data.new_password ? data.new_password : null,
         dept_id: data.dept_id ? data.dept_id : null,
-      }),
+      })
     );
     if (updateProfile.fulfilled.match(resultAction)) {
       showToast({
