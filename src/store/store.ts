@@ -12,8 +12,9 @@ import codeDisplaySlice from "../features/codeDisplay/redux/CodeDisplaySlice";
 import exercisesPoolSlice from "../features/exercisesPool/redux/ExercisesPoolSlice";
 import exerciseFormSlice from "../features/exerciseForm/redux/exerciseFormSlice";
 import exerciseInfoSlice from "../features/exerciseInfo/redux/exerciseInfoSlice";
+import adminFormSlice from "../features/adminForm/redux/adminFormSlice";
 
-export const RESET_STATE = 'RESET_STATE';
+export const RESET_STATE = "RESET_STATE";
 
 const appReducer = combineReducers({
   login: loginFormReducer,
@@ -29,6 +30,7 @@ const appReducer = combineReducers({
   exercisesPool: exercisesPoolSlice,
   exerciseForm: exerciseFormSlice,
   exerciseInfo: exerciseInfoSlice,
+  adminForm: adminFormSlice,
 });
 
 const rootReducer = (state: any, action: any) => {

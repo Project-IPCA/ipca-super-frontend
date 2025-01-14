@@ -1,0 +1,380 @@
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import * as yup from "yup";
+import { useAppDispatch, useAppSelector } from "../../hooks/store";
+import {
+  clearGroupFormError,
+  fetchDepartments,
+  fetchStaffs,
+  getDepartments,
+  getGroupFormError,
+} from "../groupForm/redux/groupFormSlice";
+import { useEffect, useRef } from "react";
+import {
+  clearAdminFormError,
+  createAdmin,
+  getAdminFormError,
+} from "./redux/adminFormSlice";
+import { showToast } from "../../utils/toast";
+import {
+  Button,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
+  IconButton,
+  Input,
+  Option,
+  Typography,
+} from "@material-tailwind/react";
+import { XMarkIcon } from "@heroicons/react/24/solid";
+import { AsyncSelect } from "../../components";
+import { GENDER_LIST, ROLE_LIST } from "../../constants/constants";
+
+interface Props {
+  open: boolean;
+  onClose: () => void;
+}
+
+const formDataSchema = yup.object({
+  username: yup.string().required("Username is required."),
+  f_name: yup.string().required("Firstname is required."),
+  l_name: yup.string().required("Lastname is required."),
+  role: yup.string().required("Role is required."),
+  gender: yup.string().required("Gender is required."),
+  dept_id: yup.string().required("Department is required."),
+});
+
+export type FormData = yup.InferType<typeof formDataSchema>;
+
+function AdminForm({ open, onClose }: Props) {
+  const dispatch = useAppDispatch();
+  const departments = useAppSelector(getDepartments);
+  const groupFormError = useAppSelector(getGroupFormError);
+  const adminFormError = useAppSelector(getAdminFormError);
+  const initialized = useRef(false);
+  const defaultForm = {
+    username: "",
+    f_name: "",
+    l_name: "",
+    role: "",
+    gender: "",
+    dept_id: "",
+  };
+  const {
+    control,
+    formState: { errors },
+    register,
+    handleSubmit,
+    reset,
+  } = useForm<FormData>({
+    resolver: yupResolver(formDataSchema),
+    defaultValues: defaultForm,
+  });
+
+  useEffect(() => {
+    if (!initialized.current) {
+      initialized.current = true;
+      dispatch(fetchDepartments());
+    }
+  }, [dispatch, initialized]);
+
+  useEffect(() => {
+    if (groupFormError) {
+      showToast({
+        variant: "error",
+        message: groupFormError.error,
+      });
+      dispatch(clearGroupFormError());
+    }
+    if (adminFormError) {
+      showToast({
+        variant: "error",
+        message: adminFormError.error,
+      });
+      dispatch(clearAdminFormError());
+    }
+  }, [dispatch, groupFormError, adminFormError]);
+
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    const request = {
+      username: data.username,
+      f_name: data.f_name,
+      l_name: data.l_name,
+      role: data.role,
+      gender: data.gender,
+      dept_id: data.dept_id,
+    };
+    const resultAction = await dispatch(createAdmin(request));
+    if (createAdmin.fulfilled.match(resultAction)) {
+      showToast({
+        variant: "success",
+        message: "Admin has been created.",
+      });
+    }
+    reset(defaultForm);
+    dispatch(fetchStaffs());
+    onClose();
+  };
+  return (
+    <>
+      <Dialog size="sm" open={open} handler={onClose} className="p-4 !z-[500]">
+        <DialogHeader className="relative m-0 block">
+          <Typography variant="h4" color="blue-gray">
+            Create Admin
+          </Typography>
+          <IconButton
+            size="sm"
+            variant="text"
+            className="!absolute right-3.5 top-3.5"
+            onClick={() => {
+              reset(defaultForm);
+              onClose();
+            }}
+          >
+            <XMarkIcon className="h-4 w-4 stroke-2" />
+          </IconButton>
+        </DialogHeader>
+        <DialogBody className="space-y-4 pb-6 lg:h-full  h-[14rem] lg:overflow-y-visible overflow-y-scroll">
+          <div>
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="mb-2 text-left font-medium"
+            >
+              Username
+            </Typography>
+            <Input
+              {...register("username")}
+              crossOrigin=""
+              color="gray"
+              size="lg"
+              placeholder="Username"
+              error={!!errors.username}
+              className={`  ${
+                errors.username
+                  ? "!border-t-red-500 focus:!border-t-red-500"
+                  : "focus:!border-t-gray-900 !border-t-blue-gray-200"
+              } `}
+              labelProps={{
+                className: "before:content-none after:content-none",
+              }}
+            />
+            <Typography
+              variant="small"
+              color="red"
+              className="mt-1 flex items-center gap-1 font-normal !text-xs"
+            >
+              {errors.username ? errors.username.message : ""}
+            </Typography>
+          </div>
+
+          <div className="flex lg:flex-row flex-col gap-4">
+            <div className="w-full">
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="mb-2 text-left font-medium"
+              >
+                Firstname
+              </Typography>
+              <Input
+                {...register("f_name")}
+                crossOrigin=""
+                color="gray"
+                size="lg"
+                placeholder="Firstname"
+                error={!!errors.f_name}
+                className={`  ${
+                  errors.f_name
+                    ? "!border-t-red-500 focus:!border-t-red-500"
+                    : "focus:!border-t-gray-900 !border-t-blue-gray-200"
+                } `}
+                labelProps={{
+                  className: "before:content-none after:content-none",
+                }}
+              />
+              <Typography
+                variant="small"
+                color="red"
+                className="mt-1 flex items-center gap-1 font-normal !text-xs"
+              >
+                {errors.f_name ? errors.f_name.message : ""}
+              </Typography>
+            </div>
+            <div className="w-full">
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="mb-2 text-left font-medium"
+              >
+                Lastname
+              </Typography>
+              <Input
+                {...register("l_name")}
+                crossOrigin=""
+                color="gray"
+                size="lg"
+                placeholder="Lastname"
+                error={!!errors.l_name}
+                className={`  ${
+                  errors.l_name
+                    ? "!border-t-red-500 focus:!border-t-red-500"
+                    : "focus:!border-t-gray-900 !border-t-blue-gray-200"
+                } `}
+                labelProps={{
+                  className: "before:content-none after:content-none",
+                }}
+              />
+              <Typography
+                variant="small"
+                color="red"
+                className="mt-1 flex items-center gap-1 font-normal !text-xs"
+              >
+                {errors.l_name ? errors.l_name.message : ""}
+              </Typography>
+            </div>
+          </div>
+          <div className="flex lg:flex-row flex-col gap-4">
+            <div className="w-full">
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="mb-2 text-left font-medium"
+              >
+                Role
+              </Typography>
+              <Controller
+                name="role"
+                control={control}
+                render={({ field }) => {
+                  return (
+                    <AsyncSelect
+                      {...field}
+                      variant="outlined"
+                      size="lg"
+                      color="gray"
+                      containerProps={{
+                        className: "!min-w-full",
+                      }}
+                      labelProps={{
+                        className: "before:mr-0 after:ml-0",
+                      }}
+                      error={!!errors.role}
+                    >
+                      {ROLE_LIST.map((role) => (
+                        <Option key={role} value={role}>
+                          {role}
+                        </Option>
+                      ))}
+                    </AsyncSelect>
+                  );
+                }}
+              />
+              <Typography
+                variant="small"
+                color="red"
+                className="mt-1 flex items-center gap-1 font-normal !text-xs"
+              >
+                {errors.role ? errors.role.message : ""}
+              </Typography>
+            </div>
+            <div className="w-full">
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="mb-2 text-left font-medium"
+              >
+                Gender
+              </Typography>
+              <Controller
+                name="gender"
+                control={control}
+                render={({ field }) => {
+                  return (
+                    <AsyncSelect
+                      {...field}
+                      variant="outlined"
+                      size="lg"
+                      color="gray"
+                      error={!!errors.gender}
+                      containerProps={{
+                        className: "!min-w-full",
+                      }}
+                      labelProps={{
+                        className: "before:mr-0 after:ml-0",
+                      }}
+                    >
+                      {GENDER_LIST.map((gender) => (
+                        <Option key={gender} value={gender}>
+                          {gender}
+                        </Option>
+                      ))}
+                    </AsyncSelect>
+                  );
+                }}
+              />
+              <Typography
+                variant="small"
+                color="red"
+                className="mt-1 flex items-center gap-1 font-normal !text-xs"
+              >
+                {errors.gender ? errors.gender.message : ""}
+              </Typography>
+            </div>
+          </div>
+          <div className="w-full">
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="mb-2 text-left font-medium"
+            >
+              Department
+            </Typography>
+            <Controller
+              name="dept_id"
+              control={control}
+              render={({ field }) => {
+                return (
+                  <AsyncSelect
+                    {...field}
+                    variant="outlined"
+                    size="lg"
+                    color="gray"
+                    containerProps={{
+                      className: "!min-w-full",
+                    }}
+                    labelProps={{
+                      className: "before:mr-0 after:ml-0",
+                    }}
+                    error={!!errors.dept_id}
+                  >
+                    {departments.map((dept) => (
+                      <Option key={dept.dept_id} value={dept.dept_id}>
+                        {dept.dept_name}
+                      </Option>
+                    ))}
+                  </AsyncSelect>
+                );
+              }}
+            />
+            <Typography
+              variant="small"
+              color="red"
+              className="mt-1 flex items-center gap-1 font-normal !text-xs"
+            >
+              {errors.dept_id ? errors.dept_id.message : ""}
+            </Typography>
+          </div>
+        </DialogBody>
+        <DialogFooter>
+          <Button className="ml-auto" onClick={handleSubmit(onSubmit)}>
+            submit
+          </Button>
+        </DialogFooter>
+      </Dialog>
+    </>
+  );
+}
+
+export default AdminForm;
