@@ -8,7 +8,11 @@ import {
 } from "@material-tailwind/react";
 import React, { createElement, useState } from "react";
 
-import { UserGroupIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
+import {
+  UserGroupIcon,
+  ChevronDownIcon,
+  ComputerDesktopIcon,
+} from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 
 interface Props {
@@ -40,6 +44,11 @@ function MenuList({ handleCloseDrawer }: Props) {
           path: "/groups",
         },
       ],
+    },
+    {
+      label: "Admins",
+      icon: ComputerDesktopIcon,
+      path: "/admins",
     },
   ];
 
@@ -89,7 +98,11 @@ function MenuList({ handleCloseDrawer }: Props) {
                 </AccordionBody>
               </Accordion>
             ) : (
-              <ListItem className={LIST_ITEM_STYLES} key={menu.label}>
+              <ListItem
+                className={LIST_ITEM_STYLES}
+                key={menu.label}
+                onClick={() => navigate(menu.path)}
+              >
                 <ListItemPrefix>
                   {createElement(menu.icon, {
                     className: "h-5 w-5",
