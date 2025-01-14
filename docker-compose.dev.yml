@@ -1,5 +1,5 @@
 services:
-  ipca-frontend:
+  ipca-super-frontend:
     container_name: ipca-super-frontend
     build:
       context: .

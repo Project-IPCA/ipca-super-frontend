@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import loginFormReducer from "../features/loginForm/redux/loginFormSlice";
 import myGroupsReducer from "../features/myGroupsList/redux/myGroupListSlice";
 import availableGroupsReducer from "../features/availableGroupList/redux/AvailableGroupListSlice";
@@ -12,24 +12,41 @@ import codeDisplaySlice from "../features/codeDisplay/redux/CodeDisplaySlice";
 import exercisesPoolSlice from "../features/exercisesPool/redux/ExercisesPoolSlice";
 import exerciseFormSlice from "../features/exerciseForm/redux/exerciseFormSlice";
 import exerciseInfoSlice from "../features/exerciseInfo/redux/exerciseInfoSlice";
+import adminFormSlice from "../features/adminForm/redux/adminFormSlice";
+
+export const RESET_STATE = "RESET_STATE";
+
+const appReducer = combineReducers({
+  login: loginFormReducer,
+  myGroups: myGroupsReducer,
+  availableGroups: availableGroupsReducer,
+  groupForm: groupFormReducer,
+  groupExercise: groupExercisesReducer,
+  groupStudent: groupStudentsReducer,
+  profileForm: profileFormReducer,
+  studentDetail: studentDetailSlice,
+  exerciseDetail: exerciseDetailSlice,
+  codeDisplay: codeDisplaySlice,
+  exercisesPool: exercisesPoolSlice,
+  exerciseForm: exerciseFormSlice,
+  exerciseInfo: exerciseInfoSlice,
+  adminForm: adminFormSlice,
+});
+
+const rootReducer = (state: any, action: any) => {
+  if (action.type === RESET_STATE) {
+    state = undefined;
+  }
+  return appReducer(state, action);
+};
 
 export const store = configureStore({
-  reducer: {
-    login: loginFormReducer,
-    myGroups: myGroupsReducer,
-    availableGroups: availableGroupsReducer,
-    groupForm: groupFormReducer,
-    groupExercise: groupExercisesReducer,
-    groupStudent: groupStudentsReducer,
-    profileForm: profileFormReducer,
-    studentDetail: studentDetailSlice,
-    exerciseDetail: exerciseDetailSlice,
-    codeDisplay: codeDisplaySlice,
-    exercisesPool: exercisesPoolSlice,
-    exerciseForm: exerciseFormSlice,
-    exerciseInfo: exerciseInfoSlice,
-  },
+  reducer: rootReducer,
 });
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
+
+export const resetState = () => ({
+  type: RESET_STATE,
+});

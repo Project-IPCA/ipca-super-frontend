@@ -23,7 +23,7 @@ interface Department {
   dept_name: string;
 }
 
-interface Staffs {
+export interface Staffs {
   supervisor_id: string;
   f_name: string;
   l_name: string;

@@ -13,7 +13,7 @@ export const DAY_OF_WEEK = [
   "MONDAY",
   "TUESDAY",
   "WEDNESDAY",
-  "THIRSDAY",
+  "THURSDAY",
   "FRIDAY",
   "SATURDAY",
   "SUNDAY",
@@ -65,3 +65,7 @@ export const SUBMISSION_STATUS = {
   pending: "PENDING",
   rejected: "REJECTED",
 };
+
+export const ROLE_LIST = ["SUPERVISOR"];
+
+export const GENDER_LIST = ["MALE","FEMALE","OTHER"]

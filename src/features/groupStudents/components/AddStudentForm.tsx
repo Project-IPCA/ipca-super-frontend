@@ -27,7 +27,7 @@ const formDataSchema = yup.object({
     .string()
     .required("Students is required.")
     .matches(
-      /^(\d+\s\d{8}\s[\u0E00-\u0E7F\w]+\s[\u0E00-\u0E7F\w]+\n?)+$/,
+      /^(\d+\s\d{8}\s*[\u0E00-\u0E7F\w]+\s*[\u0E00-\u0E7F\w]+\n?)+$/,
       "Incorrect students format.",
     ),
 });
