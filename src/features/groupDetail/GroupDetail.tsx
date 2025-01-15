@@ -14,6 +14,8 @@ import { tabsValue } from "./constants";
 import { GroupExercises } from "../groupExercises";
 import GroupStudents from "../groupStudents/GroupStudents";
 import { GroupLogs } from "../groupLogs";
+import { useAppSelector } from "../../hooks/store";
+import { getGroupExercise } from "../groupExercises/redux/groupExercisesSlice";
 
 interface Props {
   groupId: string;
@@ -21,6 +23,7 @@ interface Props {
 
 function GroupDetail({ groupId }: Props) {
   const navigate = useNavigate();
+  const groupDetail = useAppSelector(getGroupExercise);
   const [activeTab, setActiveTab] = useState<string>(tabsValue.EXERCISES);
   const TABS_MENU = [
     {
@@ -46,7 +49,7 @@ function GroupDetail({ groupId }: Props) {
         <IconButton variant="text" onClick={() => navigate(-1)}>
           <ArrowLeftIcon className="w-5 h-5" />
         </IconButton>
-        <Typography variant="h3">Group 25</Typography>
+        <Typography variant="h3">Group {groupDetail?.group_no}</Typography>
       </div>
       <Tabs value={activeTab}>
         <TabsHeader
