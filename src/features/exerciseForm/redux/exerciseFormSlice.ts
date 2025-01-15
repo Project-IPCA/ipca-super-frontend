@@ -92,6 +92,24 @@ export const updateExercise = createAsyncThunk(
   }
 );
 
+export const deleteExercise = createAsyncThunk(
+  "exerciseForm/deleteExercise",
+  async (exercise_id: string, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.delete(
+        `/supervisor/exercise/${exercise_id}`
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data);
+      } else {
+        return rejectWithValue(resolveApiError(error));
+      }
+    }
+  }
+);
+
 const exerciseFormSlice = createSlice({
   name: "exerciseForm",
   initialState,
@@ -106,6 +124,9 @@ const exerciseFormSlice = createSlice({
         state.error = action.payload as API_ERROR_RESPONSE;
       })
       .addCase(updateExercise.rejected, (state, action) => {
+        state.error = action.payload as API_ERROR_RESPONSE;
+      })
+      .addCase(deleteExercise.rejected, (state, action) => {
         state.error = action.payload as API_ERROR_RESPONSE;
       }),
 });

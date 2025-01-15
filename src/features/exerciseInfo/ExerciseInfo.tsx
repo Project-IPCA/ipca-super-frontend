@@ -27,6 +27,9 @@ import { FormUseData } from "../exercisesPool/ExercisesPool";
 import TestcaseForm from "./components/TestcaseForm";
 import TestcaseInfo from "./components/TestcaseInfo";
 import { IKeywordConstraints } from "../exerciseForm/ExerciseForm";
+import { deleteExercise } from "../exerciseForm/redux/exerciseFormSlice";
+import { showToast } from "../../utils/toast";
+import { ConfirmModal } from "../../components";
 
 function ExerciseInfo() {
   const { groupId, chapterIdx, exerciseId, level } = useParams();
@@ -44,8 +47,11 @@ function ExerciseInfo() {
     chapterId: "",
     level: "",
   });
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
 
   const handleToggleForm = () => setFormOpen(!formOpen);
+  const handleOpenDelete = () => setOpenDelete(true);
+  const handleCloseDelete = () => setOpenDelete(false);
 
   const handleToggleTestcaseForm = () => setTestcaseFormOpen(!testcaseFormOpen);
 
@@ -68,6 +74,25 @@ function ExerciseInfo() {
     },
   });
 
+  const handleDelete = async () => {
+    if (exerciseId && groupId && chapterIdx) {
+      const resultAction = await dispatch(deleteExercise(exerciseId));
+      if (deleteExercise.fulfilled.match(resultAction)) {
+        showToast({
+          variant: "success",
+          message: "Exercise has been delete.",
+        });
+      }
+      dispatch(
+        fetchExercisesPool({
+          groupId: groupId,
+          chapterIdx: parseInt(chapterIdx),
+        })
+      );
+      navigate(-1);
+    }
+  };
+
   useEffect(() => {
     if (exercise) {
       setConstraints(() => {
@@ -85,7 +110,7 @@ function ExerciseInfo() {
         fetchExercisesPool({
           groupId: groupId,
           chapterIdx: parseInt(chapterIdx),
-        }),
+        })
       );
     }
   }, [dispatch, exercisesPool, groupId, chapterIdx]);
@@ -98,6 +123,20 @@ function ExerciseInfo() {
 
   return (
     <>
+      <ConfirmModal
+        open={openDelete}
+        title="Delete Exercise?"
+        description={
+          <>
+            Are you sure you want to delete exercise <b>{exercise?.name}</b>?
+            This process cannot be undone.
+          </>
+        }
+        confirmLabel="Delete"
+        type="error"
+        handleClose={handleCloseDelete}
+        handleSubmit={handleDelete}
+      />
       <TestcaseForm
         exerciseId={exerciseId ?? ""}
         open={testcaseFormOpen}
@@ -119,6 +158,14 @@ function ExerciseInfo() {
         </Typography>
       </div>
       <div className="w-full flex justify-end mb-4">
+        <Button
+          className="mr-4"
+          variant="outlined"
+          color="red"
+          onClick={() => handleOpenDelete()}
+        >
+          delete
+        </Button>
         <Button
           onClick={() => {
             handleToggleForm();
