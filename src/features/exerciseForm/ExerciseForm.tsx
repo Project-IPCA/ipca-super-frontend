@@ -201,16 +201,16 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
           .filter(
             ([, val]) =>
               val.length > 0 &&
-              val.some((item: CheckUserConstraintData) => !item.is_passed),
+              val.some((item: CheckUserConstraintData) => !item.is_passed)
           )
           .reduce(
             (acc, [key, val]) => ({
               ...acc,
               [key]: val.filter(
-                (item: CheckUserConstraintData) => !item.is_passed,
+                (item: CheckUserConstraintData) => !item.is_passed
               ),
             }),
-            {} as Record<string, CheckUserConstraintData[]>,
+            {} as Record<string, CheckUserConstraintData[]>
           );
         Object.entries(errConstraints).map(([key, val]) => {
           val.map((data: CheckUserConstraintData) => {
@@ -271,7 +271,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
           fetchExercisesPool({
             groupId: groupId,
             chapterIdx: parseInt(chapterIdx),
-          }),
+          })
         );
       }
       if (exerciseId) {
@@ -310,7 +310,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
   useEffect(() => {
     if (jobId && exerciseId) {
       const evtSource = new EventSource(
-        `${VITE_IPCA_RT}/testcase-result/${jobId}`,
+        `${VITE_IPCA_RT}/testcase-result/${jobId}`
       );
       evtSource.onmessage = (event) => {
         if (event.data) {
@@ -319,6 +319,18 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
           }
         }
       };
+
+      const entTimeOut = setTimeout(() => {
+        if (evtSource) {
+          evtSource.close();
+          dispatch(fetchExercisesInfo(exerciseId));
+        }
+      }, 3000);
+
+      return () => {
+        evtSource.close();
+        clearTimeout(entTimeOut);
+      };
     }
   }, [jobId, exerciseId]);
 
@@ -326,7 +338,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
     key: keyof UserConstraint,
     action: UserConstraintAction,
     data?: UserConstraintData,
-    index?: number,
+    index?: number
   ) => {
     const currentItems = [...constraints.user_defined_constraints[key]];
 

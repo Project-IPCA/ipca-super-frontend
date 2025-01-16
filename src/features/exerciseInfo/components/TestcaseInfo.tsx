@@ -32,9 +32,8 @@ function TestcaseInfo({
           <Checkbox
             crossOrigin=""
             label="Show to student"
-            defaultChecked={testcase.show_to_student}
             disabled={readOnly}
-            onClick={() => {
+            onChange={() => {
               if (updateTestcaseField) {
                 updateTestcaseField(
                   index,
@@ -43,6 +42,7 @@ function TestcaseInfo({
                 );
               }
             }}
+            checked={testcase.show_to_student}
           />
         </div>
         {!readOnly && (

@@ -106,19 +106,31 @@ function TestcaseForm({ open, handleToggle, exerciseId, testcaseList }: Props) {
   };
 
   useEffect(() => {
-    if (jobId && exerciseId) {
-      const evtSource = new EventSource(
-        `${VITE_IPCA_RT}/testcase-result/${jobId}`,
-      );
-      evtSource.onmessage = (event) => {
-        if (event.data) {
-          if (exerciseId) {
+      if (jobId && exerciseId) {
+        const evtSource = new EventSource(
+          `${VITE_IPCA_RT}/testcase-result/${jobId}`
+        );
+        evtSource.onmessage = (event) => {
+          if (event.data) {
+            if (exerciseId) {
+              dispatch(fetchExercisesInfo(exerciseId));
+            }
+          }
+        };
+  
+        const entTimeOut = setTimeout(() => {
+          if (evtSource) {
+            evtSource.close();
             dispatch(fetchExercisesInfo(exerciseId));
           }
-        }
-      };
-    }
-  }, [jobId, exerciseId]);
+        }, 3000);
+  
+        return () => {
+          evtSource.close();
+          clearTimeout(entTimeOut);
+        };
+      }
+    }, [jobId, exerciseId]);
 
   return (
     <>
