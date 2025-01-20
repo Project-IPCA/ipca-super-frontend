@@ -32,9 +32,8 @@ function TestcaseInfo({
           <Checkbox
             crossOrigin=""
             label="Show to student"
-            defaultChecked={testcase.show_to_student}
             disabled={readOnly}
-            onClick={() => {
+            onChange={() => {
               if (updateTestcaseField) {
                 updateTestcaseField(
                   index,
@@ -43,6 +42,7 @@ function TestcaseInfo({
                 );
               }
             }}
+            checked={testcase.show_to_student}
           />
         </div>
         {!readOnly && (
@@ -81,14 +81,13 @@ function TestcaseInfo({
             Input
           </Typography>
           {readOnly ? (
-            <div className="w-full h-40 bg-blue-gray-50 text-black whitespace-nowrap p-2 overflow-x-scroll">
-              {(testcase?.testcase_content ?? "")
-                .split("\n")
-                .map((line, index) => (
-                  <Typography variant="small" key={index}>
-                    {line}
-                  </Typography>
-                ))}
+            <div className="w-full h-40 bg-blue-gray-50 text-black whitespace-nowrap p-2 overflow-x-auto min-h-fit">
+              <Typography
+                variant="small"
+                className="whitespace-pre break-words"
+              >
+                {testcase.testcase_content}
+              </Typography>
             </div>
           ) : (
             <textarea
@@ -111,16 +110,10 @@ function TestcaseInfo({
           <Typography variant="small" className="mb-2">
             Output
           </Typography>
-          <div className="w-full h-40 bg-blue-gray-50 text-black whitespace-nowrap p-2 overflow-x-scroll">
-            {!testcase.testcase_error
-              ? (testcase?.testcase_output ?? "")
-                  .split("\n")
-                  .map((line, index) => (
-                    <Typography variant="small" key={index}>
-                      {line}
-                    </Typography>
-                  ))
-              : testcase.testcase_error}
+          <div className="w-full h-40 bg-blue-gray-50 text-black whitespace-nowrap p-2 overflow-x-auto min-h-fit">
+            <Typography variant="small" className="whitespace-pre break-words">
+              {testcase.testcase_output}
+            </Typography>
           </div>
         </div>
       </div>
