@@ -312,13 +312,6 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
       const evtSource = new EventSource(
         `${VITE_IPCA_RT}/testcase-result/${jobId}`
       );
-      evtSource.onmessage = (event) => {
-        if (event.data) {
-          if (!exercise && exerciseId) {
-            dispatch(fetchExercisesInfo(exerciseId));
-          }
-        }
-      };
 
       const entTimeOut = setTimeout(() => {
         if (evtSource) {
@@ -326,6 +319,16 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
           dispatch(fetchExercisesInfo(exerciseId));
         }
       }, 3000);
+
+      evtSource.onmessage = (event) => {
+        if (event.data) {
+          if (!exercise && exerciseId) {
+            dispatch(fetchExercisesInfo(exerciseId));
+            evtSource.close();
+            clearTimeout(entTimeOut);
+          }
+        }
+      };
 
       return () => {
         evtSource.close();
