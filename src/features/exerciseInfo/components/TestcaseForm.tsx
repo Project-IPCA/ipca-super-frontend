@@ -110,20 +110,23 @@ function TestcaseForm({ open, handleToggle, exerciseId, testcaseList }: Props) {
         const evtSource = new EventSource(
           `${VITE_IPCA_RT}/testcase-result/${jobId}`
         );
-        evtSource.onmessage = (event) => {
-          if (event.data) {
-            if (exerciseId) {
-              dispatch(fetchExercisesInfo(exerciseId));
-            }
-          }
-        };
-  
+
         const entTimeOut = setTimeout(() => {
           if (evtSource) {
             evtSource.close();
             dispatch(fetchExercisesInfo(exerciseId));
           }
         }, 3000);
+
+        evtSource.onmessage = (event) => {
+          if (event.data) {
+            if (exerciseId) {
+              dispatch(fetchExercisesInfo(exerciseId));
+              evtSource.close();
+              clearTimeout(entTimeOut);
+            }
+          }
+        };
   
         return () => {
           evtSource.close();
