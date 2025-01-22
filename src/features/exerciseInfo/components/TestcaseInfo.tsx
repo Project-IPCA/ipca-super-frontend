@@ -1,5 +1,6 @@
 import { Button, Typography, Card, Checkbox } from "@material-tailwind/react";
 import { Testcase } from "../redux/exerciseInfoSlice";
+import { useEffect, useRef } from "react";
 
 interface Props {
   index: number;
@@ -24,6 +25,32 @@ function TestcaseInfo({
   handleSubmitRun,
   handleAddRemoved,
 }: Props) {
+  const inputRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const outputRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (outputRef.current) {
+      let actualHeight: number;
+      if (readOnly && inputRef.current) {
+        actualHeight = inputRef.current.offsetHeight;
+      } else if (!readOnly && textareaRef.current) {
+        actualHeight = textareaRef.current.offsetHeight;
+      } else {
+        actualHeight = 0;
+      }
+
+      const expectedHeight = outputRef.current.offsetHeight;
+      const maxHeight = Math.max(actualHeight, expectedHeight);
+      if (readOnly && inputRef.current) {
+        inputRef.current.style.height = `${maxHeight}px`;
+      } else if (!readOnly && textareaRef.current) {
+        textareaRef.current.style.height = `${maxHeight}px`;
+      }
+      outputRef.current.style.height = `${maxHeight}px`;
+    }
+  }, [testcase, readOnly]);
+
   return (
     <Card className="px-5 py-3 bg-white border-[1px] shadow-none mb-4">
       <div className="flex flex-col sm:flex-row items-center w-full pb-2  border-b-[1px]  justify-between">
@@ -81,7 +108,10 @@ function TestcaseInfo({
             Input
           </Typography>
           {readOnly ? (
-            <div className="w-full h-40 bg-blue-gray-50 text-black whitespace-nowrap p-2 overflow-x-auto min-h-fit">
+            <div
+              ref={inputRef}
+              className="w-full h-40 bg-blue-gray-50 text-black whitespace-nowrap p-2 overflow-x-auto min-h-fit"
+            >
               <Typography
                 variant="small"
                 className="whitespace-pre break-words"
@@ -92,6 +122,7 @@ function TestcaseInfo({
           ) : (
             <textarea
               className="w-full h-40 bg-blue-gray-50 text-black p-2 resize-none transition duration-500 ease-in-out focus:border-2 focus:!border-gray-900 !border-blue-gray-200 outline-none"
+              ref={textareaRef}
               disabled={readOnly}
               onChange={(e) => {
                 if (updateTestcaseField) {
@@ -110,9 +141,14 @@ function TestcaseInfo({
           <Typography variant="small" className="mb-2">
             Output
           </Typography>
-          <div className="w-full h-40 bg-blue-gray-50 text-black whitespace-nowrap p-2 overflow-x-auto min-h-fit">
+          <div
+            className="w-full h-40 bg-blue-gray-50 text-black whitespace-nowrap p-2 overflow-x-auto min-h-fit"
+            ref={outputRef}
+          >
             <Typography variant="small" className="whitespace-pre break-words">
-              {testcase.testcase_output}
+              {!testcase.testcase_error
+                ? testcase.testcase_output
+                : testcase.testcase_error}
             </Typography>
           </div>
         </div>
