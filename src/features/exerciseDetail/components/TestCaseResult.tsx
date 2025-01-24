@@ -7,6 +7,7 @@ import {
 import { useEffect, useRef } from "react";
 import { SubmissionResult } from "./SubmissionHistoryList";
 import TestCaseOutput from "./TestCaseOutput";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   result: SubmissionResult;
@@ -14,6 +15,7 @@ interface Props {
 }
 
 function TestCaseResult({ result, index }: Props) {
+  const { t } = useTranslation();
   const actualOutputRef = useRef<HTMLDivElement>(null);
   const expectedOutputRef = useRef<HTMLDivElement>(null);
 
@@ -43,19 +45,22 @@ function TestCaseResult({ result, index }: Props) {
             <LockClosedIcon className="w-5 h-5" />
           </span>
         ) : null}
-        <Typography variant="h6">Testcase: {index + 1}</Typography>
+        <Typography variant="h6">
+          {" "}
+          {t("feature.exercise_detail.submission.testcase")}: {index + 1}
+        </Typography>
       </div>
 
-      <div className="mt-4 flex lg:flex-row flex-col w-full gap-x-2">
+      <div className="mt-4 flex lg:flex-row flex-col w-full gap-x-2 ">
         <div className="lg:w-1/2">
           <Typography variant="small" className="mb-2">
-            Actual Output
+            {t("feature.exercise_detail.submission.actual_op")}
           </Typography>
           <TestCaseOutput ref={actualOutputRef} output={result.actual} />
         </div>
         <div className="lg:w-1/2 ">
           <Typography variant="small" className="mb-2">
-            Expected Output
+            {t("feature.exercise_detail.submission.expect_op")}
           </Typography>
           <TestCaseOutput ref={expectedOutputRef} output={result.expected} />
         </div>

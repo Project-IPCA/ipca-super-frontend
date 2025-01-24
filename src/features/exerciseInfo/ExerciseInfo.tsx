@@ -30,8 +30,11 @@ import { IKeywordConstraints } from "../exerciseForm/ExerciseForm";
 import { deleteExercise } from "../exerciseForm/redux/exerciseFormSlice";
 import { showToast } from "../../utils/toast";
 import { ConfirmModal } from "../../components";
+import { useTranslation } from "react-i18next";
+import { LANGUAGE } from "../../constants/constants";
 
 function ExerciseInfo() {
+  const { t, i18n } = useTranslation();
   const { groupId, chapterIdx, exerciseId, level } = useParams();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -87,7 +90,7 @@ function ExerciseInfo() {
         fetchExercisesPool({
           groupId: groupId,
           chapterIdx: parseInt(chapterIdx),
-        })
+        }),
       );
       navigate(-1);
     }
@@ -110,7 +113,7 @@ function ExerciseInfo() {
         fetchExercisesPool({
           groupId: groupId,
           chapterIdx: parseInt(chapterIdx),
-        })
+        }),
       );
     }
   }, [dispatch, exercisesPool, groupId, chapterIdx]);
@@ -125,14 +128,16 @@ function ExerciseInfo() {
     <>
       <ConfirmModal
         open={openDelete}
-        title="Delete Exercise?"
+        title={t("feature.exercise_info.modal.delete.title")}
         description={
           <>
-            Are you sure you want to delete exercise <b>{exercise?.name}</b>?
-            This process cannot be undone.
+            {t("feature.exercise_info.modal.delete.msg1")}{" "}
+            <b>{exercise?.name}</b>
+            {i18n.language === LANGUAGE.en ? "?" : ""}{" "}
+            {t("feature.exercise_info.modal.delete.msg2")}
           </>
         }
-        confirmLabel="Delete"
+        confirmLabel={t("common.button.delete")}
         type="error"
         handleClose={handleCloseDelete}
         handleSubmit={handleDelete}
@@ -154,7 +159,8 @@ function ExerciseInfo() {
           <ArrowLeftIcon className="w-5 h-5" onClick={() => navigate(-1)} />
         </IconButton>
         <Typography variant="h3">
-          Chapter {chapterIdx} {exercisesPool?.chapter_name}
+          {t("feature.exercise_info.title")} {chapterIdx}{" "}
+          {exercisesPool?.chapter_name}
         </Typography>
       </div>
       <div className="w-full flex justify-end mb-4">
@@ -164,7 +170,7 @@ function ExerciseInfo() {
           color="red"
           onClick={() => handleOpenDelete()}
         >
-          delete
+          {t("feature.exercise_info.button.delete")}
         </Button>
         <Button
           onClick={() => {
@@ -177,14 +183,14 @@ function ExerciseInfo() {
             }
           }}
         >
-          Edit Exercise
+          {t("feature.exercise_info.button.edit_exercise")}
         </Button>
       </div>
       <Card className="border-[1px] mb-4">
         <CardBody>
           <div className="w-full ">
             <Typography variant="small" className="pt-4 font-medium">
-              Level {level ?? ""}
+              {t("feature.exercise_info.desc")} {level ?? ""}
             </Typography>
             <Typography variant="h4" className="pt-1 pb-2">
               {exercise?.name ?? ""}
@@ -196,7 +202,7 @@ function ExerciseInfo() {
       <Card className="border-[1px] mb-4">
         <CardBody>
           <Typography variant="h5" className="pb-2">
-            Soure Code
+            {t("feature.exercise_info.code")}
           </Typography>
           <Card
             className={`border-[1px] focus-within:border-2  overflow-hidden 
@@ -210,13 +216,12 @@ function ExerciseInfo() {
               extensions={[python()]}
               readOnly={true}
               editable={false}
-              placeholder="Put your code here..."
             />
           </Card>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <div>
               <Typography color="blue-gray" className="mb-2">
-                Suggested Keyword Constraints
+                {t("feature.exercise_info.constraint.sug_const")}
               </Typography>
               <KeywordConstraints
                 constraintsType="suggested"
@@ -226,7 +231,7 @@ function ExerciseInfo() {
             </div>
             <div>
               <Typography color="blue-gray" className="mb-2">
-                User defined Keyword Constraints
+                {t("feature.exercise_info.constraint.user_const")}
               </Typography>
               <KeywordConstraints
                 constraintsType="user"
@@ -241,11 +246,11 @@ function ExerciseInfo() {
         <CardBody>
           <div className="flex justify-between mb-4">
             <Typography variant="h5" className="pt-1 pb-2">
-              Testcases
+              {t("feature.exercise_info.testcase")}
             </Typography>
             <div className="flex gap-x-2">
               <Button size="sm" onClick={() => handleToggleTestcaseForm()}>
-                Edit Testcase
+                {t("feature.exercise_info.button.edit_testcase")}
               </Button>
             </div>
           </div>

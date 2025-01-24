@@ -3,6 +3,7 @@ import { TABS_VALUE, TIME_RANGE } from "../constants";
 import { ALLOW_TYPE } from "../../../constants/constants";
 import TimerPicker from "./TimePicker";
 import DateTimePicker from "./DateTimePicker";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   handleChangePerm: (
@@ -25,6 +26,7 @@ function SinglePermission({
   handleChangePermDateTime,
   tab,
 }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="pb-2">
       <Typography
@@ -33,21 +35,21 @@ function SinglePermission({
         className="mb-2 text-left font-medium"
       >
         {tab === TABS_VALUE.accessExercise
-          ? "Access Exercise Permission"
-          : "Allow Submit Permission"}
+          ? t("feature.perm_form.label.access_exercise")
+          : t("feature.perm_form.label.allow_submit")}
       </Typography>
       <div className="flex flex-col gap-2">
         <Radio
           name={tab || "perm-type"}
           crossOrigin=""
-          label="Always"
+          label={t("feature.perm_form.radio.always")}
           defaultChecked
           onClick={() => handleChangePerm(tab, ALLOW_TYPE.always, null)}
         />
         <Radio
           name={tab || "perm-type"}
           crossOrigin=""
-          label="Set timer"
+          label={t("feature.perm_form.radio.timer")}
           onClick={() => handleChangePerm(tab, ALLOW_TYPE.timer, null)}
         />
         {permissionType === ALLOW_TYPE.timer ? (
@@ -56,7 +58,7 @@ function SinglePermission({
         <Radio
           name={tab || "perm-type"}
           crossOrigin=""
-          label="Set date and time"
+          label={t("feature.perm_form.radio.date_time")}
           onClick={() => handleChangePerm(tab, ALLOW_TYPE.dateTime, null)}
         />
         {permissionType === ALLOW_TYPE.dateTime ? (
@@ -78,7 +80,7 @@ function SinglePermission({
         <Radio
           name={tab || "perm-type"}
           crossOrigin=""
-          label="Deny"
+          label={t("feature.perm_form.radio.deny")}
           onClick={() => handleChangePerm(tab, ALLOW_TYPE.deny, null)}
         />
       </div>

@@ -9,12 +9,13 @@ import {
   Tooltip,
   Typography,
 } from "@material-tailwind/react";
-import { TABLE_HEAD } from "./constants";
 import { Group, Instructor } from "../myGroupsList/redux/myGroupListSlice";
-import { truncate, capitalize } from "lodash";
+import { truncate } from "lodash";
 import { EyeIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { getDayFromDayEnum } from "../../utils";
 
 interface Props {
   userId?: string;
@@ -38,12 +39,17 @@ function GroupTable({
   pages,
 }: Props) {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const formatStaffNames = (staffs: Instructor[]): string => {
     const staffList = staffs
       .map((staff) => `${staff.f_name} ${staff.l_name}`)
       .join(",");
     return truncate(staffList, { length: 16, separator: "..." });
   };
+
+  const tableHeaders = t("feature.group_table.th_list", {
+    returnObjects: true,
+  }) as string[];
 
   return (
     <>
@@ -52,7 +58,7 @@ function GroupTable({
           <table className="w-full min-w-max table-auto text-left">
             <thead>
               <tr>
-                {TABLE_HEAD.map((head) => (
+                {tableHeaders.map((head) => (
                   <th
                     key={head}
                     className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
@@ -104,7 +110,7 @@ function GroupTable({
                       color="blue-gray"
                       className="font-medium"
                     >
-                      {`${capitalize(group.day)}, ${group.time_start} - ${group.time_end}`}
+                      {`${getDayFromDayEnum(group.day, i18n.language)}, ${group.time_start} - ${group.time_end}`}
                     </Typography>
                   </td>
                   <td className="p-4">
@@ -151,7 +157,7 @@ function GroupTable({
                         color="blue-gray"
                         className="font-medium"
                       >
-                        No staffs
+                        {t("feature.group_table.tr.no_staff")}
                       </Typography>
                     )}
                   </td>
@@ -174,7 +180,7 @@ function GroupTable({
                           onClick={() => navigate(`/group/${group.group_id}`)}
                         >
                           <EyeIcon className="w-5 h-5" />
-                          View
+                          {t("common.table.action.view")}
                         </MenuItem>
                         {handleSetGroupId && handleFormOpen && (
                           <MenuItem
@@ -185,7 +191,7 @@ function GroupTable({
                             }}
                           >
                             <PencilSquareIcon className="w-5 h-5" />
-                            Edit
+                            {t("common.table.action.edit")}
                           </MenuItem>
                         )}
                       </MenuList>
@@ -198,14 +204,15 @@ function GroupTable({
         </div>
         <div className="flex items-center justify-between border-t border-blue-gray-50 p-4">
           <Typography variant="small" color="blue-gray" className="font-normal">
-            Page {pages ? page : 0} of {pages}
+            {t("common.table.page.page")} {pages ? page : 0}{" "}
+            {t("common.table.page.of")} {pages}
           </Typography>
           <div className="flex gap-2">
             <Button variant="outlined" size="sm" onClick={handlePrevPage}>
-              Previous
+              {t("common.table.paginate.prev")}
             </Button>
             <Button variant="outlined" size="sm" onClick={handleNextPage}>
-              Next
+              {t("common.table.paginate.next")}
             </Button>
           </div>
         </div>

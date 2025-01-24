@@ -1,0 +1,460 @@
+{
+  "page": {
+    "login": {
+      "title": "Sign In",
+      "desc": "Computer Programming Laboratory, KMITL"
+    }
+  },
+  "layout": {
+    "default": {
+      "menu": {
+        "groups": "Groups",
+        "my_groups": "My Groups",
+        "av_groups": "Available Groups",
+        "admins": "Admins",
+        "sign_out": "Sign Out"
+      }
+    }
+  },
+  "feature": {
+    "login_form": {
+      "label": {
+        "username": "Username",
+        "password": "Password"
+      },
+      "placeholder": {
+        "username": "username",
+        "password": "password"
+      },
+      "button": {
+        "sign_in": "Sign In"
+      }
+    },
+    "group_table": {
+      "th_list": [
+        "No",
+        "Year",
+        "Semester",
+        "Class Date",
+        "Students",
+        "Instructor",
+        "Staffs",
+        "Actions"
+      ],
+      "tr": {
+        "no_staff": "No staffs"
+      }
+    },
+    "my_groups_list": {
+      "title": "My Groups",
+      "button": {
+        "add_group": "Add Group"
+      },
+      "filter": {
+        "year": "Year",
+        "all": "All"
+      }
+    },
+    "group_form": {
+      "title": {
+        "create": "Create Student Group",
+        "update": "Edit Student Group"
+      },
+      "label": {
+        "group_name": "Group Name",
+        "group_number": "Group No",
+        "dept": "Department",
+        "day_of_week": "Day of Week",
+        "class_time": "Class Time",
+        "year": "Year",
+        "semester": "Semester",
+        "staffs": "Staffs"
+      },
+      "error": {
+        "group_name": "Group name is required.",
+        "group_number": {
+          "required": "Group number is required.",
+          "number": "Group number must contain only number."
+        },
+        "dept": "Department is required.",
+        "day_of_week": "Day of week is required.",
+        "class_time": "Class time is required.",
+        "year": "Year is required.",
+        "semester": "Semester is required."
+      }
+    },
+    "available_group_list": {
+      "title": "Available Groups",
+      "filter": {
+        "instructor": "Instructor",
+        "staff": "Staff",
+        "year": "Year",
+        "semester": "Semester",
+        "class_date": "Class Date",
+        "all": "All"
+      }
+    },
+    "admin_list": {
+      "title": "Admins",
+      "button": {
+        "add_admin": "Add Admin"
+      }
+    },
+    "admin_table": {
+      "th_list": ["First Name", "Last Name"]
+    },
+    "admin_form": {
+      "title": "Create Admin",
+      "label": {
+        "username": "Username",
+        "f_name": "First Name",
+        "l_name": "Last Name",
+        "role": "Role",
+        "gender": "Gender",
+        "dept": "Department"
+      },
+      "error": {
+        "username": "Username is required.",
+        "f_name": "First Name is required.",
+        "l_name": "Last Name is required.",
+        "role": "Role is required.",
+        "gender": "Gender is required.",
+        "dept": "Department is required."
+      }
+    },
+    "group_detail": {
+      "title": "Group",
+      "tab": {
+        "exercises": "Exercises",
+        "students": "Students",
+        "logs": "Activity Logs"
+      }
+    },
+    "group_exercises": {
+      "label": {
+        "group_name": "Group Name",
+        "group_no": "Group No",
+        "year": "Year",
+        "semester": "Semester",
+        "class_date": "Class Date",
+        "instructor": "Instructor",
+        "dept": "Department",
+        "all_stu": "All Students",
+        "online_stu": "Online Students",
+        "allow_login": "Allow login",
+        "allow_profile": "Allow upload profile"
+      },
+      "button": {
+        "delete_group": "Delete Group",
+        "logout_all": "Logout All"
+      },
+      "modal": {
+        "delete": {
+          "title": "Delete Group?",
+          "msg1": "Are you sure you want to delete group",
+          "msg2": "This process cannot be undone."
+        }
+      },
+      "th_list": [
+        "Chapter",
+        "Score",
+        "Access Exercise",
+        "Allow Submit",
+        "Actions"
+      ]
+    },
+    "perm_form": {
+      "title": "Edit Permission",
+      "desc": "Chapter",
+      "label": {
+        "perm_selected": "Permission Selected",
+        "allow_exercise": "Access Exercise Permission",
+        "allow_submit": "Allow Submit Permission"
+      },
+      "radio": {
+        "always": "Always",
+        "timer": "Set timer",
+        "date_time": "Set date and time",
+        "deny": "Deny"
+      },
+      "perm_selected": {
+        "all": "All permissions",
+        "access": "Access Permission Only",
+        "submit": "Submit Permission Only",
+        "custom": "Custom Permissions"
+      },
+      "set_timer": {
+        "hour": "Hour",
+        "min": "Minute",
+        "sec": "Second",
+        "button": {
+          "add": "Add",
+          "min": "Minutes",
+          "hour": "Hours"
+        }
+      },
+      "date_time": {
+        "start": "Start date",
+        "end": "End date"
+      }
+    },
+    "exercise_pool": {
+      "title": "Chapter",
+      "level": "Level",
+      "button": {
+        "update": "Update",
+        "add_exercise": "Add Exercise"
+      },
+      "filter": {
+        "title": "Status",
+        "all": "All",
+        "selected": "Selected",
+        "not_selected": "Not Selected"
+      }
+    },
+    "exercise_form": {
+      "title": {
+        "add": "Add Exercise",
+        "edit": "Edit Exercise"
+      },
+      "desc": "Level",
+      "label": {
+        "exercise_name": "Exercise Name",
+        "desc": "Description",
+        "code": "Source Code",
+        "sug_const": "Suggested Keyword Constraints",
+        "user_const": "User defined Keyword Constraints"
+      },
+      "placeholder": {
+        "code": "Put your code here..."
+      },
+      "error": {
+        "exercise_name": "Name is required.",
+        "desc": "Content is required.",
+        "code": "Source code is required."
+      },
+      "button": {
+        "analyze": "Analyze Code"
+      },
+      "constraint": {
+        "no": "No constraints added yet.",
+        "add": "Add new keyword constraints",
+        "invalid": "Invalid Constraints Type"
+      }
+    },
+    "exercise_info": {
+      "title": "Chapter",
+      "button": {
+        "delete": "Delete",
+        "edit_exercise": "Edit Exercise",
+        "edit_testcase": "Edit Testcase"
+      },
+      "desc": "Level",
+      "code": "Source Code",
+      "constraint": {
+        "sug_const": "Suggested Keyword Constraints",
+        "user_const": "User defined Keyword Constraints"
+      },
+      "testcase": "Testcases",
+      "modal": {
+        "delete": {
+          "title": "Delete Exercise?",
+          "msg1": "Are you sure you want to delete exercise",
+          "msg2": "This process cannot be undone."
+        },
+        "testcase": {
+          "title": "Edit Testcase",
+          "testcase": "Testcase",
+          "show_stu": "Show to student",
+          "input": "Input",
+          "output": "Output",
+          "button": {
+            "add": "Add Testcase",
+            "save": "Save",
+            "run_save": "Run and Save"
+          }
+        }
+      }
+    },
+    "group_logs": {
+      "th_list": [
+        "Time Stampt",
+        "Remote IP",
+        "User Agent",
+        "Page Name",
+        "Username",
+        "Action"
+      ]
+    },
+    "group_students": {
+      "online": "Online",
+      "offline": "Offline",
+      "total": "Total",
+      "button": {
+        "add": "Add Student"
+      },
+      "th_list": {
+        "part1": ["Avatar", "Status", "Allow Submit", "Student ID", "Name"],
+        "lab": "Lab",
+        "part2": ["Total", "Midterm", "Actions"]
+      }
+    },
+    "student_detail": {
+      "title": "Student",
+      "label": {
+        "name": "Name",
+        "stu_id": "Student ID",
+        "nickname": "Nickname",
+        "gender": "Gender",
+        "dob": "Date of Birth",
+        "tel": "Tel",
+        "email": "Email",
+        "group_name": "Group Name",
+        "group_no": "Group No",
+        "status": "Status",
+        "allow_submit": "Allow Submit"
+      },
+      "button": {
+        "delete": "Delete Student",
+        "reset_password": "Reset Password",
+        "set_perm": "Set Permission"
+      },
+      "item": "Item",
+      "score": "Score",
+      "online": "Online",
+      "offline": "Offline",
+      "modal": {
+        "delete": {
+          "title": "Delete Student?",
+          "msg1": "Are you sure you want to delete student",
+          "msg2": "? This process cannot be undone.",
+          "confirm": "Delete"
+        },
+        "reset_password": {
+          "title": "Reset Student Password?",
+          "msg1": "Are you sure you want to reset student",
+          "msg2": "password to default ? This process cannot be undone.",
+          "confirm": "Reset"
+        }
+      }
+    },
+    "stu_perm_form": {
+      "title": "Edit Permission",
+      "label": "Allow Submit Permission"
+    },
+    "exercise_detail": {
+      "title": "Exercise",
+      "label": {
+        "chapter": "Chapter",
+        "problem": "Problem"
+      },
+      "submission": {
+        "title": "Submission History",
+        "submission": "Submission",
+        "times": "Submission",
+        "code": "Source Code",
+        "result": "Result",
+        "testcase": "Testcase",
+        "expect_op": "Expected Output",
+        "actual_op": "Actual Output",
+        "single_view": "Single View",
+        "compare_view": "Compare View",
+        "no_submission": "No submissions found at the moment.",
+        "submitted": "Submitted at",
+        "status": {
+          "title": "Status",
+          "accepted": "Accepted",
+          "wrong_answer": "Wrong Answer",
+          "error": "Error",
+          "pending": "Pending",
+          "rejected": "Rejected",
+          "not_valid": "Not Valid"
+        }
+      },
+      "button": {
+        "reject": "Reject Submission"
+      },
+      "modal": {
+        "title": "Reject Submission?",
+        "msg1": "Are you sure you want to reject student submission for chapter",
+        "msg2": "problem",
+        "msg3": "submiited by",
+        "msg4": "? This process cannot be undone.",
+        "confirm": "Confirm"
+      }
+    },
+    "profile": {
+      "title": "Profile",
+      "personal": {
+        "title": "Personal Information",
+        "nickname": "Nickname",
+        "dob": "Birth Date",
+        "gender": {
+          "title": "Gender",
+          "male": "Male",
+          "female": "Female",
+          "other": "Other"
+        }
+      },
+      "contact": {
+        "title": "Contact",
+        "dept": "Department",
+        "email": "Email",
+        "phone": "Phone Number"
+      },
+      "password": {
+        "title": "Reset Password",
+        "new_password": "New Password",
+        "confirm_password": "Confirm Password",
+        "current_password": "Current Password"
+      }
+    }
+  },
+  "common": {
+    "table": {
+      "page": {
+        "page": "Page",
+        "of": "of"
+      },
+      "paginate": {
+        "next": "Next",
+        "prev": "Previous"
+      },
+      "action": {
+        "view": "View",
+        "edit": "Edit",
+        "perm": "Permission"
+      },
+      "perm": {
+        "deny": "Deny",
+        "always": "Always",
+        "allow": "Allow"
+      }
+    },
+    "button": {
+      "submit": "Submit",
+      "delete": "delete",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "day": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    "month": {
+      "title": "Month",
+      "list": [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ]
+    },
+    "year": "Year"
+  }
+}

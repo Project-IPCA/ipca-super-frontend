@@ -6,6 +6,7 @@ import {
   DialogFooter,
 } from "@material-tailwind/react";
 import { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 
 type Type = "error" | "warn" | "default";
 
@@ -28,6 +29,7 @@ function ConfirmModal({
   handleClose,
   handleSubmit,
 }: Props) {
+  const { t } = useTranslation();
   const getColor = () => {
     switch (type) {
       case "error":
@@ -46,7 +48,7 @@ function ConfirmModal({
         <DialogBody>{description}</DialogBody>
         <DialogFooter>
           <Button variant="text" onClick={handleClose} className="mr-1">
-            Cancel
+            {t("common.button.cancel")}
           </Button>
           <Button variant="gradient" color={getColor()} onClick={handleSubmit}>
             {confirmLabel}

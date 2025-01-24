@@ -13,6 +13,7 @@ import {
   getProfile,
 } from "../profileForm/redux/profileFormSlice";
 import { GroupForm } from "../groupForm";
+import { useTranslation } from "react-i18next";
 
 export interface FilterForm {
   instructorId: string;
@@ -34,6 +35,7 @@ function AvailableGroupList() {
   const dispatch = useAppDispatch();
   const groups = useAppSelector(getAvailableGroups);
   const profile = useAppSelector(getProfile);
+  const { t } = useTranslation();
   const [page, setPage] = useState<number>(1);
   const [groupSelected, setGroupSelected] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState<boolean>(false);
@@ -121,7 +123,7 @@ function AvailableGroupList() {
         groupId={groupSelected}
       />
       <Typography variant="h3" className="pb-6">
-        Available Groups
+        {t("feature.available_group_list.title")}
       </Typography>
       <GroupFilter
         filterForm={filterForm}

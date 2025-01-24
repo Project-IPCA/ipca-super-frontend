@@ -7,8 +7,10 @@ import { logout } from "../redux/layoutSlice";
 import { useNavigate } from "react-router-dom";
 import { createElement } from "react";
 import { resetState } from "../../store/store";
+import { useTranslation } from "react-i18next";
 
 function Footer() {
+  const { t } = useTranslation();
   const LIST_ITEM_STYLES =
     "select-none hover:bg-gray-100 focus:bg-gray-100 active:bg-gray-100 hover:text-gray-900 focus:text-gray-900 active:text-gray-900 data-[selected=true]:text-gray-900";
   const dispatch = useAppDispatch();
@@ -16,7 +18,7 @@ function Footer() {
 
   const footerMenuItems = [
     {
-      label: "Sign Out",
+      label: t("layout.default.menu.sign_out"),
       icon: ArrowLeftStartOnRectangleIcon,
       path: "/login",
       next: async () => {
@@ -47,7 +49,7 @@ function Footer() {
                 strokeWidth: 2.5,
               })}
             </ListItemPrefix>
-            Sign Out
+            {menu.label}
           </ListItem>
         ))}
       </List>

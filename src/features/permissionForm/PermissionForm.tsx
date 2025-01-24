@@ -13,18 +13,14 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { updateChapterPermission } from "./redux/permissionFormSlice";
-import {
-  PERMISSION_SELECTED,
-  PERMISSION_VALUE,
-  TABS_VALUE,
-  TIME_RANGE,
-} from "./constants";
+import { PERMISSION_VALUE, TABS_VALUE, TIME_RANGE } from "./constants";
 import { ChapterData } from "../groupExercises/GroupExercises";
 import { useAppDispatch } from "../../hooks/store";
 import { ALLOW_TYPE, PERMISIION_PREFIX } from "../../constants/constants";
 import { fetchGroupExercises } from "../groupExercises/redux/groupExercisesSlice";
 import SinglePermission from "./components/SinglePermission";
 import { showToast } from "../../utils/toast";
+import { useTranslation } from "react-i18next";
 
 export interface ChapterPermission {
   timeDuration?: number | null;
@@ -40,6 +36,7 @@ interface Props {
 }
 
 function PermissionForm({ open, handleClose, chapterSelected }: Props) {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { groupId } = useParams();
 
@@ -231,15 +228,34 @@ function PermissionForm({ open, handleClose, chapterSelected }: Props) {
     }
   }, [open]);
 
+  const PERMISSION_SELECTED = [
+    {
+      label: t("feature.perm_form.perm_selected.all"),
+      value: PERMISSION_VALUE.all,
+    },
+    {
+      label: t("feature.perm_form.perm_selected.access"),
+      value: PERMISSION_VALUE.access,
+    },
+    {
+      label: t("feature.perm_form.perm_selected.submit"),
+      value: PERMISSION_VALUE.submit,
+    },
+    {
+      label: t("feature.perm_form.perm_selected.custom"),
+      value: PERMISSION_VALUE.custom,
+    },
+  ];
+
   return (
     <>
       <Dialog size="sm" open={open} handler={handleClose} className="p-4 ">
         <DialogHeader className="relative m-0 block">
           <Typography variant="h4" color="blue-gray">
-            Edit Permission
+            {t("feature.perm_form.title")}
           </Typography>
           <Typography className="mt-1 font-normal text-gray-600">
-            {`Chapter ${chapterSelected?.chapterIndex}. ${chapterSelected?.chapterName}`}
+            {`${t("feature.perm_form.desc")} ${chapterSelected?.chapterIndex}. ${chapterSelected?.chapterName}`}
           </Typography>
           <IconButton
             size="sm"
@@ -257,7 +273,7 @@ function PermissionForm({ open, handleClose, chapterSelected }: Props) {
               color="blue-gray"
               className="mb-2 text-left font-medium"
             >
-              Permission Selected
+              {t("feature.perm_form.label.perm_selected")}
             </Typography>
             <Select
               variant="outlined"
@@ -326,7 +342,7 @@ function PermissionForm({ open, handleClose, chapterSelected }: Props) {
         </DialogBody>
         <DialogFooter>
           <Button className="ml-auto" onClick={() => handleSubmit()}>
-            submit
+            {t("common.button.submit")}
           </Button>
         </DialogFooter>
       </Dialog>

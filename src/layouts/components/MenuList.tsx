@@ -14,6 +14,7 @@ import {
   ComputerDesktopIcon,
 } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   handleCloseDrawer: () => void;
@@ -22,6 +23,7 @@ interface Props {
 function MenuList({ handleCloseDrawer }: Props) {
   const [open, setOpen] = useState(0);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleOpen = (value: any) => {
     setOpen(open === value ? 0 : value);
@@ -32,21 +34,21 @@ function MenuList({ handleCloseDrawer }: Props) {
 
   const menuItems = [
     {
-      label: "Groups",
+      label: t("layout.default.menu.groups"),
       icon: UserGroupIcon,
       subItems: [
         {
-          label: "My Groups",
+          label: t("layout.default.menu.my_groups"),
           path: "/my-groups",
         },
         {
-          label: "Available Groups",
+          label: t("layout.default.menu.av_groups"),
           path: "/groups",
         },
       ],
     },
     {
-      label: "Admins",
+      label: t("layout.default.menu.admins"),
       icon: ComputerDesktopIcon,
       path: "/admins",
     },

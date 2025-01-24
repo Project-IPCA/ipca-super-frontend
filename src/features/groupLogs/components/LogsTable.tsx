@@ -1,9 +1,9 @@
 import { Card, Tooltip, Typography } from "@material-tailwind/react";
 import { ActivityLog } from "../GroupLogs";
-import { TABLE_HEAD } from "../constants";
 import LogRow from "./LogRow";
 import { format } from "date-fns";
 import { RefObject } from "react";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   logs: ActivityLog[];
@@ -11,6 +11,37 @@ interface Props {
 }
 
 function LogsTable({ logs, tableRef }: Props) {
+  const { t } = useTranslation();
+  const thList = t("feature.group_logs.th_list", {
+    returnObjects: true,
+  }) as string[];
+  const tableHeaders = [
+    {
+      name: thList[0],
+      size: 150,
+    },
+    {
+      name: thList[1],
+      size: 70,
+    },
+    {
+      name: thList[2],
+      size: 150,
+    },
+    {
+      name: thList[3],
+      size: 140,
+    },
+    {
+      name: thList[4],
+      size: 70,
+    },
+    {
+      name: thList[5],
+      size: 500,
+    },
+  ];
+
   return (
     <>
       <Card className="h-full w-full shadow-none border-[1.5px]">
@@ -21,7 +52,7 @@ function LogsTable({ logs, tableRef }: Props) {
           <table className="w-full min-w-max text-left border-collapse">
             <thead className="sticky top-0 z-10">
               <tr>
-                {TABLE_HEAD.map((head) => (
+                {tableHeaders.map((head) => (
                   <th
                     key={head.name}
                     className={`w-[${head.size}px] border-b border-blue-gray-100 bg-blue-gray-50 p-2 text-center`}

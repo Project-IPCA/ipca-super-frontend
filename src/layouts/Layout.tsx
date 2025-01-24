@@ -12,6 +12,7 @@ import {
   fetchProfile,
   getProfile,
 } from "../features/profileForm/redux/profileFormSlice";
+import Multilingual from "./components/Multilingual";
 
 function Layout() {
   const dispatch = useAppDispatch();
@@ -34,16 +35,21 @@ function Layout() {
         firstName={profile.profile.f_name}
         lastName={profile.profile.l_name}
       />
-      <Card className="h-screen fixed max-w-[20rem] mx-auto p-6 shadow-md overflow-scroll z-20 lg:block hidden">
-        <Header />
-        <Profile
-          profileImage={profile.profile.avatar}
-          firstName={profile.profile.f_name}
-          lastName={profile.profile.l_name}
-          handleCloseDrawer={handleCloseDrawer}
-        />
-        <MenuList handleCloseDrawer={handleCloseDrawer} />
-        <Footer />
+      <Card className="h-screen fixed max-w-[20rem] mx-auto p-6 shadow-md overflow-scroll z-20 lg:flex lg:flex-col justify-between hidden">
+        <div>
+          <Header />
+          <Profile
+            profileImage={profile.profile.avatar}
+            firstName={profile.profile.f_name}
+            lastName={profile.profile.l_name}
+            handleCloseDrawer={handleCloseDrawer}
+          />
+          <MenuList handleCloseDrawer={handleCloseDrawer} />
+          <Footer />
+        </div>
+        <div>
+          <Multilingual />
+        </div>
       </Card>
       <Navbar className="fixed top-0 z-[1000] h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4 lg:hidden block">
         <div className="flex text-blue-gray-900  h-full">

@@ -2,6 +2,7 @@ import { Button, Chip, Typography } from "@material-tailwind/react";
 import { GroupChapterPermission } from "../redux/studentDetailSlice";
 import { LockClosedIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   studentId: string;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 function ChapterListCard({ chapterList, studentId }: Props) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const getItemColor = (
     isSubmit: boolean,
@@ -42,14 +44,18 @@ function ChapterListCard({ chapterList, studentId }: Props) {
             </div>
             <div className="flex items-center gap-x-2 lg:mb-0 mb-4">
               <Typography variant="paragraph" className="text-sm">
-                Allow Submit
+                {t("feature.student_detail.label.allow_submit")}
               </Typography>
               <Chip
                 className="w-fit"
                 variant="ghost"
                 color={chapter.allow_submit ? "green" : "red"}
                 size="sm"
-                value={chapter.allow_submit ? "ALLOW" : "DENY"}
+                value={
+                  chapter.allow_submit
+                    ? t("common.table.perm.allow")
+                    : t("common.table.perm.deny")
+                }
               />
             </div>
           </div>
@@ -73,14 +79,18 @@ function ChapterListCard({ chapterList, studentId }: Props) {
                 className="w-16 h-16 flex flex-col justify-center items-center !p-2"
                 key={`${item.chapter_idx}.${item.item_idx}`}
               >
-                <span className="block mb-1">Item {item.item_idx}</span>
+                <span className="block mb-1">
+                  {t("feature.student_detail.item")} {item.item_idx}
+                </span>
                 <span className="block">
                   {item.marking}/{item.full_mark}
                 </span>
               </Button>
             ))}
             <div className="text-center ml-auto md:block hidden">
-              <Typography variant="h6">Score</Typography>
+              <Typography variant="h6">
+                {t("feature.student_detail.score")}
+              </Typography>
               <Typography variant="h6">
                 {chapter.items.reduce((score, item) => score + item.marking, 0)}
                 /{chapter.chapter_full_mark}

@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import ExerciseCard from "./components/ExerciseCard";
 import { ExerciseForm } from "../exerciseForm";
 import { showToast } from "../../utils/toast";
+import { useTranslation } from "react-i18next";
 
 export interface FormUseData {
   chapterId: string;
@@ -25,6 +26,7 @@ function ExercisesPool() {
     chapterId: "",
     level: "",
   });
+  const { t } = useTranslation();
   const { groupId, chapterIdx } = useParams();
   const key = `${groupId}.${chapterIdx}`;
 
@@ -71,7 +73,8 @@ function ExercisesPool() {
           <ArrowLeftIcon className="w-5 h-5" onClick={() => navigate(-1)} />
         </IconButton>
         <Typography variant="h3">
-          Chapter {chapterIdx} {exercisesPool?.chapter_name}
+          {t("feature.exercise_pool.title")} {chapterIdx}{" "}
+          {exercisesPool?.chapter_name}
         </Typography>
       </div>
       <div className="space-y-6">

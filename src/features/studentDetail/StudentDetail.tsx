@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import StudentSummary from "./components/StudentSummary";
 import ChapterListCard from "./components/ChapterListCard";
 import { showToast } from "../../utils/toast";
+import { useTranslation } from "react-i18next";
 
 export interface ExerciseData {
   studentId: string;
@@ -19,6 +20,7 @@ export interface ExerciseData {
 }
 
 function StudentDetail() {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const studentState = useAppSelector(getStudentDetailState);
@@ -50,7 +52,9 @@ function StudentDetail() {
         <IconButton variant="text">
           <ArrowLeftIcon className="w-5 h-5" onClick={() => navigate(-1)} />
         </IconButton>
-        <Typography variant="h3">Student {studentInfo?.kmitl_id}</Typography>
+        <Typography variant="h3">
+          {t("feature.exercise_detail.title")} {studentInfo?.kmitl_id}
+        </Typography>
       </div>
       <StudentSummary studentInfo={studentInfo} />
       <Card

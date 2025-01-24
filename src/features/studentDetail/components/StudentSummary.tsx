@@ -21,12 +21,14 @@ import { useState } from "react";
 import { StudentPermissionForm } from "../../studentPermissionForm";
 import { format } from "date-fns";
 import { showToast } from "../../../utils/toast";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   studentInfo: StudentInfo | null;
 }
 
 function StudentSummary({ studentInfo }: Props) {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [openDelete, setOpenDelete] = useState<boolean>(false);
@@ -71,36 +73,36 @@ function StudentSummary({ studentInfo }: Props) {
     <>
       <ConfirmModal
         open={openDelete}
-        title="Delete Student?"
+        title={t("feature.student_detail.modal.delete.title")}
         description={
           <>
-            Are you sure you want to delete student{" "}
+            {t("feature.student_detail.modal.delete.msg1")}{" "}
             <b>
               {studentInfo?.f_name} {studentInfo?.l_name} (
               {studentInfo?.kmitl_id})
             </b>
-            ? This process cannot be undone.
+            {t("feature.student_detail.modal.delete.msg2")}
           </>
         }
-        confirmLabel="Delete"
+        confirmLabel={t("feature.student_detail.modal.delete.confirm")}
         type="error"
         handleClose={handleDeleteClose}
         handleSubmit={handleDeleteStudent}
       />
       <ConfirmModal
         open={openReset}
-        title="Reset Student Password?"
+        title={t("feature.student_detail.modal.reset_password.title")}
         description={
           <>
-            Are you sure you want to reset student{" "}
+            {t("feature.student_detail.modal.reset_password.msg1")}{" "}
             <b>
               {studentInfo?.f_name} {studentInfo?.l_name} (
               {studentInfo?.kmitl_id})
             </b>{" "}
-            password to default ? This process cannot be undone.
+            {t("feature.student_detail.modal.reset_password.msg2")}
           </>
         }
-        confirmLabel="Reset"
+        confirmLabel={t("feature.student_detail.modal.reset_password.confirm")}
         type="error"
         handleClose={handleResetClose}
         handleSubmit={handleResetStudentPassword}
@@ -126,36 +128,37 @@ function StudentSummary({ studentInfo }: Props) {
             <div className="h-full space-y-2">
               <div className="flex justify-start flex-wrap items-center gap-x-4">
                 <LabelValueText
-                  label="Name"
+                  label={t("feature.student_detail.label.name")}
                   value={`${studentInfo?.f_name} ${studentInfo?.l_name}`}
                 />
                 <LabelValueText
-                  label="Student ID"
+                  label={t("feature.student_detail.label.stu_id")}
                   value={studentInfo?.kmitl_id}
                 />
               </div>
               <div className="flex justify-start flex-wrap items-center gap-x-4">
                 <LabelValueText
-                  label="Nickname"
+                  label={t("feature.student_detail.label.nickname")}
                   value={studentInfo?.nickname}
                 />
                 <LabelValueText
-                  label="Gender"
+                  label={t("feature.student_detail.label.gender")}
                   value={capitalize(studentInfo?.gender)}
                 />
               </div>
               <LabelValueText
-                label="Date of Birth"
+                label={t("feature.student_detail.label.dob")}
                 value={
-                  studentInfo?.dob
-                    ? format(studentInfo.dob, "MMMM dd, yyyy")
-                    : ""
+                  studentInfo?.dob ? format(studentInfo.dob, "yyyy-MM-dd") : ""
                 }
               />
               <div className="flex justify-start flex-wrap items-center gap-x-4">
-                <LabelValueText label="Tel" value={studentInfo?.tel} />
                 <LabelValueText
-                  label="Email"
+                  label={t("feature.student_detail.label.tel")}
+                  value={studentInfo?.tel}
+                />
+                <LabelValueText
+                  label={t("feature.student_detail.label.email")}
                   value={capitalize(studentInfo?.email)}
                 />
               </div>
@@ -168,36 +171,40 @@ function StudentSummary({ studentInfo }: Props) {
               color="red"
               onClick={() => handleDeleteOpen()}
             >
-              Delete Student
+              {t("feature.student_detail.button.delete")}
             </Button>
             <Button
               size="sm"
               variant="outlined"
               onClick={() => handleResetOpen()}
             >
-              Reset Password
+              {t("feature.student_detail.button.reset_password")}
             </Button>
           </CardFooter>
         </Card>
         <Card className="border-[1px]   lg:w-2/5 w-full">
           <CardBody className="min-h-36 space-y-2">
             <LabelValueText
-              label="Group Name"
+              label={t("feature.student_detail.label.group_name")}
               value={studentInfo?.group.name}
             />
             <LabelValueText
-              label="Group No"
+              label={t("feature.student_detail.label.group_no")}
               value={studentInfo?.group.number}
             />
             <div className="flex gap-2">
               <Typography className="font-semibold" color="blue-gray">
-                Status
+                {t("feature.student_detail.label.status")}
               </Typography>
               <Chip
                 variant="ghost"
                 color={studentInfo?.is_online ? "green" : "red"}
                 size="sm"
-                value={studentInfo?.is_online ? "Online" : "Ofline"}
+                value={
+                  studentInfo?.is_online
+                    ? t("feature.student_detail.online")
+                    : t("feature.student_detail.offline")
+                }
                 icon={
                   <span
                     className={`mx-auto mt-1 block h-2 w-2 rounded-full ${
@@ -209,13 +216,17 @@ function StudentSummary({ studentInfo }: Props) {
             </div>
             <div className="flex gap-2">
               <Typography className="font-semibold" color="blue-gray">
-                Allow Submit
+                {t("feature.student_detail.label.allow_submit")}
               </Typography>
               <Chip
                 variant="ghost"
                 color={studentInfo?.can_submit ? "green" : "red"}
                 size="sm"
-                value={studentInfo?.can_submit ? "Allow" : "Deny"}
+                value={
+                  studentInfo?.can_submit
+                    ? t("common.table.perm.allow")
+                    : t("common.table.perm.deny")
+                }
               />
             </div>
           </CardBody>
@@ -225,7 +236,7 @@ function StudentSummary({ studentInfo }: Props) {
               size="sm"
               onClick={() => handlePermFormOpen()}
             >
-              Set Permission
+              {t("feature.student_detail.button.set_perm")}
             </Button>
           </CardFooter>
         </Card>

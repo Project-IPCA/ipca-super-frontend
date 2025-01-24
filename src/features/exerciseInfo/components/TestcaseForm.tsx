@@ -19,6 +19,7 @@ import {
 import { useAppDispatch } from "../../../hooks/store";
 import TestcaseInfo from "./TestcaseInfo";
 import { showToast } from "../../../utils/toast";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   open: boolean;
@@ -28,6 +29,7 @@ interface Props {
 }
 
 function TestcaseForm({ open, handleToggle, exerciseId, testcaseList }: Props) {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [jobId, setJobId] = useState<string>();
   const defaultTestcase = {
@@ -106,41 +108,41 @@ function TestcaseForm({ open, handleToggle, exerciseId, testcaseList }: Props) {
   };
 
   useEffect(() => {
-      if (jobId && exerciseId) {
-        const evtSource = new EventSource(
-          `${VITE_IPCA_RT}/testcase-result/${jobId}`
-        );
+    if (jobId && exerciseId) {
+      const evtSource = new EventSource(
+        `${VITE_IPCA_RT}/testcase-result/${jobId}`,
+      );
 
-        const entTimeOut = setTimeout(() => {
-          if (evtSource) {
-            evtSource.close();
-            dispatch(fetchExercisesInfo(exerciseId));
-          }
-        }, 3000);
-
-        evtSource.onmessage = (event) => {
-          if (event.data) {
-            if (exerciseId) {
-              dispatch(fetchExercisesInfo(exerciseId));
-              evtSource.close();
-              clearTimeout(entTimeOut);
-            }
-          }
-        };
-  
-        return () => {
+      const entTimeOut = setTimeout(() => {
+        if (evtSource) {
           evtSource.close();
-          clearTimeout(entTimeOut);
-        };
-      }
-    }, [jobId, exerciseId]);
+          dispatch(fetchExercisesInfo(exerciseId));
+        }
+      }, 3000);
+
+      evtSource.onmessage = (event) => {
+        if (event.data) {
+          if (exerciseId) {
+            dispatch(fetchExercisesInfo(exerciseId));
+            evtSource.close();
+            clearTimeout(entTimeOut);
+          }
+        }
+      };
+
+      return () => {
+        evtSource.close();
+        clearTimeout(entTimeOut);
+      };
+    }
+  }, [jobId, exerciseId]);
 
   return (
     <>
       <Dialog size="xl" open={open} handler={handleToggle} className="p-4">
         <DialogHeader>
           <Typography variant="h4" color="blue-gray">
-            Edit Testcase
+            {t("feature.exercise_info.modal.testcase.title")}
           </Typography>
           <IconButton
             size="sm"
@@ -173,7 +175,7 @@ function TestcaseForm({ open, handleToggle, exerciseId, testcaseList }: Props) {
             }}
           >
             <PlusIcon className="w-5 h-5" />
-            Add testcase
+            {t("feature.exercise_info.modal.testcase.button.add")}
           </Button>
         </DialogBody>
         <DialogFooter className="space-x-2">
@@ -183,7 +185,7 @@ function TestcaseForm({ open, handleToggle, exerciseId, testcaseList }: Props) {
               handleToggle();
             }}
           >
-            Save
+            {t("feature.exercise_info.modal.testcase.button.save")}
           </Button>
         </DialogFooter>
       </Dialog>
