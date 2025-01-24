@@ -31,12 +31,18 @@ interface Staff {
   supervisor_id: string;
 }
 
+interface Department {
+  dept_id: string;
+  name_th: string;
+  name_en: string;
+}
+
 export interface GroupData {
   name: string;
   allow_login: boolean;
   allow_upload_profile: boolean;
   day: string;
-  department: string;
+  department: Department;
   group_chapter_permissions: GroupChapterPermission[];
   group_id: string;
   group_no: number;

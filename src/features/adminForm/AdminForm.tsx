@@ -29,7 +29,7 @@ import {
 } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { AsyncSelect } from "../../components";
-import { GENDER_LIST, ROLE_LIST } from "../../constants/constants";
+import { GENDER_LIST, LANGUAGE, ROLE_LIST } from "../../constants/constants";
 import { useTranslation } from "react-i18next";
 import i18n from "../../locales";
 import { getGenderFromEnum, getRoleFromEnum } from "../../utils";
@@ -355,7 +355,7 @@ function AdminForm({ open, onClose }: Props) {
                   >
                     {departments.map((dept) => (
                       <Option key={dept.dept_id} value={dept.dept_id}>
-                        {dept.dept_name}
+                        {i18n.language === LANGUAGE.th?dept.name_th:dept.name_en}
                       </Option>
                     ))}
                   </AsyncSelect>

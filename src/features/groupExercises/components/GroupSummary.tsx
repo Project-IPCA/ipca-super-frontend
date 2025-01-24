@@ -162,7 +162,7 @@ function GroupSummary({ groupData }: Props) {
           <CardBody className="space-y-2">
             <LabelValueText
               label={t("feature.group_exercises.label.dept")}
-              value={groupData?.department}
+              value={i18n.language === LANGUAGE.th?groupData?.department.name_th:groupData?.department.name_en}
             />
             <LabelValueText
               label={t("feature.group_exercises.label.all_stu")}

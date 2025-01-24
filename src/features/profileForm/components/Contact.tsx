@@ -4,6 +4,8 @@ import { ProfileInfo } from "../ProfileForm";
 import { Dept, ProfileData } from "../redux/profileFormSlice";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import i18n from "../../../locales";
+import { LANGUAGE } from "../../../constants/constants";
 
 interface Props {
   register: UseFormRegister<ProfileInfo>;
@@ -40,7 +42,7 @@ function Contact({ register, setValue, formData }: Props) {
         >
           {depts.map((item, index) => (
             <Option key={index} value={item.dept_id}>
-              {item.name}
+              {i18n.language === LANGUAGE.th?item.name_th:item.name_en}
             </Option>
           ))}
         </Select>

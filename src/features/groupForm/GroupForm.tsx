@@ -17,6 +17,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import {
   AVAILABLE_TIME,
   DAY_OF_WEEK,
+  LANGUAGE,
   SEMESTER,
 } from "../../constants/constants";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
@@ -207,13 +208,15 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
     onClose();
   };
 
+  console.log(departments)
+
   return (
     <>
       <Dialog size="sm" open={open} handler={onClose} className="p-4 !z-[500]">
         <DialogHeader className="relative m-0 block">
           <Typography variant="h4" color="blue-gray">
             {groupId
-              ? t("feature.group_form.title.edit")
+              ? t("feature.group_form.title.update")
               : t("feature.group_form.title.create")}
           </Typography>
           <IconButton
@@ -315,7 +318,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
                     >
                       {departments.map((dept) => (
                         <Option key={dept.dept_id} value={dept.dept_id}>
-                          {dept.dept_name}
+                          {i18n.language === LANGUAGE.th?dept.name_th:dept.name_en}
                         </Option>
                       ))}
                     </AsyncSelect>
