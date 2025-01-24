@@ -18,7 +18,8 @@ interface Staff {
 
 interface Department {
   dept_id: string;
-  dept_name: string;
+  name_th: string;
+  name_en: string;
 }
 
 interface Group {

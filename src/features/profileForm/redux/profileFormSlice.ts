@@ -19,7 +19,8 @@ interface ProfileInfo {
 
 export interface Dept {
   dept_id: string;
-  name: string;
+  name_th: string;
+  name_en: string;
 }
 
 interface Selected {
@@ -45,7 +46,8 @@ const initialState: ProfileState = {
       avatar: "",
       dept: {
         dept_id: "",
-        name: "",
+        name_th: "",
+        name_en: "",
       },
       dob: "",
       email: "",

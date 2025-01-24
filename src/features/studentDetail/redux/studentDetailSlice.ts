@@ -6,7 +6,8 @@ import axiosInstance from "../../../utils/axios";
 
 interface Department {
   dept_id: string;
-  name: string;
+  name_th: string;
+  name_en: string;
 }
 
 interface Group {

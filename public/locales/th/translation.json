@@ -249,7 +249,7 @@
       "title": "บทที่",
       "button": {
         "delete": "ลบโจทย์",
-        "edit_exercise": "แก้ไขโจทย์่",
+        "edit_exercise": "แก้ไขโจทย์",
         "edit_testcase": "แก้ไขเทสเคส"
       },
       "desc": "ระดับ",
