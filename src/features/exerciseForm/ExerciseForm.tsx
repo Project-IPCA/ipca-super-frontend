@@ -38,6 +38,8 @@ import {
 import axiosInstance from "../../utils/axios";
 import axios from "axios";
 import { showToast } from "../../utils/toast";
+import { useTranslation } from "react-i18next";
+import i18n from "../../locales";
 
 interface Props {
   open: boolean;
@@ -103,14 +105,20 @@ interface CheckKeywordReponse {
 type ConstraintType = "eq" | "me" | "le" | "na";
 
 const formDataSchema = yup.object({
-  name: yup.string().required("Name is required."),
-  sourecode: yup.string().required("Source code is required."),
+  name: yup
+    .string()
+    .required(i18n.t("feature.exercise_form.error.exercise_name")),
+  sourecode: yup.string().required(i18n.t("feature.exercise_form.error.code")),
   content: yup
     .string()
-    .required("Content is required.")
-    .test("non-empty", "Content is required.", (value: string) => {
-      return !!(value && value !== "<p><br></p>");
-    }),
+    .required(i18n.t("feature.exercise_form.error.desc"))
+    .test(
+      "non-empty",
+      i18n.t("feature.exercise_form.error.desc"),
+      (value: string) => {
+        return !!(value && value !== "<p><br></p>");
+      },
+    ),
 });
 
 export type FormData = yup.InferType<typeof formDataSchema>;
@@ -136,6 +144,7 @@ const defaultConstraints: IKeywordConstraints = {
 };
 
 function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const error = useAppSelector(getExerciseFormError);
   const exerciseInfoState = useAppSelector(getExercisesInfoState);
@@ -201,16 +210,16 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
           .filter(
             ([, val]) =>
               val.length > 0 &&
-              val.some((item: CheckUserConstraintData) => !item.is_passed)
+              val.some((item: CheckUserConstraintData) => !item.is_passed),
           )
           .reduce(
             (acc, [key, val]) => ({
               ...acc,
               [key]: val.filter(
-                (item: CheckUserConstraintData) => !item.is_passed
+                (item: CheckUserConstraintData) => !item.is_passed,
               ),
             }),
-            {} as Record<string, CheckUserConstraintData[]>
+            {} as Record<string, CheckUserConstraintData[]>,
           );
         Object.entries(errConstraints).map(([key, val]) => {
           val.map((data: CheckUserConstraintData) => {
@@ -271,7 +280,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
           fetchExercisesPool({
             groupId: groupId,
             chapterIdx: parseInt(chapterIdx),
-          })
+          }),
         );
       }
       if (exerciseId) {
@@ -310,7 +319,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
   useEffect(() => {
     if (jobId && exerciseId) {
       const evtSource = new EventSource(
-        `${VITE_IPCA_RT}/testcase-result/${jobId}`
+        `${VITE_IPCA_RT}/testcase-result/${jobId}`,
       );
 
       const entTimeOut = setTimeout(() => {
@@ -341,7 +350,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
     key: keyof UserConstraint,
     action: UserConstraintAction,
     data?: UserConstraintData,
-    index?: number
+    index?: number,
   ) => {
     const currentItems = [...constraints.user_defined_constraints[key]];
 
@@ -433,10 +442,12 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
       >
         <DialogHeader className="relative m-0 block">
           <Typography variant="h4" color="blue-gray">
-            {exerciseId ? "Edit Exercise" : "Add Exercise"}
+            {exerciseId
+              ? t("feature.exercise_form.title.edit")
+              : t("feature.exercise_form.title.add")}
           </Typography>
           <Typography className="mt-1 font-normal text-gray-600">
-            {`Level ${formUseData.level}`}
+            {`${t("feature.exercise_form.desc")} ${formUseData.level}`}
           </Typography>
           <IconButton
             size="sm"
@@ -460,14 +471,14 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
               color="blue-gray"
               className="mb-2 text-left font-medium"
             >
-              Exercise Name
+              {t("feature.exercise_form.label.exercise_name")}
             </Typography>
             <Input
               {...register("name")}
               crossOrigin=""
               color="gray"
               size="lg"
-              placeholder="Group Name"
+              placeholder={t("feature.exercise_form.label.exercise_name")}
               error={!!errors.name}
               className={`  ${
                 errors.name
@@ -492,7 +503,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
               color="blue-gray"
               className="mb-2 text-left font-medium"
             >
-              Description
+              {t("feature.exercise_form.label.desc")}
             </Typography>
             <TextEditor
               value={formData.content}
@@ -515,14 +526,14 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
                 color="blue-gray"
                 className="text-left font-medium"
               >
-                Source Code
+                {t("feature.exercise_form.label.code")}
               </Typography>
               <Button
                 size="sm"
                 variant="outlined"
                 onClick={handleSubmit(analyzeKeywordList)}
               >
-                Analyze Code
+                {t("feature.exercise_form.button.analyze")}
               </Button>
             </div>
             <Card
@@ -540,7 +551,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
                 value={formData.sourecode}
                 extensions={[python()]}
                 onChange={(val) => setValue("sourecode", val)}
-                placeholder="Put your code here..."
+                placeholder={t("feature.exercise_form.placeholder.code")}
               />
             </Card>
             <Typography
@@ -558,7 +569,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
                 color="blue-gray"
                 className="text-left font-medium mb-2"
               >
-                Suggested Keyword Constraints
+                {t("feature.exercise_form.label.sug_const")}
               </Typography>
               <KeywordConstraints
                 constraintsType="suggested"
@@ -573,7 +584,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
                 color="blue-gray"
                 className="text-left font-medium mb-2"
               >
-                User defined Keyword Constraints
+                {t("feature.exercise_form.label.user_const")}
               </Typography>
               <KeywordConstraints
                 constraintsType="user"
@@ -586,7 +597,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
         </DialogBody>
         <DialogFooter className="space-x-2">
           <Button className="ml-auto" onClick={handleSubmit(onSubmit)}>
-            submit
+            {t("common.button.submit")}
           </Button>
         </DialogFooter>
       </Dialog>

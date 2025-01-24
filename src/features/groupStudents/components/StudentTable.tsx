@@ -17,6 +17,7 @@ import { LabInfo, Student } from "../redux/GroupStudentsSlice";
 import { profileNone } from "../../../assets";
 import { StudentData } from "../GroupStudents";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   page: number;
@@ -39,22 +40,20 @@ function StudentTable({
   handleSetStudent,
   handleChangePage,
 }: Props) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
+  const tableHeadersP1 = t("feature.group_students.th_list.part1", {
+    returnObjects: true,
+  }) as string[];
+  const tableHeadersP2 = t("feature.group_students.th_list.part2", {
+    returnObjects: true,
+  }) as string[];
   const getTableHeader = () => {
     const labs = labInfo.map(
-      (lab) => `Lab ${lab.chapter_idx} (${lab.full_mark})`
+      (lab) =>
+        `${t("feature.group_students.th_list.lab")} ${lab.chapter_idx} (${lab.full_mark})`,
     );
-    return [
-      "Avatar",
-      "Status",
-      "Allow Submit",
-      "Student ID",
-      "Name",
-      ...labs,
-      "Total",
-      "Midterm",
-      "Actions",
-    ];
+    return [...tableHeadersP1, ...labs, ...tableHeadersP2];
   };
 
   return (
@@ -98,8 +97,8 @@ function StudentTable({
                       size="sm"
                       value={
                         onlineStudent.includes(student.stu_id)
-                          ? "Online"
-                          : "Ofline"
+                          ? t("feature.group_students.online")
+                          : t("feature.group_students.offline")
                       }
                       icon={
                         <span
@@ -118,7 +117,11 @@ function StudentTable({
                       variant="ghost"
                       color={student.can_submit ? "green" : "red"}
                       size="sm"
-                      value={student.can_submit ? "Allow" : "Deny"}
+                      value={
+                        student.can_submit
+                          ? t("common.table.perm.allow")
+                          : t("common.table.perm.deny")
+                      }
                     />
                   </td>
                   <td className="p-4">
@@ -158,7 +161,7 @@ function StudentTable({
                     >
                       {Object.values(student.chapter_score).reduce(
                         (total, value) => total + value,
-                        0
+                        0,
                       )}
                     </Typography>
                   </td>
@@ -185,7 +188,7 @@ function StudentTable({
                           onClick={() => navigate(`/student/${student.stu_id}`)}
                         >
                           <EyeIcon className="w-5 h-5" />
-                          View
+                          {t("common.table.action.view")}
                         </MenuItem>
                         <MenuItem
                           className="flex justify-start items-center gap-2"
@@ -199,7 +202,7 @@ function StudentTable({
                           }}
                         >
                           <Cog6ToothIcon className="w-5 h-5" />
-                          Permission
+                          {t("common.table.action.perm")}
                         </MenuItem>
                       </MenuList>
                     </Menu>
@@ -211,7 +214,8 @@ function StudentTable({
         </div>
         <div className="flex items-center justify-between border-t border-blue-gray-50 p-4">
           <Typography variant="small" color="blue-gray" className="font-normal">
-            Page {page} of {pages}
+            {t("common.table.page.page")} {page} {t("common.table.page.of")}{" "}
+            {pages}
           </Typography>
           <div className="flex gap-2">
             <Button
@@ -219,14 +223,14 @@ function StudentTable({
               size="sm"
               onClick={() => handleChangePage("prev")}
             >
-              Previous
+              {t("common.table.paginate.prev")}
             </Button>
             <Button
               variant="outlined"
               size="sm"
               onClick={() => handleChangePage("next")}
             >
-              Next
+              {t("common.table.paginate.next")}
             </Button>
           </div>
         </div>

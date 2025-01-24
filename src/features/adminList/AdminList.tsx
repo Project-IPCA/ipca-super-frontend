@@ -4,12 +4,14 @@ import { AdminForm } from "../adminForm";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import { fetchStaffs, getStaffs } from "../groupForm/redux/groupFormSlice";
 import { AdminTable } from "../adminTable";
+import { useTranslation } from "react-i18next";
 
 function AdminList() {
   const dispatch = useAppDispatch();
   const staffs = useAppSelector(getStaffs);
   const [formOpen, setFormOpen] = useState<boolean>(false);
   const initialized = useRef(false);
+  const { t } = useTranslation();
 
   const handleFormClose = () => {
     setFormOpen(false);
@@ -26,7 +28,7 @@ function AdminList() {
     <>
       <AdminForm open={formOpen} onClose={handleFormClose} />
       <Typography variant="h3" className="pb-6">
-        Admins
+        {t("feature.admin_list.title")}
       </Typography>
       <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-0 items-center pb-4">
         <Button
@@ -34,7 +36,7 @@ function AdminList() {
           size="md"
           onClick={() => setFormOpen(true)}
         >
-          Add Admin
+          {t("feature.admin_list.button.add_admin")}
         </Button>
       </div>
       <AdminTable staffs={staffs} />

@@ -28,12 +28,15 @@ import {
 import { showToast } from "../../../utils/toast";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { LANGUAGE } from "../../../constants/constants";
 
 interface Props {
   groupData: GroupData | null;
 }
 
 function GroupSummary({ groupData }: Props) {
+  const { t, i18n } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const formatTime = (timeString: string) => {
@@ -49,7 +52,7 @@ function GroupSummary({ groupData }: Props) {
   const handleLogoutAll = async () => {
     if (groupData?.group_id) {
       const resultAction = await dispatch(
-        logoutAllStudents(groupData.group_id)
+        logoutAllStudents(groupData.group_id),
       );
       if (logoutAllStudents.fulfilled.match(resultAction)) {
         showToast({
@@ -66,7 +69,7 @@ function GroupSummary({ groupData }: Props) {
         updateAllowGroupLogin({
           groupId: groupData?.group_id,
           allow: !groupData?.allow_login,
-        })
+        }),
       );
     }
   };
@@ -77,7 +80,7 @@ function GroupSummary({ groupData }: Props) {
         updateAllowGroupUploadProfile({
           groupId: groupData?.group_id,
           allow: !groupData?.allow_upload_profile,
-        })
+        }),
       );
     }
   };
@@ -100,14 +103,16 @@ function GroupSummary({ groupData }: Props) {
     <>
       <ConfirmModal
         open={openDelete}
-        title="Delete Group?"
+        title={t("feature.group_exercises.modal.delete.title")}
         description={
           <>
-            Are you sure you want to delete group <b>{groupData?.name}</b>? This
-            process cannot be undone.
+            {t("feature.group_exercises.modal.delete.msg1")}{" "}
+            <b>{groupData?.name}</b>
+            {i18n.language === LANGUAGE.en ? "?" : ""}{" "}
+            {t("feature.group_exercises.modal.delete.msg2")}
           </>
         }
-        confirmLabel="Delete"
+        confirmLabel={t("common.button.delete")}
         type="error"
         handleClose={handleDeleteClose}
         handleSubmit={onDeleteGroup}
@@ -115,23 +120,32 @@ function GroupSummary({ groupData }: Props) {
       <div className="flex lg:flex-row flex-col gap-x-4 lg:gap-y-0 gap-y-3 w-full">
         <Card className="lg:w-1/3 w-full border-[1px] min-h-56">
           <CardBody className="space-y-2">
-            <LabelValueText label={"Group Name"} value={groupData?.name} />
             <LabelValueText
-              label={"Group No"}
+              label={t("feature.group_exercises.label.group_name")}
+              value={groupData?.name}
+            />
+            <LabelValueText
+              label={t("feature.group_exercises.label.group_no")}
               value={groupData?.group_no.toString()}
             />
             <div className="flex justify-start flex-wrap items-center gap-x-4">
-              <LabelValueText label={"Year"} value={groupData?.year} />
-              <LabelValueText label={"Semester"} value={groupData?.semester} />
+              <LabelValueText
+                label={t("feature.group_exercises.label.year")}
+                value={groupData?.year}
+              />
+              <LabelValueText
+                label={t("feature.group_exercises.label.semester")}
+                value={groupData?.semester}
+              />
             </div>
             <LabelValueText
-              label={"Class Date"}
+              label={t("feature.group_exercises.label.class_date")}
               value={`${capitalize(groupData?.day)}, ${formatTime(
-                groupData?.time_start || ""
+                groupData?.time_start || "",
               )} - ${formatTime(groupData?.time_end || "")}  `}
             />
             <LabelValueText
-              label={"Instructor"}
+              label={t("feature.group_exercises.label.instructor")}
               value={`${groupData?.instructor.f_name} ${groupData?.instructor.l_name}`}
             />
             <Button
@@ -140,22 +154,22 @@ function GroupSummary({ groupData }: Props) {
               onClick={() => handleDeleteOpen()}
               className="w-full"
             >
-              delete group
+              {t("feature.group_exercises.button.delete_group")}
             </Button>
           </CardBody>
         </Card>
         <Card className="lg:w-1/3 w-full border-[1px] min-h-56">
           <CardBody className="space-y-2">
             <LabelValueText
-              label={"Department"}
+              label={t("feature.group_exercises.label.dept")}
               value={groupData?.department}
             />
             <LabelValueText
-              label={"All Student"}
+              label={t("feature.group_exercises.label.all_stu")}
               value={groupStudent.total_student}
             />
             <LabelValueText
-              label={"Online Student"}
+              label={t("feature.group_exercises.label.online_stu")}
               value={onlineStudent.length}
             />
           </CardBody>
@@ -166,7 +180,7 @@ function GroupSummary({ groupData }: Props) {
               onClick={() => handleLogoutAll()}
             >
               <ArrowRightStartOnRectangleIcon className="w-5 h-5" />
-              Log out all
+              {t("feature.group_exercises.button.logout_all")}
             </Button>
           </CardFooter>
         </Card>
@@ -181,7 +195,7 @@ function GroupSummary({ groupData }: Props) {
                   className=" font-semibold text-center min-h-16"
                   color="blue-gray"
                 >
-                  Allow login
+                  {t("feature.group_exercises.label.allow_login")}
                 </Typography>
                 <Switch
                   crossOrigin=""
@@ -206,7 +220,7 @@ function GroupSummary({ groupData }: Props) {
                   className="font-semibold text-center min-h-16"
                   color="blue-gray"
                 >
-                  Allow upload profile picture
+                  {t("feature.group_exercises.label.allow_profile")}
                 </Typography>
                 <Switch
                   crossOrigin=""

@@ -13,6 +13,7 @@ import {
 import AddStudentForm from "./components/AddStudentForm";
 import { StudentPermissionForm } from "../studentPermissionForm";
 import { showToast } from "../../utils/toast";
+import { useTranslation } from "react-i18next";
 
 export interface StudentData {
   name: string;
@@ -25,6 +26,7 @@ interface Props {
 }
 
 function GroupStudents({ groupId }: Props) {
+  const { t } = useTranslation();
   const initialized = useRef(false);
   const dispatch = useAppDispatch();
   const groupStudent = useAppSelector(getGroupStudents);
@@ -34,7 +36,7 @@ function GroupStudents({ groupId }: Props) {
   const [openPermForm, setOpenPermForm] = useState<boolean>(false);
   const [openStudentFrom, setOpenStudentForm] = useState<boolean>(false);
   const [studentSelected, setStudentSelected] = useState<StudentData | null>(
-    null
+    null,
   );
 
   const handlePermFormClose = () => setOpenPermForm(false);
@@ -86,7 +88,7 @@ function GroupStudents({ groupId }: Props) {
 
   useEffect(() => {
     const evtSource = new EventSource(
-      `${VITE_IPCA_RT}/online-students/${groupId}`
+      `${VITE_IPCA_RT}/online-students/${groupId}`,
     );
     evtSource.onmessage = (event) => {
       if (event.data) {
@@ -120,17 +122,17 @@ function GroupStudents({ groupId }: Props) {
           <div className="flex items-center gap-x-1">
             <span className="mx-auto mb-1 block h-3 w-3 rounded-full bg-green-900 content-['']" />
             <Typography variant="h6" color="blue-gray">
-              {`Online: ${onlineStudent.length}`}
+              {`${t("feature.group_students.online")}: ${onlineStudent.length}`}
             </Typography>
           </div>
           <div className="flex items-center gap-x-1">
             <span className="mx-auto mb-1 block h-3 w-3 rounded-full bg-red-900 content-['']" />
             <Typography variant="h6" color="blue-gray">
-              {`Ofline: ${groupStudent.total_student - onlineStudent.length}`}
+              {`${t("feature.group_students.offline")}: ${groupStudent.total_student - onlineStudent.length}`}
             </Typography>
           </div>
           <Typography variant="h6" color="blue-gray">
-            {`Total: ${groupStudent.total_student}`}
+            {`${t("feature.group_students.total")}: ${groupStudent.total_student}`}
           </Typography>
         </div>
         <Button
@@ -138,7 +140,7 @@ function GroupStudents({ groupId }: Props) {
           size="md"
           onClick={() => setOpenStudentForm(true)}
         >
-          Add Student
+          {t("feature.group_students.button.add")}
         </Button>
       </div>
       <StudentTable

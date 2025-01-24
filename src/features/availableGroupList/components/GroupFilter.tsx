@@ -2,10 +2,11 @@ import { Option, Select } from "@material-tailwind/react";
 import { AsyncSelect } from "../../../components";
 import { FilterForm, FilterKey } from "../AvailableGroupList";
 import { Filters } from "../redux/AvailableGroupListSlice";
-import { ALL_LABEL, ALL_VALUE } from "../constants";
+import { ALL_VALUE } from "../constants";
 import { useMemo } from "react";
-import { capitalize } from "lodash";
 import { DAY_OF_WEEK } from "../../../constants/constants";
+import { useTranslation } from "react-i18next";
+import { getDayFromDayEnum } from "../../../utils";
 
 interface Props {
   filters: Filters;
@@ -14,16 +15,17 @@ interface Props {
 }
 
 function GroupFilter({ filters, filterForm, handleChangeForm }: Props) {
+  const { t, i18n } = useTranslation();
   const instructorOptions = useMemo(
     () => [
       {
         supervisor_id: ALL_VALUE,
-        f_name: ALL_LABEL,
+        f_name: t("feature.available_group_list.filter.all"),
         l_name: "",
       },
       ...filters.instructors.map((instructor) => instructor),
     ],
-    [filters.instructors]
+    [filters.instructors],
   );
 
   const yearOptions = useMemo(() => {
@@ -44,7 +46,7 @@ function GroupFilter({ filters, filterForm, handleChangeForm }: Props) {
   return (
     <div className="flex justify-start items-center pb-4 w-full gap-x-3 lg:flex-row flex-col gap-y-4">
       <AsyncSelect
-        label="Instructor"
+        label={t("feature.available_group_list.filter.instructor")}
         value={filterForm.instructorId}
         onChange={(val) => {
           if (val) {
@@ -62,7 +64,7 @@ function GroupFilter({ filters, filterForm, handleChangeForm }: Props) {
         ))}
       </AsyncSelect>
       <AsyncSelect
-        label="Staff"
+        label={t("feature.available_group_list.filter.staff")}
         value={filterForm.staffs}
         onChange={(val) => {
           if (val) {
@@ -80,7 +82,7 @@ function GroupFilter({ filters, filterForm, handleChangeForm }: Props) {
         ))}
       </AsyncSelect>
       <AsyncSelect
-        label="Year"
+        label={t("feature.available_group_list.filter.year")}
         value={filterForm.year}
         onChange={(val) => {
           if (val) {
@@ -93,12 +95,14 @@ function GroupFilter({ filters, filterForm, handleChangeForm }: Props) {
       >
         {yearOptions.map((option) => (
           <Option key={option} value={option}>
-            {option === ALL_VALUE ? ALL_LABEL : option}
+            {option === ALL_VALUE
+              ? t("feature.available_group_list.filter.all")
+              : option}
           </Option>
         ))}
       </AsyncSelect>
       <Select
-        label="Semester"
+        label={t("feature.available_group_list.filter.semester")}
         value={filterForm.semester}
         onChange={(val) => {
           if (val) {
@@ -111,12 +115,14 @@ function GroupFilter({ filters, filterForm, handleChangeForm }: Props) {
       >
         {semesterOptions.map((option) => (
           <Option key={option} value={option}>
-            {option === ALL_VALUE ? ALL_LABEL : option}
+            {option === ALL_VALUE
+              ? t("feature.available_group_list.filter.all")
+              : option}
           </Option>
         ))}
       </Select>
       <Select
-        label="Class Date"
+        label={t("feature.available_group_list.filter.class_date")}
         value={filterForm.classDate}
         onChange={(val) => {
           if (val) {
@@ -129,7 +135,9 @@ function GroupFilter({ filters, filterForm, handleChangeForm }: Props) {
       >
         {classDateOptions.map((option) => (
           <Option key={option} value={option}>
-            {option === ALL_VALUE ? ALL_LABEL : capitalize(option)}
+            {option === ALL_VALUE
+              ? t("feature.available_group_list.filter.all")
+              : getDayFromDayEnum(option, i18n.language)}
           </Option>
         ))}
       </Select>

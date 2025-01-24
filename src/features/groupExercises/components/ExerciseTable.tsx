@@ -7,7 +7,6 @@ import {
   MenuList,
   Typography,
 } from "@material-tailwind/react";
-import { TABLE_HEAD } from "../constants";
 import { GroupChapterPermission } from "../redux/groupExercisesSlice";
 import {
   Cog6ToothIcon,
@@ -17,6 +16,7 @@ import {
 import { ChapterData } from "../GroupExercises";
 import { StatusChip } from "./StatusChip";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   chapterList: GroupChapterPermission[] | [];
@@ -29,8 +29,12 @@ function ExerciseTable({
   handleSetChapter,
   handleAccessFormOpen,
 }: Props) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { groupId } = useParams();
+  const tableHeaders = t("feature.group_exercises.th_list", {
+    returnObjects: true,
+  }) as string[];
   return (
     <div className="pt-8">
       <Card className="h-full w-full  shadow-none border-[1.5px]">
@@ -38,7 +42,7 @@ function ExerciseTable({
           <table className="w-full min-w-max table-auto text-left">
             <thead>
               <tr>
-                {TABLE_HEAD.map((head) => (
+                {tableHeaders.map((head) => (
                   <th
                     key={head}
                     className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
@@ -109,7 +113,7 @@ function ExerciseTable({
                           }
                         >
                           <EyeIcon className="w-5 h-5" />
-                          View
+                          {t("common.table.action.view")}
                         </MenuItem>
                         <MenuItem
                           className="flex justify-start items-center gap-2"
@@ -123,7 +127,7 @@ function ExerciseTable({
                           }}
                         >
                           <Cog6ToothIcon className="w-5 h-5" />
-                          Permission
+                          {t("common.table.action.perm")}
                         </MenuItem>
                       </MenuList>
                     </Menu>

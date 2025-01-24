@@ -15,6 +15,7 @@ import { updateStudentCanSubmit } from "./redux/StudentPermissionFormSlice";
 import { fetchGroupStudents } from "../groupStudents/redux/GroupStudentsSlice";
 import { fetchStudentInfo } from "../studentDetail/redux/studentDetailSlice";
 import { showToast } from "../../utils/toast";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   open: boolean;
@@ -35,6 +36,7 @@ function StudentPermissionForm({
   groupId,
   page,
 }: Props) {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [submitPerm, setSubmitPerm] = useState<boolean>(true);
   const handleSubmit = async () => {
@@ -60,7 +62,7 @@ function StudentPermissionForm({
     <Dialog size="sm" open={open} handler={handleClose} className="p-4 ">
       <DialogHeader className="relative m-0 block">
         <Typography variant="h4" color="blue-gray">
-          Edit Permission
+          {t("feature.stu_perm_form.title")}
         </Typography>
         <Typography className="mt-1 font-normal text-gray-600">
           {`${name} (${kmitlId})`}
@@ -80,27 +82,27 @@ function StudentPermissionForm({
           color="blue-gray"
           className="mb-2 text-left font-medium"
         >
-          Allow Submit Permission
+          {t("feature.stu_perm_form.label")}
         </Typography>
         <div className="flex flex-col">
           <Radio
             name="allow-submit-perm"
             crossOrigin=""
-            label="Allow"
+            label={t("common.table.perm.allow")}
             defaultChecked
             onClick={() => setSubmitPerm(true)}
           />
           <Radio
             name="allow-submit-perm"
             crossOrigin=""
-            label="Deny"
+            label={t("common.table.perm.deny")}
             onClick={() => setSubmitPerm(false)}
           />
         </div>
       </DialogBody>
       <DialogFooter>
         <Button className="ml-auto" onClick={() => handleSubmit()}>
-          submit
+          {t("common.button.submit")}
         </Button>
       </DialogFooter>
     </Dialog>

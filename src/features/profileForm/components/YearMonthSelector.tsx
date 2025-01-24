@@ -1,5 +1,5 @@
 import { Option, Select } from "@material-tailwind/react";
-import { MONTHS } from "../../../constants/constants";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   currentMonth: Date;
@@ -7,10 +7,12 @@ interface Props {
 }
 
 function YearMonthSelector({ currentMonth, setCurrentMonth }: Props) {
+  const { t } = useTranslation();
   const currentYear = currentMonth.getFullYear();
   const years = Array.from({ length: currentYear + 1 - 1900 }, (_, i) =>
     (1900 + i).toString(),
   );
+  const months = t("common.month.list", { returnObjects: true }) as string[];
 
   const handleYearChange = (year: string | undefined) => {
     if (year) {
@@ -21,7 +23,7 @@ function YearMonthSelector({ currentMonth, setCurrentMonth }: Props) {
   const handleMonthChange = (month: string | undefined) => {
     if (month) {
       setCurrentMonth(
-        new Date(currentMonth.getFullYear(), MONTHS.indexOf(month)),
+        new Date(currentMonth.getFullYear(), months.indexOf(month)),
       );
     }
   };
@@ -29,7 +31,7 @@ function YearMonthSelector({ currentMonth, setCurrentMonth }: Props) {
   return (
     <div className="flex flex-col gap-4">
       <Select
-        label="Year"
+        label={t("common.year")}
         value={currentYear.toString()}
         onChange={(val) => handleYearChange(val)}
       >
@@ -40,11 +42,11 @@ function YearMonthSelector({ currentMonth, setCurrentMonth }: Props) {
         ))}
       </Select>
       <Select
-        label="Month"
-        value={MONTHS[currentMonth.getMonth()]}
+        label={t("common.month.title")}
+        value={months[currentMonth.getMonth()]}
         onChange={(val) => handleMonthChange(val)}
       >
-        {MONTHS.map((month) => (
+        {months.map((month) => (
           <Option key={month} value={month}>
             {month}
           </Option>

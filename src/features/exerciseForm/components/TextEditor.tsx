@@ -103,9 +103,7 @@ function Divider() {
 
 function Placeholder() {
   return (
-    <div className="z-[9999] pointer-events-none absolute left-2.5 top-4 inline-block select-none overflow-hidden text-base font-normal text-gray-400">
-      Play around with the editor...
-    </div>
+    <div className="z-[9999] pointer-events-none absolute left-2.5 top-4 inline-block select-none overflow-hidden text-base font-normal text-gray-400"></div>
   );
 }
 
@@ -1104,11 +1102,13 @@ function TextEditor({
   onChange,
   errors,
   exerciseId,
+  isEdit = true,
 }: {
   value: string;
   onChange?: (val: string) => void;
   errors?: any;
   exerciseId?: string;
+  isEdit?: boolean;
 }) {
   const editorConfig = {
     namespace: "MyEditor",
@@ -1149,7 +1149,7 @@ function TextEditor({
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div
-        className={`z-[999] relative overflow-hidden w-full ${
+        className={`${isEdit ? "z-[999]" : "z-[0]"} relative overflow-hidden w-full ${
           !!onChange ? "rounded-xl" : "rounded-none"
         } border  focus-within:!border-2  border-blue-gray-200 bg-white text-left font-normal leading-5 text-gray-900 
           ${getEditorBorder()}
