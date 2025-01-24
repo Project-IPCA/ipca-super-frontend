@@ -1,4 +1,6 @@
 import { createPortal } from "react-dom";
+import katex from "katex";
+import "katex/dist/katex.css";
 import {
   Dispatch,
   MutableRefObject,
@@ -17,6 +19,12 @@ import {
   IconButton,
   Typography,
   ListItemPrefix,
+  Dialog,
+  DialogBody,
+  DialogHeader,
+  Checkbox,
+  Textarea,
+  DialogFooter,
 } from "@material-tailwind/react";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html";
@@ -32,6 +40,10 @@ import {
   BaseSelection,
   $getRoot,
   $insertNodes,
+  LexicalCommand,
+  createCommand,
+  $isRootOrShadowRoot,
+  COMMAND_PRIORITY_EDITOR,
 } from "lexical";
 import {
   $isListNode,
@@ -64,13 +76,32 @@ import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { $wrapNodes, $isAtNodeEnd } from "@lexical/selection";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import { $getNearestNodeOfType, mergeRegister } from "@lexical/utils";
+import {
+  $getNearestNodeOfType,
+  $wrapNodeInElement,
+  mergeRegister,
+} from "@lexical/utils";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { HashtagIcon, PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { $createImageNode, ImageNode } from "./ImageNode";
+import { $createEquationNode, EquationNode } from "./EquationNode";
+import { ErrorBoundary } from "react-error-boundary";
+import KatexRenderer from "./KatexRenderer";
+import { useTranslation } from "react-i18next";
 
 const LowPriority = 1;
+
+type CommandPayload = {
+  equation: string;
+  inline: boolean;
+};
+
+const INSERT_EQUATION_COMMAND: LexicalCommand<CommandPayload> = createCommand(
+  "INSERT_EQUATION_COMMAND",
+);
 
 const supportedBlockTypes = new Set([
   "paragraph",
@@ -779,6 +810,152 @@ function FloatingLinkEditor({ editor }: { editor: LexicalEditor }) {
   );
 }
 
+export function InsertEquationDialog({
+  activeEditor,
+  onClose,
+  open,
+  initialEquation = "",
+}: {
+  open: boolean;
+  activeEditor: LexicalEditor;
+  onClose: () => void;
+  initialEquation?: string;
+}): JSX.Element {
+  const { t } = useTranslation();
+  const [editor] = useLexicalComposerContext();
+  const [equation, setEquation] = useState<string>(initialEquation);
+  const [inline, setInline] = useState<boolean>(true);
+
+  const onEquationConfirm = () => {
+    activeEditor.dispatchCommand(INSERT_EQUATION_COMMAND, {
+      equation,
+      inline,
+    });
+    onClose();
+  };
+
+  const katexElementRef = useRef(null);
+
+  useEffect(() => {
+    const katexElement = katexElementRef.current;
+
+    if (katexElement !== null) {
+      katex.render(equation, katexElement, {
+        displayMode: !inline,
+        errorColor: "#F44336",
+        output: "html",
+        strict: "warn",
+        throwOnError: false,
+        trust: false,
+      });
+    }
+  }, [equation, inline]);
+
+  const handleClose = () => {
+    onClose();
+    setEquation("");
+    setInline(true);
+  };
+
+  return (
+    <Dialog size="sm" open={open} handler={handleClose} className="p-4">
+      <DialogHeader className="relative m-0 block">
+        <Typography variant="h4" color="blue-gray">
+          {t("feature.exercise_form.equation.title")}
+        </Typography>
+        <IconButton
+          size="sm"
+          variant="text"
+          className="!absolute right-3.5 top-3.5"
+          onClick={handleClose}
+        >
+          <XMarkIcon className="h-4 w-4 stroke-2" />
+        </IconButton>
+      </DialogHeader>
+      <DialogBody className="space-y-4 pb-6">
+        <div className="flex justify-between items-center">
+          <Typography
+            variant="small"
+            color="blue-gray"
+            className="text-left font-medium"
+          >
+            {t("feature.exercise_form.equation.inline")}
+          </Typography>
+          <Checkbox
+            defaultChecked
+            crossOrigin=""
+            onClick={() => setInline(!inline)}
+          />
+        </div>
+        <div>
+          <Typography
+            variant="small"
+            color="blue-gray"
+            className="mb-2 text-left font-medium"
+          >
+            {t("feature.exercise_form.equation.equation")}
+          </Typography>
+          {inline ? (
+            <Input
+              value={equation}
+              crossOrigin=""
+              color="gray"
+              size="md"
+              placeholder={t("feature.exercise_form.equation.equation")}
+              className={"focus:!border-t-gray-900 !border-t-blue-gray-200"}
+              labelProps={{
+                className: "before:content-none after:content-none",
+              }}
+              onChange={(e) => setEquation(e.target.value)}
+            />
+          ) : (
+            <Textarea
+              value={equation}
+              color="gray"
+              size="md"
+              placeholder={t("feature.exercise_form.equation.equation")}
+              className={"focus:!border-t-gray-900 !border-t-blue-gray-200"}
+              labelProps={{
+                className: "before:content-none after:content-none",
+              }}
+              onChange={(e) => setEquation(e.target.value)}
+            />
+          )}
+        </div>
+        {equation !== "" && (
+          <div>
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="mb-2 text-left font-medium"
+            >
+              {t("feature.exercise_form.equation.visual")}
+            </Typography>
+            <ErrorBoundary onError={(e) => editor._onError(e)} fallback={null}>
+              <KatexRenderer
+                equation={equation}
+                inline={inline}
+                onDoubleClick={() => null}
+              />
+            </ErrorBoundary>
+          </div>
+        )}
+      </DialogBody>
+      <DialogFooter>
+        <Button
+          className="ml-auto"
+          onClick={() => {
+            onEquationConfirm();
+            handleClose();
+          }}
+        >
+          {t("common.button.submit")}
+        </Button>
+      </DialogFooter>
+    </Dialog>
+  );
+}
+
 function ToolbarPlugin({ onChange }: { onChange?: (val: string) => void }) {
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef<HTMLDivElement | null>(null);
@@ -789,11 +966,14 @@ function ToolbarPlugin({ onChange }: { onChange?: (val: string) => void }) {
   );
   const [showBlockOptionsDropDown, setShowBlockOptionsDropDown] =
     useState(false);
+  const [showEquation, setShowEquation] = useState(false);
+  useState(false);
   const [codeLanguage, setCodeLanguage] = useState("");
   const [isLink, setIsLink] = useState(false);
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isCode, setIsCode] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -1048,12 +1228,90 @@ function ToolbarPlugin({ onChange }: { onChange?: (val: string) => void }) {
               ></path>
             </svg>
           </IconButton>
+          <Divider />
+          <IconButton
+            variant={!true ? "filled" : "text"}
+            aria-label="Add Image"
+            onClick={() => {
+              inputRef?.current?.click();
+            }}
+          >
+            <PhotoIcon className="w-5 h-5" />
+          </IconButton>
+          <input
+            type="file"
+            ref={inputRef}
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                const reader = new FileReader();
+
+                reader.onload = () => {
+                  const base64 = reader.result as string;
+                  editor.update(() => {
+                    const node = $createImageNode({
+                      src: base64,
+                      altText: file.name,
+                    });
+                    $insertNodes([node]);
+                  });
+                };
+
+                reader.readAsDataURL(file);
+              }
+              e.target.value = "";
+            }}
+          />
+          <IconButton
+            variant={false ? "filled" : "text"}
+            onClick={() => setShowEquation(!showEquation)}
+          >
+            <HashtagIcon className="w-4 h-4" />
+          </IconButton>
+          <InsertEquationDialog
+            open={showEquation}
+            activeEditor={editor}
+            onClose={() => setShowEquation(!showEquation)}
+          />
+
           {isLink &&
             createPortal(<FloatingLinkEditor editor={editor} />, document.body)}
         </>
       )}
     </div>
   );
+}
+
+function EquationsPlugin(): JSX.Element | null {
+  const [editor] = useLexicalComposerContext();
+
+  useEffect(() => {
+    if (!editor.hasNodes([EquationNode])) {
+      throw new Error(
+        "EquationsPlugins: EquationsNode not registered on editor",
+      );
+    }
+
+    return editor.registerCommand<CommandPayload>(
+      INSERT_EQUATION_COMMAND,
+      (payload) => {
+        const { equation, inline } = payload;
+        const equationNode = $createEquationNode(equation, inline);
+
+        $insertNodes([equationNode]);
+        if ($isRootOrShadowRoot(equationNode.getParentOrThrow())) {
+          $wrapNodeInElement(equationNode, $createParagraphNode).selectEnd();
+        }
+
+        return true;
+      },
+      COMMAND_PRIORITY_EDITOR,
+    );
+  }, [editor]);
+
+  return null;
 }
 
 function MyOnChangePlugin({
@@ -1124,6 +1382,8 @@ function TextEditor({
       CodeHighlightNode,
       AutoLinkNode,
       LinkNode,
+      ImageNode,
+      EquationNode,
     ],
     editorState: exerciseId
       ? (editor: LexicalEditor) => {
@@ -1175,6 +1435,7 @@ function TextEditor({
             placeholder={<Placeholder />}
             ErrorBoundary={LexicalErrorBoundary}
           />
+          <EquationsPlugin />
           <MyOnChangePlugin onChange={onChange} value={value} />
           <AutoFocusPlugin />
           <ListPlugin />

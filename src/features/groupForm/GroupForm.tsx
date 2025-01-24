@@ -208,8 +208,6 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
     onClose();
   };
 
-  console.log(departments)
-
   return (
     <>
       <Dialog size="sm" open={open} handler={onClose} className="p-4 !z-[500]">
@@ -318,7 +316,9 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
                     >
                       {departments.map((dept) => (
                         <Option key={dept.dept_id} value={dept.dept_id}>
-                          {i18n.language === LANGUAGE.th?dept.name_th:dept.name_en}
+                          {i18n.language === LANGUAGE.th
+                            ? dept.name_th
+                            : dept.name_en}
                         </Option>
                       ))}
                     </AsyncSelect>

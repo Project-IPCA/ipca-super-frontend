@@ -240,6 +240,12 @@
         "no": "No constraints added yet.",
         "add": "Add new keyword constraints",
         "invalid": "Invalid Constraints Type"
+      },
+      "equation": {
+        "title": "Insert Equation",
+        "inline": "Inline",
+        "equation": "Equation",
+        "visual": "Visualization"
       }
     },
     "exercise_info": {
