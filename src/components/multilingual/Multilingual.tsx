@@ -8,11 +8,15 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
-import { flagEn, flagTh } from "../../assets";
+import { flagEn, flagTh, flagCirEn, flagCirTh } from "../../assets";
 import { useTranslation } from "react-i18next";
 import { LANGUAGE } from "../../constants/constants";
 
-function Multilingual() {
+interface Props {
+  variant?: "long" | "short";
+}
+
+function Multilingual({ variant = "long" }: Props) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const { i18n } = useTranslation();
@@ -33,9 +37,9 @@ function Multilingual() {
   const getFlagIcon = () => {
     switch (i18n.language) {
       case LANGUAGE.th:
-        return flagTh;
+        return variant === "long" ? flagTh : flagCirTh;
       case LANGUAGE.en:
-        return flagEn;
+        return variant === "long" ? flagEn : flagCirEn;
     }
   };
 
@@ -54,19 +58,21 @@ function Multilingual() {
         <Button
           variant="text"
           color="blue-gray"
-          className="flex items-center gap-3  p-2 text-md font-medium capitalize"
+          className={`flex items-center gap-3   text-md font-medium capitalize ${variant === "long" ? "p-2" : "p-0 !rounded-full"}`}
           fullWidth
         >
           <Avatar
-            variant="square"
-            className="p-[0.25rem]"
+            variant={variant === "long" ? "square" : "circular"}
+            className={`p-[0.25rem] ${variant === "short" ? "w-8 h-8" : ""} `}
             size="sm"
-            alt="tania andrew"
+            alt="flag"
             src={getFlagIcon()}
           />
-          <Typography color="blue-gray" className="font-normal">
-            {getLanguageText()}
-          </Typography>
+          {variant === "long" && (
+            <Typography color="blue-gray" className="font-normal">
+              {getLanguageText()}
+            </Typography>
+          )}
         </Button>
       </MenuHandler>
       <MenuList className="p-1">
