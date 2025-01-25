@@ -12,7 +12,7 @@ import {
   fetchProfile,
   getProfile,
 } from "../features/profileForm/redux/profileFormSlice";
-import Multilingual from "./components/Multilingual";
+import Multilingual from "../components/multilingual/Multilingual";
 
 function Layout() {
   const dispatch = useAppDispatch();
