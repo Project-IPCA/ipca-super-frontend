@@ -20,9 +20,11 @@ import {
 } from "../studentDetail/redux/studentDetailSlice";
 import TextEditor from "../exerciseForm/components/TextEditor";
 import { showToast } from "../../utils/toast";
+import { useTranslation } from "react-i18next";
 
 function ExerciseDetail() {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
   const exerciseDetailState = useAppSelector(getExerciseDetailSlice);
   const studentState = useAppSelector(getStudentDetailState);
   const { studentId, chapterIdx, problemIdx } = useParams();
@@ -92,18 +94,21 @@ function ExerciseDetail() {
         <IconButton variant="text">
           <ArrowLeftIcon className="w-5 h-5" onClick={() => navigate(-1)} />
         </IconButton>
-        <Typography variant="h3">Exercise</Typography>
+        <Typography variant="h3">
+          {t("feature.exercise_detail.title")}
+        </Typography>
       </div>
       <Card className="border-[1px] mb-4">
         <CardBody>
           <Typography variant="small" className="font-medium">
-            Chapter {exerciseDetail?.chapter_index} Problem{" "}
-            {exerciseDetail?.level}
+            {t("feature.exercise_detail.label.chapter")}{" "}
+            {exerciseDetail?.chapter_index}{" "}
+            {t("feature.exercise_detail.label.chapter")} {exerciseDetail?.level}
           </Typography>
           <Typography variant="h4" className="pt-1 pb-2">
             {exerciseDetail?.name || ""}
           </Typography>
-          <TextEditor value={exerciseDetail?.content ?? ""} />
+          <TextEditor value={exerciseDetail?.content ?? ""} isEdit={false} />
         </CardBody>
       </Card>
       <SubmissionHistoryList

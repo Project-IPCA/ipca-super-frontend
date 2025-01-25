@@ -14,6 +14,7 @@ import {
   updateProfile,
 } from "./redux/profileFormSlice";
 import { showToast } from "../../utils/toast";
+import { useTranslation } from "react-i18next";
 
 export interface ProfileInfo {
   avatar: string;
@@ -31,6 +32,7 @@ export interface ProfileInfo {
 }
 
 function ProfileForm() {
+  const { t } = useTranslation();
   const initialized = useRef(false);
   const dispatch = useAppDispatch();
   const data = useAppSelector(getProfile);
@@ -91,7 +93,7 @@ function ProfileForm() {
         current_password: data.current_password ? data.current_password : null,
         new_password: data.new_password ? data.new_password : null,
         dept_id: data.dept_id ? data.dept_id : null,
-      })
+      }),
     );
     if (updateProfile.fulfilled.match(resultAction)) {
       showToast({
@@ -107,7 +109,7 @@ function ProfileForm() {
   return (
     <>
       <Typography variant="h3" className="pb-6">
-        Profile
+        {t("feature.profile.title")}
       </Typography>
 
       <div className="w-full flex justify-center items-center ">
@@ -121,7 +123,7 @@ function ProfileForm() {
                 onFileChange={handleFileChange}
               />
               <Typography variant="h4" color="blue-gray">
-                Personal Information
+                {t("feature.profile.personal.title")}
               </Typography>
               <PersonalInfo
                 register={register}
@@ -132,7 +134,7 @@ function ProfileForm() {
             <div className="lg:h-full flex flex-col gap-y-5 md:w-1/2">
               <Card className="h-1/2 p-6 space-y-5 border-[1px]">
                 <Typography variant="h4" color="blue-gray">
-                  Contact
+                  {t("feature.profile.contact.title")}
                 </Typography>
                 <Contact
                   register={register}
@@ -142,7 +144,7 @@ function ProfileForm() {
               </Card>
               <Card className="h-1/2 p-6 space-y-5 border-[1px]">
                 <Typography variant="h4" color="blue-gray">
-                  Reset Password
+                  {t("feature.profile.password.title")}
                 </Typography>
                 <ResetPassword register={register} />
               </Card>
@@ -153,8 +155,8 @@ function ProfileForm() {
               <Input
                 crossOrigin=""
                 size="lg"
-                placeholder="Current Password"
-                label="Current Password"
+                placeholder={t("feature.profile.password.current_password")}
+                label={t("feature.profile.password.current_password")}
                 type="password"
                 {...register("current_password")}
               />
@@ -164,7 +166,7 @@ function ProfileForm() {
               disabled={isUpdating}
               loading={isUpdating}
             >
-              Submit
+              {t("common.button.save")}
             </Button>
           </div>
         </div>

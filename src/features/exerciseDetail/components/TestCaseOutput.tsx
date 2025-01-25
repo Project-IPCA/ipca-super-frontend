@@ -6,14 +6,11 @@ const TestCaseOutput = forwardRef<HTMLDivElement, { output: string }>(
     return (
       <div
         ref={ref}
-        className="w-full bg-blue-gray-50 text-black whitespace-nowrap p-2 overflow-x-scroll"
+        className="w-full bg-blue-gray-50 text-black whitespace-nowrap p-2 overflow-x-auto min-h-fit"
       >
-        {props.output &&
-          props.output.split("\n").map((line, index) => (
-            <Typography variant="small" key={index}>
-              {line}
-            </Typography>
-          ))}
+        <Typography variant="small" className="whitespace-pre break-words">
+          {props.output}
+        </Typography>
       </div>
     );
   },

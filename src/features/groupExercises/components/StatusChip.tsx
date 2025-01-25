@@ -4,6 +4,7 @@ import { DATE_COMPARE } from "../constants";
 import { isAfter, isBefore, parseISO } from "date-fns";
 import CountdownTimer from "./CountdownTimer";
 import DateTimeChip from "./DateTimeChip";
+import { useTranslation } from "react-i18next";
 
 interface StatusChipProps {
   type: string;
@@ -12,6 +13,7 @@ interface StatusChipProps {
 }
 
 export const StatusChip = ({ type, timeEnd, timeStart }: StatusChipProps) => {
+  const { t } = useTranslation();
   const getTimeDuration = (timeEnd: string) => {
     const dateStart = new Date();
     const dateEnd = new Date(timeEnd);
@@ -41,7 +43,7 @@ export const StatusChip = ({ type, timeEnd, timeStart }: StatusChipProps) => {
         variant="ghost"
         color="green"
         size="sm"
-        value={ALLOW_TYPE.always}
+        value={t("common.table.perm.always")}
       />
     );
   }
@@ -58,7 +60,7 @@ export const StatusChip = ({ type, timeEnd, timeStart }: StatusChipProps) => {
         variant="ghost"
         color="red"
         size="sm"
-        value={ALLOW_TYPE.deny}
+        value={t("common.table.perm.deny")}
       />
     );
   }

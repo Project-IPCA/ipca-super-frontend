@@ -13,7 +13,7 @@ import {
   SubmissionHistory,
 } from "../redux/ExerciseDetailSlice";
 import { useEffect, useMemo, useState } from "react";
-import { TABS_MENU, TABS_VALUE } from "../constants";
+import { TABS_VALUE } from "../constants";
 import SubmissionView from "./SubmissionView";
 import { ConfirmModal } from "../../../components";
 import { StudentInfo } from "../../studentDetail/redux/studentDetailSlice";
@@ -21,6 +21,7 @@ import { useAppDispatch } from "../../../hooks/store";
 import { useParams } from "react-router-dom";
 import { parseInt } from "lodash";
 import { showToast } from "../../../utils/toast";
+import { useTranslation } from "react-i18next";
 
 export interface SubmissionResult {
   actual: string;
@@ -41,6 +42,7 @@ function SubmissionHistoryList({
   exerciseDetail,
   studentInfo,
 }: Props) {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [tabSelected, setTabSelected] = useState<string>(TABS_VALUE.single);
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
@@ -48,6 +50,17 @@ function SubmissionHistoryList({
 
   const handleCloseConfirm = () => setOpenConfirm(false);
   const handleOpenConfirm = () => setOpenConfirm(true);
+
+  const TABS_MENU = [
+    {
+      label: t("feature.exercise_detail.submission.single_view"),
+      value: TABS_VALUE.single,
+    },
+    {
+      label: t("feature.exercise_detail.submission.compare_view"),
+      value: TABS_VALUE.compare,
+    },
+  ];
 
   const [submissionSelected, setSubmissionSelected] = useState({
     first: "",
@@ -98,30 +111,30 @@ function SubmissionHistoryList({
     <>
       <ConfirmModal
         open={openConfirm}
-        title="Reject Submission?"
+        title={t("feature.exercise_detail.modal.title")}
         description={
           <>
-            Are you sure you want to reject student submission for chapter{" "}
-            {exerciseDetail?.chapter_index} ({exerciseDetail?.chapter_name})
-            problem {exerciseDetail?.level} ({exerciseDetail?.name}), submiited
-            by{" "}
+            {t("feature.exercise_detail.modal.msg1")}{" "}
+            {exerciseDetail?.chapter_index} ({exerciseDetail?.chapter_name}){" "}
+            {t("feature.exercise_detail.modal.msg2")} {exerciseDetail?.level} (
+            {exerciseDetail?.name}), {t("feature.exercise_detail.modal.msg3")}{" "}
             <b>
               {studentInfo?.f_name} {studentInfo?.l_name} (
               {studentInfo?.kmitl_id})
             </b>
-            ? This process cannot be undone.
+            {t("feature.exercise_detail.modal.msg4")}
           </>
         }
-        confirmLabel="Confirm"
+        confirmLabel={t("feature.exercise_detail.modal.confirm")}
         type="error"
         handleClose={handleCloseConfirm}
         handleSubmit={handleSubmit}
       />
-      <Card className="border-[1px] h-full ">
+      <Card className="border-[1px] h-full w-full ">
         <CardBody>
           <div className="flex lg:flex-row flex-col justify-between items-center pb-6">
             <Typography variant="h4" className="pt-1 ">
-              Submission History
+              {t("feature.exercise_detail.submission.title")}
             </Typography>
             {submissionHistory && submissionHistory.length !== 0 && (
               <div className="lg:w-80 w-full">
@@ -144,7 +157,9 @@ function SubmissionHistoryList({
           {submissionHistory &&
             (submissionHistory.length === 0 ? (
               <>
-                <Typography>No submissions found at the moment.</Typography>
+                <Typography>
+                  {t("feature.exercise_detail.submission.no_submission")}
+                </Typography>
               </>
             ) : (
               <>
@@ -156,10 +171,11 @@ function SubmissionHistoryList({
                     }
                     submissions={reversedSubmissions}
                     handleOpenConfirm={handleOpenConfirm}
+                    isCompare={false}
                   />
                 )}
                 {tabSelected === TABS_VALUE.compare && (
-                  <div className="w-full flex lg:flex-row flex-col gap-x-10">
+                  <div className="w-full flex lg:flex-row flex-col lg:gap-x-10">
                     <SubmissionView
                       submissionId={submissionSelected.first}
                       onSelect={(val) =>
@@ -170,6 +186,7 @@ function SubmissionHistoryList({
                       }
                       submissions={reversedSubmissions}
                       handleOpenConfirm={handleOpenConfirm}
+                      isCompare={true}
                     />
                     <SubmissionView
                       submissionId={submissionSelected.second}
@@ -181,6 +198,7 @@ function SubmissionHistoryList({
                       }
                       submissions={reversedSubmissions}
                       handleOpenConfirm={handleOpenConfirm}
+                      isCompare={true}
                     />
                   </div>
                 )}

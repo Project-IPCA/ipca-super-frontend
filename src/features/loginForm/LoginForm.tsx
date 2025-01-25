@@ -9,6 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "../../utils/toast";
+import { useTranslation } from "react-i18next";
 
 type LoginInput = {
   username: string;
@@ -16,6 +17,7 @@ type LoginInput = {
 };
 
 function LoginForm() {
+  const { t } = useTranslation();
   const { register, handleSubmit } = useForm<LoginInput>();
   const dispatch = useAppDispatch();
   const loginState = useAppSelector(getLoginState);
@@ -69,27 +71,27 @@ function LoginForm() {
     >
       <div className="mb-1 flex flex-col gap-6">
         <Typography variant="h6" color="blue-gray" className="-mb-3">
-          Username
+          {t("feature.login_form.label.username")}
         </Typography>
         <Input
           {...register("username")}
           crossOrigin=""
           size="lg"
-          placeholder="username"
+          placeholder={t("feature.login_form.placeholder.username")}
           className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
           labelProps={{
             className: "before:content-none after:content-none",
           }}
         />
         <Typography variant="h6" color="blue-gray" className="-mb-3">
-          Password
+          {t("feature.login_form.label.password")}
         </Typography>
         <Input
           {...register("password")}
           crossOrigin=""
           type="password"
           size="lg"
-          placeholder="password"
+          placeholder={t("feature.login_form.placeholder.password")}
           className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
           labelProps={{
             className: "before:content-none after:content-none",
@@ -103,7 +105,7 @@ function LoginForm() {
         disabled={pendingLogin}
         loading={pendingLogin}
       >
-        sign in
+        {t("feature.login_form.button.sign_in")}
       </Button>
     </form>
   );

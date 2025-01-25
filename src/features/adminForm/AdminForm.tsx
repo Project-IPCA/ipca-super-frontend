@@ -29,7 +29,10 @@ import {
 } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { AsyncSelect } from "../../components";
-import { GENDER_LIST, ROLE_LIST } from "../../constants/constants";
+import { GENDER_LIST, LANGUAGE, ROLE_LIST } from "../../constants/constants";
+import { useTranslation } from "react-i18next";
+import i18n from "../../locales";
+import { getGenderFromEnum, getRoleFromEnum } from "../../utils";
 
 interface Props {
   open: boolean;
@@ -37,17 +40,18 @@ interface Props {
 }
 
 const formDataSchema = yup.object({
-  username: yup.string().required("Username is required."),
-  f_name: yup.string().required("Firstname is required."),
-  l_name: yup.string().required("Lastname is required."),
-  role: yup.string().required("Role is required."),
-  gender: yup.string().required("Gender is required."),
-  dept_id: yup.string().required("Department is required."),
+  username: yup.string().required(i18n.t("feature.admin_form.error.username")),
+  f_name: yup.string().required(i18n.t("feature.admin_form.error.f_name")),
+  l_name: yup.string().required(i18n.t("feature.admin_form.error.l_name")),
+  role: yup.string().required(i18n.t("feature.admin_form.error.role")),
+  gender: yup.string().required(i18n.t("feature.admin_form.error.gender")),
+  dept_id: yup.string().required(i18n.t("feature.admin_form.error.dept")),
 });
 
 export type FormData = yup.InferType<typeof formDataSchema>;
 
 function AdminForm({ open, onClose }: Props) {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const departments = useAppSelector(getDepartments);
   const groupFormError = useAppSelector(getGroupFormError);
@@ -121,7 +125,7 @@ function AdminForm({ open, onClose }: Props) {
       <Dialog size="sm" open={open} handler={onClose} className="p-4 !z-[500]">
         <DialogHeader className="relative m-0 block">
           <Typography variant="h4" color="blue-gray">
-            Create Admin
+            {t("feature.admin_form.title")}
           </Typography>
           <IconButton
             size="sm"
@@ -142,14 +146,14 @@ function AdminForm({ open, onClose }: Props) {
               color="blue-gray"
               className="mb-2 text-left font-medium"
             >
-              Username
+              {t("feature.admin_form.label.username")}
             </Typography>
             <Input
               {...register("username")}
               crossOrigin=""
               color="gray"
               size="lg"
-              placeholder="Username"
+              placeholder={t("feature.admin_form.label.username")}
               error={!!errors.username}
               className={`  ${
                 errors.username
@@ -176,14 +180,14 @@ function AdminForm({ open, onClose }: Props) {
                 color="blue-gray"
                 className="mb-2 text-left font-medium"
               >
-                Firstname
+                {t("feature.admin_form.label.f_name")}
               </Typography>
               <Input
                 {...register("f_name")}
                 crossOrigin=""
                 color="gray"
                 size="lg"
-                placeholder="Firstname"
+                placeholder={t("feature.admin_form.label.f_name")}
                 error={!!errors.f_name}
                 className={`  ${
                   errors.f_name
@@ -208,14 +212,14 @@ function AdminForm({ open, onClose }: Props) {
                 color="blue-gray"
                 className="mb-2 text-left font-medium"
               >
-                Lastname
+                {t("feature.admin_form.label.l_name")}
               </Typography>
               <Input
                 {...register("l_name")}
                 crossOrigin=""
                 color="gray"
                 size="lg"
-                placeholder="Lastname"
+                placeholder={t("feature.admin_form.label.l_name")}
                 error={!!errors.l_name}
                 className={`  ${
                   errors.l_name
@@ -242,7 +246,7 @@ function AdminForm({ open, onClose }: Props) {
                 color="blue-gray"
                 className="mb-2 text-left font-medium"
               >
-                Role
+                {t("feature.admin_form.label.role")}
               </Typography>
               <Controller
                 name="role"
@@ -264,7 +268,7 @@ function AdminForm({ open, onClose }: Props) {
                     >
                       {ROLE_LIST.map((role) => (
                         <Option key={role} value={role}>
-                          {role}
+                          {getRoleFromEnum(role, i18n.language)}
                         </Option>
                       ))}
                     </AsyncSelect>
@@ -285,7 +289,7 @@ function AdminForm({ open, onClose }: Props) {
                 color="blue-gray"
                 className="mb-2 text-left font-medium"
               >
-                Gender
+                {t("feature.admin_form.label.gender")}
               </Typography>
               <Controller
                 name="gender"
@@ -307,7 +311,7 @@ function AdminForm({ open, onClose }: Props) {
                     >
                       {GENDER_LIST.map((gender) => (
                         <Option key={gender} value={gender}>
-                          {gender}
+                          {getGenderFromEnum(gender, i18n.language)}
                         </Option>
                       ))}
                     </AsyncSelect>
@@ -329,7 +333,7 @@ function AdminForm({ open, onClose }: Props) {
               color="blue-gray"
               className="mb-2 text-left font-medium"
             >
-              Department
+              {t("feature.admin_form.label.dept")}
             </Typography>
             <Controller
               name="dept_id"
@@ -351,7 +355,7 @@ function AdminForm({ open, onClose }: Props) {
                   >
                     {departments.map((dept) => (
                       <Option key={dept.dept_id} value={dept.dept_id}>
-                        {dept.dept_name}
+                        {i18n.language === LANGUAGE.th?dept.name_th:dept.name_en}
                       </Option>
                     ))}
                   </AsyncSelect>
@@ -369,7 +373,7 @@ function AdminForm({ open, onClose }: Props) {
         </DialogBody>
         <DialogFooter>
           <Button className="ml-auto" onClick={handleSubmit(onSubmit)}>
-            submit
+            {t("common.button.submit")}
           </Button>
         </DialogFooter>
       </Dialog>

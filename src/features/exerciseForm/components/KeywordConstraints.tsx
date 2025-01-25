@@ -25,6 +25,7 @@ import {
   PlusCircleIcon,
   MinusCircleIcon,
 } from "@heroicons/react/24/outline";
+import { useTranslation } from "react-i18next";
 
 type ConstraintsType = "suggested" | "user";
 
@@ -47,6 +48,7 @@ function KeywordConstraints({
   isEdit,
 }: Props) {
   const [openKeys, setOpenKeys] = useState<string[]>([]);
+  const { t } = useTranslation();
 
   const handleOpen = (key: string) => {
     if (openKeys.includes(key)) {
@@ -174,7 +176,9 @@ function KeywordConstraints({
                   </div>
                 ))
               ) : (
-                <Typography>No constraints added yet.</Typography>
+                <Typography>
+                  {t("feature.exercise_form.constraint.no")}
+                </Typography>
               )
             ) : constraintsType === "user" ? (
               <div>
@@ -287,7 +291,9 @@ function KeywordConstraints({
                   ))
                 ) : (
                   <div>
-                    <Typography>No constraints added yet.</Typography>
+                    <Typography>
+                      {t("feature.exercise_form.constraint.no")}
+                    </Typography>
                   </div>
                 )}
                 {isEdit ? (
@@ -295,14 +301,16 @@ function KeywordConstraints({
                     onClick={() => addUserConstraintBySuggested(key)}
                     className="underline text-indigo-900 w-fit hover:cursor-pointer"
                   >
-                    Add new keyword constraints
+                    {t("feature.exercise_form.constraint.add")}
                   </Typography>
                 ) : (
                   ""
                 )}
               </div>
             ) : (
-              <Typography>Invalid Constraints Type</Typography>
+              <Typography>
+                {t("feature.exercise_form.constraint.invalid")}
+              </Typography>
             )}
           </AccordionBody>
         </Accordion>

@@ -8,12 +8,14 @@ import TestCaseOutput from "./TestCaseOutput";
 import { useMemo } from "react";
 import { SubmissionHistory } from "../redux/ExerciseDetailSlice";
 import { CodeDisplay } from "../../codeDisplay";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   submissionId: string;
   onSelect: (value: string) => void;
   submissions: SubmissionHistory[];
   handleOpenConfirm: () => void;
+  isCompare: boolean;
 }
 
 function SubmissionView({
@@ -21,11 +23,13 @@ function SubmissionView({
   onSelect,
   submissions,
   handleOpenConfirm,
+  isCompare,
 }: Props) {
+  const { t } = useTranslation();
   const submission = useMemo(
     () =>
       submissions?.find((sub) => sub.submission_id === submissionId) || null,
-    [submissions, submissionId]
+    [submissions, submissionId],
   );
 
   const result: SubmissionResult[] =
@@ -34,25 +38,25 @@ function SubmissionView({
   const attempt = useMemo(
     () =>
       submissions
-        ? submissions.findIndex((sub) => sub.result === submissionId) + 1
+        ? submissions.findIndex((sub) => sub.submission_id === submissionId) + 1
         : 0,
-    [submissions, submissionId]
+    [submissions, submissionId],
   );
 
   const convertStatus = (status: string) => {
     switch (status) {
       case SUBMISSION_STATUS.accepted:
-        return "Accepted";
+        return t("feature.exercise_detail.submission.status.accepted");
       case SUBMISSION_STATUS.wrongAnswer:
-        return "Wrong Answer";
+        return t("feature.exercise_detail.submission.status.wrong_answer");
       case SUBMISSION_STATUS.error:
-        return "Error";
+        return t("feature.exercise_detail.submission.status.error");
       case SUBMISSION_STATUS.pending:
-        return "Pending";
+        return t("feature.exercise_detail.submission.status.pending");
       case SUBMISSION_STATUS.rejected:
-        return "Rejected";
+        return t("feature.exercise_detail.submission.status.rejected");
       default:
-        return "Not Valid";
+        return t("feature.exercise_detail.submission.status.not_valid");
     }
   };
 
@@ -63,11 +67,11 @@ function SubmissionView({
     return "red";
   };
   return (
-    <div className="w-full">
-      {" "}
+    <div className={`${isCompare ? "w-1/2" : "w-full"}`}>
       <div className="w-44">
         <AsyncSelect
-          label="Submission"
+          className="z-[9999]"
+          label={t("feature.exercise_detail.submission.submission")}
           value={submissionId}
           onChange={(val) => val && onSelect(val)}
           containerProps={{ className: "!min-w-28" }}
@@ -77,7 +81,8 @@ function SubmissionView({
               key={submission.submission_id}
               value={submission.submission_id}
             >
-              Submission {arr.length - index}
+              {t("feature.exercise_detail.submission.times")}{" "}
+              {arr.length - index}
             </Option>
           ))}
         </AsyncSelect>
@@ -86,7 +91,8 @@ function SubmissionView({
         <>
           <div className="flex flex-col sm:flex-row sm:justify-between items-center pt-4">
             <Typography variant="h5">
-              Submission {submissions.length - attempt + 1}
+              {t("feature.exercise_detail.submission.times")}{" "}
+              {submissions.length - attempt + 1}
             </Typography>
             {submission.submission_id === submissions[0].submission_id &&
               submission.status === SUBMISSION_STATUS.accepted && (
@@ -97,7 +103,7 @@ function SubmissionView({
                   color="red"
                   onClick={handleOpenConfirm}
                 >
-                  Reject Submission
+                  {t("feature.exercise_detail.button.reject")}
                 </Button>
               )}
           </div>
@@ -109,9 +115,9 @@ function SubmissionView({
                 className="rounded-full"
               />
               <Typography variant="small">
-                Submitted at{" "}
+                {t("feature.exercise_detail.submission.submitted")}{" "}
                 {submission
-                  ? format(submission?.time_submit, "MMM dd, yyyy HH:mm:ss")
+                  ? format(submission?.time_submit, "dd/MM/yyyy HH:mm:ss")
                   : ""}
               </Typography>
             </div>
@@ -119,13 +125,13 @@ function SubmissionView({
           </div>
           <div className="pt-4">
             <Typography variant="h6" className="mb-2">
-              Sourcecode
+              {t("feature.exercise_detail.submission.code")}
             </Typography>
             <CodeDisplay fileName={submission.sourcecode_filename} />
           </div>
           <div className="pt-4">
             <Typography variant="h6" className="mb-2">
-              Result
+              {t("feature.exercise_detail.submission.result")}
             </Typography>
             {(submission?.status === SUBMISSION_STATUS.accepted ||
               submission?.status === SUBMISSION_STATUS.wrongAnswer ||

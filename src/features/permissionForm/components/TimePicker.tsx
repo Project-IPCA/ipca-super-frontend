@@ -9,6 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import { ALLOW_TYPE } from "../../../constants/constants";
 import { parseInt } from "lodash";
+import { useTranslation } from "react-i18next";
 
 interface Timer {
   hour: string;
@@ -26,6 +27,7 @@ interface Props {
 }
 
 function TimerPicker({ tab, handleChangePerm }: Props) {
+  const { t } = useTranslation();
   const [timer, setTimer] = useState<Timer>({
     hour: "00",
     minute: "00",
@@ -47,7 +49,7 @@ function TimerPicker({ tab, handleChangePerm }: Props) {
             <Select
               variant="outlined"
               color="gray"
-              label="Hour"
+              label={t("feature.perm_form.set_timer.hour")}
               size="lg"
               value={timer.hour}
               onChange={(val) => {
@@ -80,7 +82,7 @@ function TimerPicker({ tab, handleChangePerm }: Props) {
             <Select
               variant="outlined"
               color="gray"
-              label="Minute"
+              label={t("feature.perm_form.set_timer.min")}
               size="lg"
               value={timer.minute}
               containerProps={{
@@ -113,7 +115,7 @@ function TimerPicker({ tab, handleChangePerm }: Props) {
             <Select
               variant="outlined"
               color="gray"
-              label="Second"
+              label={t("feature.perm_form.set_timer.min")}
               size="lg"
               value={timer.second}
               containerProps={{
@@ -154,7 +156,8 @@ function TimerPicker({ tab, handleChangePerm }: Props) {
               })
             }
           >
-            Add 5 minutes
+            {t("feature.perm_form.set_timer.button.add")} 5{" "}
+            {t("feature.perm_form.set_timer.button.min")}
           </Button>
           <Button
             size="sm"
@@ -167,7 +170,8 @@ function TimerPicker({ tab, handleChangePerm }: Props) {
               })
             }
           >
-            Add 30 minutes
+            {t("feature.perm_form.set_timer.button.add")} 30{" "}
+            {t("feature.perm_form.set_timer.button.min")}
           </Button>
           <Button
             size="sm"
@@ -180,7 +184,8 @@ function TimerPicker({ tab, handleChangePerm }: Props) {
               })
             }
           >
-            Add 3 hours
+            {t("feature.perm_form.set_timer.button.add")} 3{" "}
+            {t("feature.perm_form.set_timer.button.hour")}
           </Button>
         </div>
       </CardBody>

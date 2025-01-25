@@ -17,9 +17,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import {
   AVAILABLE_TIME,
   DAY_OF_WEEK,
+  LANGUAGE,
   SEMESTER,
 } from "../../constants/constants";
-import { capitalize } from "lodash";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import {
   clearGroupFormError,
@@ -37,6 +37,9 @@ import { useEffect, useRef } from "react";
 import MultiSelect from "./components/MultiSelect";
 import { fetchMyGroups } from "../myGroupsList/redux/myGroupListSlice";
 import { showToast } from "../../utils/toast";
+import { useTranslation } from "react-i18next";
+import { getDayFromDayEnum } from "../../utils";
+import i18n from "../../locales";
 
 interface Props {
   open: boolean;
@@ -45,16 +48,25 @@ interface Props {
 }
 
 const formDataSchema = yup.object({
-  groupName: yup.string().required("Group name is required."),
+  groupName: yup
+    .string()
+    .required(i18n.t("feature.group_form.error.group_name")),
   groupNumber: yup
     .string()
-    .required("Group number is required.")
-    .matches(/^[0-9]+$/, "Group number must contain only number."),
-  dayOfWeek: yup.string().required("Day of week is required."),
-  classTime: yup.string().required("Class time is required."),
-  semester: yup.string().required("Semester is required."),
-  year: yup.string().required("Year is required."),
-  departmentId: yup.string().required("Department is required."),
+    .required(i18n.t("feature.group_form.error.group_number.required"))
+    .matches(
+      /^[0-9]+$/,
+      i18n.t("feature.group_form.error.group_number.number"),
+    ),
+  dayOfWeek: yup
+    .string()
+    .required(i18n.t("feature.group_form.error.day_of_week")),
+  classTime: yup
+    .string()
+    .required(i18n.t("feature.group_form.error.class_time")),
+  semester: yup.string().required(i18n.t("feature.group_form.error.semester")),
+  year: yup.string().required(i18n.t("feature.group_form.error.year")),
+  departmentId: yup.string().required(i18n.t("feature.group_form.error.dept")),
   staffs: yup
     .array()
     .of(
@@ -74,6 +86,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
   const groupFormError = useAppSelector(getGroupFormError);
   const groupInfo = useAppSelector(getGroupInfo);
   const staffs = useAppSelector(getStaffs);
+  const { t, i18n } = useTranslation();
   const initialized = useRef(false);
   const defaultForm = {
     groupName: "",
@@ -200,7 +213,9 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
       <Dialog size="sm" open={open} handler={onClose} className="p-4 !z-[500]">
         <DialogHeader className="relative m-0 block">
           <Typography variant="h4" color="blue-gray">
-            {groupId ? "Edit Student Group" : "Create Student Group"}
+            {groupId
+              ? t("feature.group_form.title.update")
+              : t("feature.group_form.title.create")}
           </Typography>
           <IconButton
             size="sm"
@@ -221,14 +236,14 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
               color="blue-gray"
               className="mb-2 text-left font-medium"
             >
-              Group Name
+              {t("feature.group_form.label.group_name")}
             </Typography>
             <Input
               {...register("groupName")}
               crossOrigin=""
               color="gray"
               size="lg"
-              placeholder="Group Name"
+              placeholder={t("feature.group_form.label.group_name")}
               error={!!errors.groupName}
               className={`  ${errors.groupName ? "!border-t-red-500 focus:!border-t-red-500" : "focus:!border-t-gray-900 !border-t-blue-gray-200"} `}
               labelProps={{
@@ -251,14 +266,14 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
                 color="blue-gray"
                 className="mb-2 text-left font-medium"
               >
-                Group Number
+                {t("feature.group_form.label.group_number")}
               </Typography>
               <Input
                 {...register("groupNumber")}
                 crossOrigin=""
                 color="gray"
                 size="lg"
-                placeholder="Group Number"
+                placeholder={t("feature.group_form.label.group_number")}
                 error={!!errors.groupNumber}
                 className={`  ${errors.groupNumber ? "!border-t-red-500 focus:!border-t-red-500" : "focus:!border-t-gray-900 !border-t-blue-gray-200"} `}
                 labelProps={{
@@ -279,7 +294,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
                 color="blue-gray"
                 className="mb-2 text-left font-medium"
               >
-                Department
+                {t("feature.group_form.label.dept")}
               </Typography>
               <Controller
                 name="departmentId"
@@ -301,7 +316,9 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
                     >
                       {departments.map((dept) => (
                         <Option key={dept.dept_id} value={dept.dept_id}>
-                          {dept.dept_name}
+                          {i18n.language === LANGUAGE.th
+                            ? dept.name_th
+                            : dept.name_en}
                         </Option>
                       ))}
                     </AsyncSelect>
@@ -324,7 +341,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
                 color="blue-gray"
                 className="mb-2 text-left font-medium"
               >
-                Day of Week
+                {t("feature.group_form.label.day_of_week")}
               </Typography>
               <Controller
                 name="dayOfWeek"
@@ -346,7 +363,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
                     >
                       {DAY_OF_WEEK.map((day) => (
                         <Option key={day} value={day}>
-                          {capitalize(day)}
+                          {getDayFromDayEnum(day, i18n.language)}
                         </Option>
                       ))}
                     </AsyncSelect>
@@ -367,7 +384,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
                 color="blue-gray"
                 className="mb-2 text-left font-medium"
               >
-                Class Time
+                {t("feature.group_form.label.class_time")}
               </Typography>
               <Controller
                 name="classTime"
@@ -412,7 +429,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
                 color="blue-gray"
                 className="mb-2 text-left font-medium"
               >
-                Year
+                {t("feature.group_form.label.year")}
               </Typography>
               <Controller
                 name="year"
@@ -455,7 +472,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
                 color="blue-gray"
                 className="mb-2 text-left font-medium"
               >
-                Semester
+                {t("feature.group_form.label.semester")}
               </Typography>
               <Controller
                 name="semester"
@@ -499,7 +516,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
               color="blue-gray"
               className="mb-2 text-left font-medium"
             >
-              Staffs
+              {t("feature.group_form.label.staffs")}
             </Typography>
             <Controller
               name="staffs"
@@ -519,7 +536,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
         </DialogBody>
         <DialogFooter>
           <Button className="ml-auto" onClick={handleSubmit(onSubmit)}>
-            submit
+            {t("common.button.submit")}
           </Button>
         </DialogFooter>
       </Dialog>

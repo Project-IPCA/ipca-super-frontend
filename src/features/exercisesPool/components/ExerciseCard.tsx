@@ -15,10 +15,11 @@ import {
   updateAssignedExercise,
 } from "../redux/ExercisesPoolSlice";
 import { useNavigate, useParams } from "react-router-dom";
-import { OPTIONS, OPTIONS_VALUE } from "../constants";
+import { OPTIONS_VALUE } from "../constants";
 import { useMemo, useState } from "react";
 import { useAppDispatch } from "../../../hooks/store";
 import { showToast } from "../../../utils/toast";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   level: string;
@@ -37,6 +38,7 @@ function ExerciseCard({
   handleToggleForm,
   handleSetFormUseData,
 }: Props) {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { groupId, chapterIdx } = useParams();
@@ -49,6 +51,17 @@ function ExerciseCard({
     () => new Set(selectedItems),
     [selectedItems],
   );
+  const OPTIONS = [
+    { label: t("feature.exercise_pool.filter.all"), value: OPTIONS_VALUE.all },
+    {
+      label: t("feature.exercise_pool.filter.selected"),
+      value: OPTIONS_VALUE.selected,
+    },
+    {
+      label: t("feature.exercise_pool.filter.not_selected"),
+      value: OPTIONS_VALUE.notSelected,
+    },
+  ];
 
   const getItemSelected = (exerciseId: string) => {
     return selectedItemsSet.has(exerciseId);
@@ -102,10 +115,12 @@ function ExerciseCard({
     <Card className="border-[1px] ">
       <CardBody>
         <div className="flex justify-between items-center">
-          <Typography variant="h5">Level {level}</Typography>
+          <Typography variant="h5">
+            {t("feature.exercise_pool.level")} {level}
+          </Typography>
           <div className="w-36">
             <Select
-              label="Filter"
+              label={t("feature.exercise_pool.filter.title")}
               value={filter}
               onChange={(val) => {
                 if (val) {
@@ -164,7 +179,7 @@ function ExerciseCard({
           variant="outlined"
           onClick={() => handleUpdatedAssingedExercise()}
         >
-          Update
+          {t("feature.exercise_pool.button.update")}
         </Button>
         <Button
           size="sm"
@@ -173,7 +188,7 @@ function ExerciseCard({
             handleToggleForm();
           }}
         >
-          Add Exercise
+          {t("feature.exercise_pool.button.add_exercise")}
         </Button>
       </CardFooter>
     </Card>
