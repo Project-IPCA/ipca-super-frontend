@@ -26,7 +26,7 @@ export const loginUser = createAsyncThunk(
   "login/loginUser",
   async ({ username, password }: UserRequest, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post(`/auth/login`, {
+      const response = await axiosInstance.post(`/auth/login/super`, {
         username: username,
         password: password,
       });
@@ -42,7 +42,7 @@ export const loginUser = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 const loginSlice = createSlice({
