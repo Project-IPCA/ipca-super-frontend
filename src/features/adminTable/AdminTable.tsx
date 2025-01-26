@@ -9,9 +9,15 @@ interface Props {
 
 function AdminTable({ staffs }: Props) {
   const { t } = useTranslation();
-  const tableHeaders = t("feature.admin_table.th_list", {
-    returnObjects: true,
-  }) as string[];
+  const tableHeaders = Array.isArray(
+    t("feature.admin_table.th_list", {
+      returnObjects: true,
+    }),
+  )
+    ? (t("feature.admin_table.th_list", {
+        returnObjects: true,
+      }) as string[])
+    : [];
   return (
     <>
       <Card className="h-full w-full  shadow-none border-[1.5px]">

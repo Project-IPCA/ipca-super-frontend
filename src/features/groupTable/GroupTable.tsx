@@ -47,9 +47,15 @@ function GroupTable({
     return truncate(staffList, { length: 16, separator: "..." });
   };
 
-  const tableHeaders = t("feature.group_table.th_list", {
-    returnObjects: true,
-  }) as string[];
+  const tableHeaders = Array.isArray(
+    t("feature.group_table.th_list", {
+      returnObjects: true,
+    }),
+  )
+    ? (t("feature.group_table.th_list", {
+        returnObjects: true,
+      }) as string[])
+    : [];
 
   return (
     <>

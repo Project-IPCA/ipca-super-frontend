@@ -9,7 +9,10 @@ interface Props {
 function YearMonthSelector({ currentMonth, setCurrentMonth }: Props) {
   const { t } = useTranslation();
   const currentYear = currentMonth.getFullYear();
-  const months = t("common.month.list", { returnObjects: true }) as string[];
+  const months = Array.isArray(t("common.month.list", { returnObjects: true }))
+    ? (t("common.month.list", { returnObjects: true }) as string[])
+    : [];
+
   const years = Array.from({ length: currentYear + 1 - 1900 }, (_, i) =>
     (1900 + i).toString(),
   );

@@ -27,9 +27,13 @@ const DatePicker = ({ setValue, formData }: Props) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [isYearMonthView, setIsYearMonthView] = useState(false);
 
-  const months = t("common.month.list", { returnObjects: true }) as string[];
+  const months = Array.isArray(t("common.month.list", { returnObjects: true }))
+    ? (t("common.month.list", { returnObjects: true }) as string[])
+    : [];
 
-  const days = t("common.day", { returnObjects: true }) as string[];
+  const days = Array.isArray(t("common.day", { returnObjects: true }))
+    ? (t("common.day", { returnObjects: true }) as string[])
+    : [];
 
   const handlePrevMonth = () => {
     setCurrentMonth(

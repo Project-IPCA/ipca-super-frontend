@@ -32,9 +32,15 @@ function ExerciseTable({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { groupId } = useParams();
-  const tableHeaders = t("feature.group_exercises.th_list", {
-    returnObjects: true,
-  }) as string[];
+  const tableHeaders = Array.isArray(
+    t("feature.group_exercises.th_list", {
+      returnObjects: true,
+    }),
+  )
+    ? (t("feature.group_exercises.th_list", {
+        returnObjects: true,
+      }) as string[])
+    : [];
   return (
     <div className="pt-8">
       <Card className="h-full w-full  shadow-none border-[1.5px]">
