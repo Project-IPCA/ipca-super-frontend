@@ -42,12 +42,24 @@ function StudentTable({
 }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const tableHeadersP1 = t("feature.group_students.th_list.part1", {
-    returnObjects: true,
-  }) as string[];
-  const tableHeadersP2 = t("feature.group_students.th_list.part2", {
-    returnObjects: true,
-  }) as string[];
+  const tableHeadersP1 = Array.isArray(
+    t("feature.group_students.th_list.part1", {
+      returnObjects: true,
+    }),
+  )
+    ? (t("feature.group_students.th_list.part1", {
+        returnObjects: true,
+      }) as string[])
+    : [];
+  const tableHeadersP2 = Array.isArray(
+    t("feature.group_students.th_list.part2", {
+      returnObjects: true,
+    }),
+  )
+    ? (t("feature.group_students.th_list.part2", {
+        returnObjects: true,
+      }) as string[])
+    : [];
   const getTableHeader = () => {
     const labs = labInfo.map(
       (lab) =>

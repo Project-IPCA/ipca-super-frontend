@@ -12,9 +12,15 @@ interface Props {
 
 function LogsTable({ logs, tableRef }: Props) {
   const { t } = useTranslation();
-  const thList = t("feature.group_logs.th_list", {
-    returnObjects: true,
-  }) as string[];
+  const thList = Array.isArray(
+    t("feature.group_logs.th_list", {
+      returnObjects: true,
+    }),
+  )
+    ? (t("feature.group_logs.th_list", {
+        returnObjects: true,
+      }) as string[])
+    : [];
   const tableHeaders = [
     {
       name: thList[0],

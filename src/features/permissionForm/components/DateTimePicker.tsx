@@ -43,9 +43,13 @@ const DateTimePicker = ({
   const minuteContainRef = useRef<HTMLDivElement>(null);
   const secondContainRef = useRef<HTMLDivElement>(null);
 
-  const months = t("common.month.list", { returnObjects: true }) as string[];
+  const months = Array.isArray(t("common.month.list", { returnObjects: true }))
+    ? (t("common.month.list", { returnObjects: true }) as string[])
+    : [];
 
-  const days = t("common.day", { returnObjects: true }) as string[];
+  const days = Array.isArray(t("common.day", { returnObjects: true }))
+    ? (t("common.day", { returnObjects: true }) as string[])
+    : [];
 
   const handlePrevMonth = () => {
     setCurrentMonth(
