@@ -35,6 +35,8 @@ export const getDayFromDayEnum = (day: string, lang: string) => {
       return day2lang.th;
     case LANGUAGE.en:
       return day2lang.en;
+    default:
+      return day2lang.en;
   }
 };
 
@@ -45,6 +47,8 @@ export const getGenderFromEnum = (gender: string, lang: string) => {
       return gender2lang.th;
     case LANGUAGE.en:
       return gender2lang.en;
+    default:
+      return gender2lang.en;
   }
 };
 
@@ -54,6 +58,8 @@ export const getRoleFromEnum = (role: string, lang: string) => {
     case LANGUAGE.th:
       return role2lang.th;
     case LANGUAGE.en:
+      return role2lang.en;
+    default:
       return role2lang.en;
   }
 };

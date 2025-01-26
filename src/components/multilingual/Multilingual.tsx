@@ -40,6 +40,8 @@ function Multilingual({ variant = "long" }: Props) {
         return variant === "long" ? flagTh : flagCirTh;
       case LANGUAGE.en:
         return variant === "long" ? flagEn : flagCirEn;
+      default:
+        return variant === "long" ? flagEn : flagCirEn;
     }
   };
 
@@ -48,6 +50,8 @@ function Multilingual({ variant = "long" }: Props) {
       case LANGUAGE.th:
         return "ภาษาไทย";
       case LANGUAGE.en:
+        return "English";
+      default:
         return "English";
     }
   };
