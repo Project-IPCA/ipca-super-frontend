@@ -125,3 +125,15 @@ export const GENDER_2_LANGUAGE = [
     en: "Other",
   },
 ];
+
+export const ROLE = {
+  ta: "TA",
+  supervisor: "SUPERVISOR",
+  executive: "EXECUTIVE",
+};
+export const ROLE_PERMISSION = [
+  "GROUP_ADMIN",
+  "STUDENT_ADMIN",
+  "EXERCISE_ADMIN",
+  "DASHBOARD_ADMIN",
+];

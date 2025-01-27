@@ -163,7 +163,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
     if (groupFormError) {
       showToast({
         variant: "error",
-        message: "groupFormError.error",
+        message: groupFormError.error,
       });
       dispatch(clearGroupFormError());
     }
