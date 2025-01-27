@@ -12,6 +12,7 @@ import {
   UserGroupIcon,
   ChevronDownIcon,
   ComputerDesktopIcon,
+  AcademicCapIcon,
 } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -35,7 +36,7 @@ function MenuList({ handleCloseDrawer }: Props) {
   const menuItems = [
     {
       label: t("layout.default.menu.groups"),
-      icon: UserGroupIcon,
+      icon: AcademicCapIcon,
       subItems: [
         {
           label: t("layout.default.menu.my_groups"),
@@ -49,7 +50,7 @@ function MenuList({ handleCloseDrawer }: Props) {
     },
     {
       label: t("layout.default.menu.admins"),
-      icon: ComputerDesktopIcon,
+      icon: UserGroupIcon,
       path: "/admins",
     },
   ];
