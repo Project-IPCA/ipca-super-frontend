@@ -97,7 +97,22 @@
     "admin_list": {
       "title": "Admins",
       "button": {
-        "add_admin": "Add Admin"
+        "add_admin": "Add Admin",
+        "conf_perm": "Configure Permissions"
+      },
+      "modal": {
+        "title": "Configure Role Permissions",
+        "role": {
+          "ta": "Teacher Assistant",
+          "exe": "Executive"
+        },
+        "th_list": [
+          "Role",
+          "Group Admin",
+          "Student Admin",
+          "Exercise Admin",
+          "Dashboard Admin"
+        ]
       }
     },
     "admin_table": {
