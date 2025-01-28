@@ -6,34 +6,36 @@ import {
 } from "react-router-dom";
 import Layout from "./layouts/Layout";
 import { AnonymousRoutes, ProtectedRoutes, SpinnerLoading } from "./components";
+import ErrorPage from "./pages/errorPage/ErrorPage";
 
 const ProfilePage = lazy(() => import("./pages/profilePage/ProfilePage"));
 const LoginPage = lazy(() => import("./pages/loginPage/LoginPage"));
 const NotFoundPage = lazy(() => import("./pages/notFoundPage/NotFoundPage"));
 const MyGroupsPage = lazy(() => import("./pages/myGroupsPage/MyGroupsPage"));
 const AvailableGroupPage = lazy(
-  () => import("./pages/availableGroupPage/AvailableGroupPage")
+  () => import("./pages/availableGroupPage/AvailableGroupPage"),
 );
 const GroupDetailPage = lazy(
-  () => import("./pages/groupDetailPage/GroupDetailPage")
+  () => import("./pages/groupDetailPage/GroupDetailPage"),
 );
 const StudentDetailPage = lazy(
-  () => import("./pages/studentDetailPage/StudentDetailPage")
+  () => import("./pages/studentDetailPage/StudentDetailPage"),
 );
 const ExerciseDetailPage = lazy(
-  () => import("./pages/exerciseDetailPage/ExerciseDetailPage")
+  () => import("./pages/exerciseDetailPage/ExerciseDetailPage"),
 );
 const ExercisePoolPage = lazy(
-  () => import("./pages/exercisePoolPage/ExercisePoolPage")
+  () => import("./pages/exercisePoolPage/ExercisePoolPage"),
 );
 const ExerciseInfoPage = lazy(
-  () => import("./pages/exerciseInfoPage/ExerciseInfoPage")
+  () => import("./pages/exerciseInfoPage/ExerciseInfoPage"),
 );
 const AdminPage = lazy(() => import("./pages/adminPage/AdminPage"));
 
 const router = createBrowserRouter([
   {
     element: <AnonymousRoutes />,
+    errorElement: <Navigate to="/error" replace />,
     children: [
       {
         path: "/login",
@@ -47,6 +49,7 @@ const router = createBrowserRouter([
   },
   {
     element: <ProtectedRoutes />,
+    errorElement: <Navigate to="/error" replace />,
     children: [
       {
         element: <Layout />,
@@ -132,6 +135,14 @@ const router = createBrowserRouter([
     element: (
       <Suspense fallback={<SpinnerLoading />}>
         <NotFoundPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/error",
+    element: (
+      <Suspense fallback={<SpinnerLoading />}>
+        <ErrorPage />
       </Suspense>
     ),
   },
