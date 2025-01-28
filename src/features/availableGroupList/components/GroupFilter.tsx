@@ -3,10 +3,15 @@ import { AsyncSelect } from "../../../components";
 import { FilterForm, FilterKey } from "../AvailableGroupList";
 import { Filters } from "../redux/AvailableGroupListSlice";
 import { ALL_VALUE } from "../constants";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { DAY_OF_WEEK } from "../../../constants/constants";
 import { useTranslation } from "react-i18next";
 import { getDayFromDayEnum } from "../../../utils";
+import { useAppDispatch, useAppSelector } from "../../../hooks/store";
+import {
+  fetchProfile,
+  getUserId,
+} from "../../profileForm/redux/profileFormSlice";
 
 interface Props {
   filters: Filters;
@@ -16,10 +21,12 @@ interface Props {
 
 function GroupFilter({ filters, filterForm, handleChangeForm }: Props) {
   const { t, i18n } = useTranslation();
+  const userId = useAppSelector(getUserId);
+  const dispatch = useAppDispatch();
   const instructorOptions = useMemo(
     () => [
       {
-        supervisor_id: ALL_VALUE,
+        staff_id: ALL_VALUE,
         f_name: t("feature.available_group_list.filter.all"),
         l_name: "",
       },
@@ -27,6 +34,12 @@ function GroupFilter({ filters, filterForm, handleChangeForm }: Props) {
     ],
     [filters.instructors],
   );
+
+  useEffect(() => {
+    if (!userId) {
+      dispatch(fetchProfile());
+    }
+  }, [dispatch, userId]);
 
   const yearOptions = useMemo(() => {
     if (filters.years != null && filters.years.length) {
@@ -58,7 +71,7 @@ function GroupFilter({ filters, filterForm, handleChangeForm }: Props) {
         }}
       >
         {instructorOptions.map((option) => (
-          <Option key={option.supervisor_id} value={option.supervisor_id}>
+          <Option key={option.staff_id} value={option.staff_id}>
             {`${option.f_name} ${option.l_name}`}
           </Option>
         ))}
@@ -75,11 +88,13 @@ function GroupFilter({ filters, filterForm, handleChangeForm }: Props) {
           className: "!min-w-28 ",
         }}
       >
-        {instructorOptions.map((option) => (
-          <Option key={option.supervisor_id} value={option.supervisor_id}>
-            {`${option.f_name} ${option.l_name}`}
-          </Option>
-        ))}
+        {instructorOptions
+          .filter((option) => option.staff_id !== userId)
+          .map((option) => (
+            <Option key={option.staff_id} value={option.staff_id}>
+              {`${option.f_name} ${option.l_name}`}
+            </Option>
+          ))}
       </AsyncSelect>
       <AsyncSelect
         label={t("feature.available_group_list.filter.year")}

@@ -130,7 +130,37 @@ export const ROLE = {
   ta: "TA",
   supervisor: "SUPERVISOR",
   executive: "EXECUTIVE",
+  beyonder: "BEYONDER",
+  student: "STUDENT",
 };
+
+export const ROLE_DISPLAY_2_LANGUAGE = {
+  student: {
+    en: "Student",
+    th: "นักเรียน",
+  },
+  ta: {
+    en: "Teacher Assistant",
+    th: "ผู้ช่วยสอน",
+  },
+  supervisor: {
+    en: "Supervisor",
+    th: "อาจารย์",
+  },
+  executive: {
+    en: "Executive",
+    th: "ผู้บริหาร",
+  },
+  beyonder: {
+    en: "Beyonder",
+    th: "บียอนเดอร์",
+  },
+  invalid: {
+    en: "Invalid",
+    th: "ไม่ถูกต้อง",
+  },
+};
+
 export const ROLE_PERMISSION = [
   "GROUP_ADMIN",
   "STUDENT_ADMIN",

@@ -116,7 +116,7 @@
       }
     },
     "admin_table": {
-      "th_list": ["First Name", "Last Name"]
+      "th_list": ["First Name", "Last Name", "Role"]
     },
     "admin_form": {
       "title": "Create Admin",

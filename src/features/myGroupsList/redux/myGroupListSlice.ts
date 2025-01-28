@@ -10,6 +10,13 @@ export interface Instructor {
   supervisor_id: string;
 }
 
+export interface Staffs {
+  staff_id: string;
+  f_name: string;
+  l_name: string;
+  role: string;
+}
+
 interface Department {
   dept_id: string;
   name_th: string;
@@ -28,7 +35,7 @@ export interface Group {
   year: number;
   student_amount: number;
   instructor: Instructor;
-  staffs: Instructor[];
+  staffs: Staffs[];
 }
 
 interface MyGroups {
@@ -65,7 +72,7 @@ export const fetchMyGroups = createAsyncThunk(
   "myGroups/fetchMyGroups",
   async (
     { year, page }: { year: string; page: number },
-    { rejectWithValue }
+    { rejectWithValue },
   ) => {
     try {
       const response = await axiosInstance.get(`/supervisor/my_groups`, {
@@ -79,7 +86,7 @@ export const fetchMyGroups = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 const myGroupsSlice = createSlice({

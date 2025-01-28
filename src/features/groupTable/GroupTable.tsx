@@ -9,7 +9,7 @@ import {
   Tooltip,
   Typography,
 } from "@material-tailwind/react";
-import { Group, Instructor } from "../myGroupsList/redux/myGroupListSlice";
+import { Group, Staffs } from "../myGroupsList/redux/myGroupListSlice";
 import { truncate } from "lodash";
 import { EyeIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
@@ -40,7 +40,7 @@ function GroupTable({
 }: Props) {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
-  const formatStaffNames = (staffs: Instructor[]): string => {
+  const formatStaffNames = (staffs: Staffs[]): string => {
     const staffList = staffs
       .map((staff) => `${staff.f_name} ${staff.l_name}`)
       .join(",");
@@ -142,7 +142,7 @@ function GroupTable({
                       <Tooltip
                         content={group.staffs.map((staff) => (
                           <Typography
-                            key={staff.supervisor_id}
+                            key={staff.staff_id}
                             variant="small"
                             className="font-medium"
                           >{`${staff.f_name} ${staff.l_name}`}</Typography>

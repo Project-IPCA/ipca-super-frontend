@@ -3,14 +3,9 @@ import { resolveApiError } from "../../../utils";
 import { API_ERROR_RESPONSE, Pagination } from "../../../constants/constants";
 import { RootState } from "../../../store/store";
 import axiosInstance from "../../../utils/axios";
+import { Staffs } from "../../myGroupsList/redux/myGroupListSlice";
 
 interface Instructor {
-  f_name: string;
-  l_name: string;
-  supervisor_id: string;
-}
-
-interface Staff {
   f_name: string;
   l_name: string;
   supervisor_id: string;
@@ -34,12 +29,12 @@ interface Group {
   year: number;
   student_amount: number;
   instructor: Instructor;
-  staffs: Instructor[];
+  staffs: Staffs[];
 }
 
 export interface Filters {
-  instructors: Instructor[];
-  staffs: Staff[];
+  instructors: Staffs[];
+  staffs: Staffs[];
   years: number[];
 }
 
@@ -96,7 +91,7 @@ export const fetchAvailableGroups = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 const availableGroupsSlice = createSlice({

@@ -65,7 +65,9 @@ function MyGroupsList() {
 
   const yearOptions = [
     "All",
-    ...(myGroups.filters.year || []).map((year) => year.toString()),
+    ...[...(myGroups.filters.year || [])]
+      .sort((a, b) => b - a)
+      .map((year) => year.toString()),
   ];
 
   return (

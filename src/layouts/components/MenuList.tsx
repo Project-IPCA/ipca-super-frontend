@@ -11,7 +11,6 @@ import React, { createElement, useState } from "react";
 import {
   UserGroupIcon,
   ChevronDownIcon,
-  ComputerDesktopIcon,
   AcademicCapIcon,
 } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
