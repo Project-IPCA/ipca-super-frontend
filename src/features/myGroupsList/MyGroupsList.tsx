@@ -1,6 +1,6 @@
 import { Button, Option, Typography } from "@material-tailwind/react";
 import { GroupTable } from "../groupTable";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import { fetchMyGroups, getMyGroups } from "./redux/myGroupListSlice";
 import { AsyncSelect } from "../../components";
@@ -63,12 +63,15 @@ function MyGroupsList() {
     }
   };
 
-  const yearOptions = [
-    "All",
-    ...[...(myGroups.filters.year || [])]
-      .sort((a, b) => b - a)
-      .map((year) => year.toString()),
-  ];
+  const yearOptions = useMemo(
+    () => [
+      "All",
+      ...[...(myGroups.filters.year || [])]
+        .sort((a, b) => b - a)
+        .map((year) => year.toString()),
+    ],
+    [myGroups.filters.year],
+  );
 
   return (
     <>
