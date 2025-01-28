@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import Layout from "./layouts/Layout";
 import { AnonymousRoutes, ProtectedRoutes, SpinnerLoading } from "./components";
-import ErrorPage from "./pages/errorPage/ErrorPage";
 
 const ProfilePage = lazy(() => import("./pages/profilePage/ProfilePage"));
 const LoginPage = lazy(() => import("./pages/loginPage/LoginPage"));
@@ -31,6 +30,8 @@ const ExerciseInfoPage = lazy(
   () => import("./pages/exerciseInfoPage/ExerciseInfoPage"),
 );
 const AdminPage = lazy(() => import("./pages/adminPage/AdminPage"));
+
+const ErrorPage = lazy(() => import("./pages/errorPage/ErrorPage"));
 
 const router = createBrowserRouter([
   {
