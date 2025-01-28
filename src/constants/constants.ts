@@ -102,11 +102,19 @@ export const SUBMISSION_STATUS = {
   rejected: "REJECTED",
 };
 
-export const ROLE_LIST = ["SUPERVISOR"];
+export const ROLE_LIST = ["TA", "SUPERVISOR", "EXECUTIVE"];
 export const ROLE_2_LANGUAGE = [
+  {
+    th: "ผู้ช่วยสอน",
+    en: "Teacher Assistant",
+  },
   {
     th: "อาจารย์ผู้สอน",
     en: "Supervisor",
+  },
+  {
+    th: "ผู้บริหาร",
+    en: "Executive",
   },
 ];
 
