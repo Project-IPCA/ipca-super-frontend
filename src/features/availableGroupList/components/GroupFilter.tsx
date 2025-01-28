@@ -30,7 +30,12 @@ function GroupFilter({ filters, filterForm, handleChangeForm }: Props) {
 
   const yearOptions = useMemo(() => {
     if (filters.years != null && filters.years.length) {
-      return [ALL_VALUE, ...filters.years.map((year) => year.toString())];
+      return [
+        ALL_VALUE,
+        ...[...(filters.years || [])]
+          .sort((a, b) => b - a)
+          .map((year) => year.toString()),
+      ];
     } else {
       return [ALL_VALUE];
     }
