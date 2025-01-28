@@ -25,9 +25,10 @@ interface Department {
 }
 
 export interface Staffs {
-  supervisor_id: string;
+  staff_id: string;
   f_name: string;
   l_name: string;
+  role: string;
 }
 
 interface GroupFormState {
@@ -51,13 +52,13 @@ export const fetchGroupInfo = createAsyncThunk(
   async (groupId: string, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(
-        `/supervisor/my_group_info/${groupId}`
+        `/supervisor/my_group_info/${groupId}`,
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 export const fetchDepartments = createAsyncThunk(
@@ -69,7 +70,7 @@ export const fetchDepartments = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 export const fetchStaffs = createAsyncThunk(
@@ -81,7 +82,7 @@ export const fetchStaffs = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 export const createStudentGroup = createAsyncThunk(
@@ -97,19 +98,19 @@ export const createStudentGroup = createAsyncThunk(
         return rejectWithValue(resolveApiError(error));
       }
     }
-  }
+  },
 );
 
 export const updateStudentGroup = createAsyncThunk(
   "groupForm/updateStudentGroup",
   async (
     { request, groupId }: { request: FormRequest; groupId: string },
-    { rejectWithValue }
+    { rejectWithValue },
   ) => {
     try {
       const response = await axiosInstance.put(
         `/supervisor/my_group_info/${groupId}`,
-        request
+        request,
       );
       return response.data;
     } catch (error) {
@@ -119,7 +120,7 @@ export const updateStudentGroup = createAsyncThunk(
         return rejectWithValue(resolveApiError(error));
       }
     }
-  }
+  },
 );
 
 const groupFormSlice = createSlice({

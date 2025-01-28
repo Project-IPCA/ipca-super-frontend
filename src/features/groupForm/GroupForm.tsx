@@ -40,6 +40,7 @@ import { showToast } from "../../utils/toast";
 import { useTranslation } from "react-i18next";
 import { getDayFromDayEnum } from "../../utils";
 import i18n from "../../locales";
+import { fetchProfile, getUserId } from "../profileForm/redux/profileFormSlice";
 
 interface Props {
   open: boolean;
@@ -86,6 +87,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
   const groupFormError = useAppSelector(getGroupFormError);
   const groupInfo = useAppSelector(getGroupInfo);
   const staffs = useAppSelector(getStaffs);
+  const userId = useAppSelector(getUserId);
   const { t, i18n } = useTranslation();
   const initialized = useRef(false);
   const defaultForm = {
@@ -115,6 +117,12 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
     }
   }, [dispatch, groupId]);
 
+  useEffect(() => {
+    if (!userId) {
+      dispatch(fetchProfile());
+    }
+  }, [dispatch, userId]);
+
   const formatTime = (timeString: string) => {
     const [hours, minutes] = timeString.split(":");
     return `${parseInt(hours, 10)}:${minutes}`;
@@ -125,7 +133,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
       const newGroupInfo = groupInfo[groupId];
       const classTime = `${formatTime(newGroupInfo.time_start)} - ${formatTime(newGroupInfo.time_end)}`;
       const staffs = newGroupInfo.staffs.map((staff) => ({
-        value: staff.supervisor_id,
+        value: staff.staff_id,
         label: `${staff.f_name} ${staff.l_name}`,
       }));
       reset({
@@ -149,10 +157,12 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
     }
   }, [dispatch, initialized]);
 
-  const staffsOptions = staffs.map((staff) => ({
-    value: staff.supervisor_id,
-    label: `${staff.f_name} ${staff.l_name}`,
-  }));
+  const staffsOptions = staffs
+    .filter((staff) => staff.staff_id !== userId)
+    .map((staff) => ({
+      value: staff.staff_id,
+      label: `${staff.f_name} ${staff.l_name}`,
+    }));
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: groupId ? 5 : 2 }, (_, i) =>
