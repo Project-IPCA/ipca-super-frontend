@@ -29,10 +29,11 @@ import {
 } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { AsyncSelect } from "../../components";
-import { GENDER_LIST, LANGUAGE, ROLE_LIST } from "../../constants/constants";
+import { GENDER_LIST, LANGUAGE, ROLE } from "../../constants/constants";
 import { useTranslation } from "react-i18next";
 import i18n from "../../locales";
 import { getGenderFromEnum, getRoleFromEnum } from "../../utils";
+import usePermission from "../../hooks/usePermission";
 
 interface Props {
   open: boolean;
@@ -56,6 +57,7 @@ function AdminForm({ open, onClose }: Props) {
   const departments = useAppSelector(getDepartments);
   const groupFormError = useAppSelector(getGroupFormError);
   const adminFormError = useAppSelector(getAdminFormError);
+  const { role } = usePermission();
   const initialized = useRef(false);
   const defaultForm = {
     username: "",
@@ -75,6 +77,12 @@ function AdminForm({ open, onClose }: Props) {
     resolver: yupResolver(formDataSchema),
     defaultValues: defaultForm,
   });
+
+  const ROLE_LIST = [
+    ROLE.ta,
+    ROLE.supervisor,
+    role === ROLE.beyonder ? ROLE.executive : null,
+  ].filter(Boolean) as string[];
 
   useEffect(() => {
     if (!initialized.current) {
@@ -355,7 +363,9 @@ function AdminForm({ open, onClose }: Props) {
                   >
                     {departments.map((dept) => (
                       <Option key={dept.dept_id} value={dept.dept_id}>
-                        {i18n.language === LANGUAGE.th?dept.name_th:dept.name_en}
+                        {i18n.language === LANGUAGE.th
+                          ? dept.name_th
+                          : dept.name_en}
                       </Option>
                     ))}
                   </AsyncSelect>

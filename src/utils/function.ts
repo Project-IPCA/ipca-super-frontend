@@ -6,6 +6,7 @@ import {
   GENDER_2_LANGUAGE,
   GENDER_LIST,
   LANGUAGE,
+  Permission,
   ROLE_2_LANGUAGE,
   ROLE_LIST,
 } from "../constants/constants";
@@ -62,4 +63,11 @@ export const getRoleFromEnum = (role: string, lang: string) => {
     default:
       return role2lang.en;
   }
+};
+
+export const isAcceptedPermission = (
+  perms: Permission[],
+  acceptedPermission: Permission[],
+) => {
+  return perms.some((i) => acceptedPermission.includes(i));
 };

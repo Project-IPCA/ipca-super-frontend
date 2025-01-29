@@ -6,6 +6,8 @@ import { fetchMyGroups, getMyGroups } from "./redux/myGroupListSlice";
 import { AsyncSelect } from "../../components";
 import { GroupForm } from "../groupForm";
 import { useTranslation } from "react-i18next";
+import RoleProtection from "../../components/roleProtection/RoleProtection";
+import { GROUP_ADMIN } from "../../constants/constants";
 
 function MyGroupsList() {
   const initialized = useRef(false);
@@ -97,13 +99,15 @@ function MyGroupsList() {
             ))}
           </AsyncSelect>
         </div>
-        <Button
-          className="w-full sm:w-fit"
-          size="md"
-          onClick={() => setFormOpen(true)}
-        >
-          {t("feature.my_groups_list.button.add_group")}
-        </Button>
+        <RoleProtection acceptedPermission={[GROUP_ADMIN]}>
+          <Button
+            className="w-full sm:w-fit"
+            size="md"
+            onClick={() => setFormOpen(true)}
+          >
+            {t("feature.my_groups_list.button.add_group")}
+          </Button>
+        </RoleProtection>
       </div>
       <GroupTable
         groups={myGroups.my_groups}

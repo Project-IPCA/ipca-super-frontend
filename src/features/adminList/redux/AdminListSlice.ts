@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { API_ERROR_RESPONSE } from "../../../constants/constants";
+import { API_ERROR_RESPONSE, Permission } from "../../../constants/constants";
 import axiosInstance from "../../../utils/axios";
 import { resolveApiError } from "../../../utils";
 import { RootState } from "../../../store/store";
@@ -12,12 +12,20 @@ export interface RolePermission {
 
 interface AdminListState {
   rolePermission: RolePermission[];
+  myPermissions: {
+    permission: Permission[] | null;
+    role: string | null;
+  };
   isFetching: boolean;
   error: API_ERROR_RESPONSE | null;
 }
 
 const initialState: AdminListState = {
   rolePermission: [],
+  myPermissions: {
+    permission: null,
+    role: null,
+  },
   isFetching: false,
   error: null,
 };
@@ -34,6 +42,18 @@ export const fetchRolePermission = createAsyncThunk(
       const response = await axiosInstance.get(
         `/supervisor/all_role_permission`,
       );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(resolveApiError(error));
+    }
+  },
+);
+
+export const fetchMyPermissions = createAsyncThunk(
+  "adminList/fetchMyPermissions",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`/supervisor/role_permission`);
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
@@ -83,6 +103,17 @@ const adminListSlice = createSlice({
         state.isFetching = false;
         state.error = action.payload as API_ERROR_RESPONSE;
       })
+      .addCase(fetchMyPermissions.pending, (state, _) => {
+        state.isFetching = true;
+      })
+      .addCase(fetchMyPermissions.fulfilled, (state, action) => {
+        state.isFetching = false;
+        state.myPermissions = action.payload;
+      })
+      .addCase(fetchMyPermissions.rejected, (state, action) => {
+        state.isFetching = false;
+        state.error = action.payload as API_ERROR_RESPONSE;
+      })
       .addCase(updateRolePermission.rejected, (state, action) => {
         state.error = action.payload as API_ERROR_RESPONSE;
       }),
@@ -94,5 +125,9 @@ export const getRolePermission = (state: RootState) =>
 export const getRolePermissionError = (state: RootState) =>
   state.adminList.error;
 export const getRoleStatus = (state: RootState) => state.adminList.isFetching;
+export const getMyPerm = (state: RootState) =>
+  state.adminList.myPermissions.permission;
+export const getMyRole = (state: RootState) =>
+  state.adminList.myPermissions.role;
 
 export default adminListSlice.reducer;

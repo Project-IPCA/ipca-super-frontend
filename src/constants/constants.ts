@@ -175,3 +175,14 @@ export const ROLE_PERMISSION = [
   "EXERCISE_ADMIN",
   "DASHBOARD_ADMIN",
 ];
+
+export const GROUP_ADMIN = "GROUP_ADMIN";
+export const STUDENT_ADMIN = "STUDENT_ADMIN";
+export const EXERCISE_ADMIN = "EXERCISE_ADMIN";
+export const DASHBOARD_ADMIN = "DASHBOARD_ADMIN";
+
+export type Permission =
+  | "GROUP_ADMIN"
+  | "STUDENT_ADMIN"
+  | "EXERCISE_ADMIN"
+  | "DASHBOARD_ADMIN";
