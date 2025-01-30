@@ -1,7 +1,10 @@
 import { ControllerRenderProps } from "react-hook-form";
 import Select from "react-select";
-import { FormData } from "../GroupForm";
 import makeAnimated from "react-select/animated";
+
+type FormData = {
+  staffs: { value: string; label: string }[];
+};
 
 interface Props {
   field: ControllerRenderProps<FormData>;

@@ -68,6 +68,7 @@
         "class_time": "Class Time",
         "year": "Year",
         "semester": "Semester",
+        "supervisor": "Supervisor",
         "staffs": "Staffs"
       },
       "error": {
