@@ -599,7 +599,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
               </Typography>
             </div>
           </div>
-          {role !== ROLE.supervisor && (
+          {role !== ROLE.supervisor && !groupId && (
             <div>
               <Typography
                 variant="small"
