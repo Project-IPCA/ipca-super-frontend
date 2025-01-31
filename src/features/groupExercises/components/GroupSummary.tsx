@@ -26,12 +26,16 @@ import {
   getOnlineStudents,
 } from "../../groupStudents/redux/GroupStudentsSlice";
 import { showToast } from "../../../utils/toast";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { GROUP_ADMIN, LANGUAGE, ROLE } from "../../../constants/constants";
 import RoleProtection from "../../../components/roleProtection/RoleProtection";
 import usePermission from "../../../hooks/usePermission";
+import {
+  fetchProfile,
+  getUserId,
+} from "../../profileForm/redux/profileFormSlice";
 
 interface Props {
   groupData: GroupData | null;
@@ -41,6 +45,7 @@ function GroupSummary({ groupData }: Props) {
   const { t, i18n } = useTranslation();
   const dispatch = useAppDispatch();
   const { role } = usePermission();
+  const userId = useAppSelector(getUserId);
   const navigate = useNavigate();
   const formatTime = (timeString: string) => {
     const [hours, minutes] = timeString.split(":");
@@ -51,6 +56,12 @@ function GroupSummary({ groupData }: Props) {
   const [openDelete, setOpenDelete] = useState<boolean>(false);
   const handleDeleteOpen = () => setOpenDelete(true);
   const handleDeleteClose = () => setOpenDelete(false);
+
+  useEffect(() => {
+    if (!userId) {
+      dispatch(fetchProfile());
+    }
+  }, [userId, dispatch]);
 
   const handleLogoutAll = async () => {
     if (groupData?.group_id) {
@@ -102,6 +113,8 @@ function GroupSummary({ groupData }: Props) {
     }
   };
 
+  console.log(userId, groupData?.instructor.supervisor_id);
+
   return (
     <>
       <ConfirmModal
@@ -151,7 +164,8 @@ function GroupSummary({ groupData }: Props) {
               label={t("feature.group_exercises.label.instructor")}
               value={`${groupData?.instructor.f_name} ${groupData?.instructor.l_name}`}
             />
-            {role === ROLE.supervisor && (
+            {(userId === groupData?.instructor.supervisor_id ||
+              role === ROLE.beyonder) && (
               <Button
                 variant="outlined"
                 color="red"
@@ -183,7 +197,6 @@ function GroupSummary({ groupData }: Props) {
             />
           </CardBody>
           <CardFooter className="absolute bottom-0 w-full">
-            {}
             <Button
               fullWidth
               className="flex justify-center items-center gap-3 w-full"
