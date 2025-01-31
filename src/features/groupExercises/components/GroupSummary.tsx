@@ -29,8 +29,9 @@ import { showToast } from "../../../utils/toast";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { GROUP_ADMIN, LANGUAGE } from "../../../constants/constants";
+import { GROUP_ADMIN, LANGUAGE, ROLE } from "../../../constants/constants";
 import RoleProtection from "../../../components/roleProtection/RoleProtection";
+import usePermission from "../../../hooks/usePermission";
 
 interface Props {
   groupData: GroupData | null;
@@ -39,6 +40,7 @@ interface Props {
 function GroupSummary({ groupData }: Props) {
   const { t, i18n } = useTranslation();
   const dispatch = useAppDispatch();
+  const { role } = usePermission();
   const navigate = useNavigate();
   const formatTime = (timeString: string) => {
     const [hours, minutes] = timeString.split(":");
@@ -149,7 +151,7 @@ function GroupSummary({ groupData }: Props) {
               label={t("feature.group_exercises.label.instructor")}
               value={`${groupData?.instructor.f_name} ${groupData?.instructor.l_name}`}
             />
-            <RoleProtection acceptedPermission={[GROUP_ADMIN]}>
+            {role === ROLE.supervisor && (
               <Button
                 variant="outlined"
                 color="red"
@@ -158,7 +160,7 @@ function GroupSummary({ groupData }: Props) {
               >
                 {t("feature.group_exercises.button.delete_group")}
               </Button>
-            </RoleProtection>
+            )}
           </CardBody>
         </Card>
         <Card className=" w-full border-[1px] min-h-56">
@@ -181,16 +183,15 @@ function GroupSummary({ groupData }: Props) {
             />
           </CardBody>
           <CardFooter className="absolute bottom-0 w-full">
-            <RoleProtection acceptedPermission={[GROUP_ADMIN]}>
-              <Button
-                fullWidth
-                className="flex justify-center items-center gap-3 w-full"
-                onClick={() => handleLogoutAll()}
-              >
-                <ArrowRightStartOnRectangleIcon className="w-5 h-5" />
-                {t("feature.group_exercises.button.logout_all")}
-              </Button>
-            </RoleProtection>
+            {}
+            <Button
+              fullWidth
+              className="flex justify-center items-center gap-3 w-full"
+              onClick={() => handleLogoutAll()}
+            >
+              <ArrowRightStartOnRectangleIcon className="w-5 h-5" />
+              {t("feature.group_exercises.button.logout_all")}
+            </Button>
           </CardFooter>
         </Card>
         <RoleProtection acceptedPermission={[GROUP_ADMIN]}>

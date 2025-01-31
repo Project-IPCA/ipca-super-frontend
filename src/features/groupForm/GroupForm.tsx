@@ -42,7 +42,11 @@ import { fetchMyGroups } from "../myGroupsList/redux/myGroupListSlice";
 import { showToast } from "../../utils/toast";
 import { useTranslation } from "react-i18next";
 import { getDayFromDayEnum } from "../../utils";
-import { fetchProfile, getUserId } from "../profileForm/redux/profileFormSlice";
+import {
+  fetchProfile,
+  getProfile,
+  getUserId,
+} from "../profileForm/redux/profileFormSlice";
 import usePermission from "../../hooks/usePermission";
 
 interface Props {
@@ -60,6 +64,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
   const staffs = useAppSelector(getStaffs);
   const supervisors = useAppSelector(getSupervisors);
   const userId = useAppSelector(getUserId);
+  const userInfo = useAppSelector(getProfile);
   const { t, i18n } = useTranslation();
   const initialized = useRef(false);
 
@@ -129,7 +134,8 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
     defaultValues: defaultForm,
   });
 
-  const groupFormInfo = watch();
+  const supervisorsForm = watch("supervisor");
+  const staffsForm = watch("staffs");
 
   useEffect(() => {
     if (groupId && !groupInfo[groupId]) {
@@ -147,6 +153,20 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
     const [hours, minutes] = timeString.split(":");
     return `${parseInt(hours, 10)}:${minutes}`;
   };
+
+  useEffect(() => {
+    if (!groupId && role != ROLE.supervisor && open) {
+      reset({
+        ...defaultForm,
+        staffs: [
+          {
+            value: userId,
+            label: `${userInfo.profile.f_name} ${userInfo.profile.l_name}`,
+          },
+        ],
+      });
+    }
+  }, [groupId, open, reset, role]);
 
   useEffect(() => {
     if (groupId && groupInfo[groupId]) {
@@ -183,10 +203,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
     () =>
       staffs.reduce(
         (acc, staff) => {
-          if (
-            staff.staff_id !== userId &&
-            staff.staff_id !== groupFormInfo.supervisor
-          ) {
+          if (staff.staff_id !== userId && staff.staff_id !== supervisorsForm) {
             acc.push({
               value: staff.staff_id,
               label: `${staff.f_name} ${staff.l_name}`,
@@ -196,11 +213,11 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
         },
         [] as { value: string; label: string }[],
       ),
-    [staffs, userId, groupFormInfo.supervisor],
+    [staffs, userId, supervisorsForm],
   );
 
   const supervisorsOptions = useMemo(() => {
-    const staffSet = new Set(groupFormInfo.staffs.map((staff) => staff.value));
+    const staffSet = new Set(staffsForm.map((staff) => staff.value));
 
     return supervisors.reduce(
       (acc, sup) => {
@@ -214,7 +231,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
       },
       [] as { value: string; label: string }[],
     );
-  }, [supervisors, groupFormInfo.staffs]);
+  }, [supervisors, staffsForm]);
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: groupId ? 5 : 2 }, (_, i) =>
