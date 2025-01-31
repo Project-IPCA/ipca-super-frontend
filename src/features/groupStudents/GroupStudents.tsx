@@ -14,6 +14,8 @@ import AddStudentForm from "./components/AddStudentForm";
 import { StudentPermissionForm } from "../studentPermissionForm";
 import { showToast } from "../../utils/toast";
 import { useTranslation } from "react-i18next";
+import RoleProtection from "../../components/roleProtection/RoleProtection";
+import { GROUP_ADMIN } from "../../constants/constants";
 
 export interface StudentData {
   name: string;
@@ -112,11 +114,14 @@ function GroupStudents({ groupId }: Props) {
         page={page}
         groupId={groupId}
       />
-      <AddStudentForm
-        open={openStudentFrom}
-        handleClose={handleStudentFormClose}
-        groupId={groupId}
-      />
+      <RoleProtection acceptedPermission={[GROUP_ADMIN]}>
+        <AddStudentForm
+          open={openStudentFrom}
+          handleClose={handleStudentFormClose}
+          groupId={groupId}
+        />
+      </RoleProtection>
+
       <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 justify-between items-center pb-4">
         <div className="flex gap-x-5">
           <div className="flex items-center gap-x-1">
@@ -135,13 +140,15 @@ function GroupStudents({ groupId }: Props) {
             {`${t("feature.group_students.total")}: ${groupStudent.total_student}`}
           </Typography>
         </div>
-        <Button
-          className="w-full sm:w-fit"
-          size="md"
-          onClick={() => setOpenStudentForm(true)}
-        >
-          {t("feature.group_students.button.add")}
-        </Button>
+        <RoleProtection acceptedPermission={[GROUP_ADMIN]}>
+          <Button
+            className="w-full sm:w-fit"
+            size="md"
+            onClick={() => setOpenStudentForm(true)}
+          >
+            {t("feature.group_students.button.add")}
+          </Button>
+        </RoleProtection>
       </div>
       <StudentTable
         page={page}

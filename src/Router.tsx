@@ -6,6 +6,8 @@ import {
 } from "react-router-dom";
 import Layout from "./layouts/Layout";
 import { AnonymousRoutes, ProtectedRoutes, SpinnerLoading } from "./components";
+import RoleProtectedRoute from "./components/roleProtectedRoutes/RoleProtectedRoute";
+import { EXERCISE_ADMIN, STUDENT_ADMIN } from "./constants/constants";
 
 const ProfilePage = lazy(() => import("./pages/profilePage/ProfilePage"));
 const LoginPage = lazy(() => import("./pages/loginPage/LoginPage"));
@@ -32,6 +34,8 @@ const ExerciseInfoPage = lazy(
 const AdminPage = lazy(() => import("./pages/adminPage/AdminPage"));
 
 const ErrorPage = lazy(() => import("./pages/errorPage/ErrorPage"));
+
+const ForbiddenPage = lazy(() => import("./pages/forbiddenPage/ForbiddenPage"));
 
 const router = createBrowserRouter([
   {
@@ -88,36 +92,46 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "/student/:studentId",
-            element: (
-              <Suspense fallback={<SpinnerLoading />}>
-                <StudentDetailPage />
-              </Suspense>
-            ),
+            element: <RoleProtectedRoute acceptedPermission={STUDENT_ADMIN} />,
+            children: [
+              {
+                path: "/student/:studentId",
+                element: (
+                  <Suspense fallback={<SpinnerLoading />}>
+                    <StudentDetailPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: "/exercise/student/:studentId/chapter/:chapterIdx/problem/:problemIdx",
+                element: (
+                  <Suspense fallback={<SpinnerLoading />}>
+                    <ExerciseDetailPage />
+                  </Suspense>
+                ),
+              },
+            ],
           },
           {
-            path: "/exercise/student/:studentId/chapter/:chapterIdx/problem/:problemIdx",
-            element: (
-              <Suspense fallback={<SpinnerLoading />}>
-                <ExerciseDetailPage />
-              </Suspense>
-            ),
-          },
-          {
-            path: "/exercise_pool/group/:groupId/chapter/:chapterIdx",
-            element: (
-              <Suspense fallback={<SpinnerLoading />}>
-                <ExercisePoolPage />
-              </Suspense>
-            ),
-          },
-          {
-            path: "/exercise_pool/group/:groupId/chapter/:chapterIdx/level/:level/exercise/:exerciseId",
-            element: (
-              <Suspense fallback={<SpinnerLoading />}>
-                <ExerciseInfoPage />
-              </Suspense>
-            ),
+            element: <RoleProtectedRoute acceptedPermission={EXERCISE_ADMIN} />,
+            children: [
+              {
+                path: "/exercise_pool/group/:groupId/chapter/:chapterIdx",
+                element: (
+                  <Suspense fallback={<SpinnerLoading />}>
+                    <ExercisePoolPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: "/exercise_pool/group/:groupId/chapter/:chapterIdx/level/:level/exercise/:exerciseId",
+                element: (
+                  <Suspense fallback={<SpinnerLoading />}>
+                    <ExerciseInfoPage />
+                  </Suspense>
+                ),
+              },
+            ],
           },
           {
             path: "/admins",
@@ -136,6 +150,14 @@ const router = createBrowserRouter([
     element: (
       <Suspense fallback={<SpinnerLoading />}>
         <NotFoundPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/403page",
+    element: (
+      <Suspense fallback={<SpinnerLoading />}>
+        <ForbiddenPage />
       </Suspense>
     ),
   },

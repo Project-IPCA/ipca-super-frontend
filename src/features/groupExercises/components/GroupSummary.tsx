@@ -26,10 +26,16 @@ import {
   getOnlineStudents,
 } from "../../groupStudents/redux/GroupStudentsSlice";
 import { showToast } from "../../../utils/toast";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { LANGUAGE } from "../../../constants/constants";
+import { GROUP_ADMIN, LANGUAGE, ROLE } from "../../../constants/constants";
+import RoleProtection from "../../../components/roleProtection/RoleProtection";
+import usePermission from "../../../hooks/usePermission";
+import {
+  fetchProfile,
+  getUserId,
+} from "../../profileForm/redux/profileFormSlice";
 
 interface Props {
   groupData: GroupData | null;
@@ -38,6 +44,8 @@ interface Props {
 function GroupSummary({ groupData }: Props) {
   const { t, i18n } = useTranslation();
   const dispatch = useAppDispatch();
+  const { role } = usePermission();
+  const userId = useAppSelector(getUserId);
   const navigate = useNavigate();
   const formatTime = (timeString: string) => {
     const [hours, minutes] = timeString.split(":");
@@ -48,6 +56,12 @@ function GroupSummary({ groupData }: Props) {
   const [openDelete, setOpenDelete] = useState<boolean>(false);
   const handleDeleteOpen = () => setOpenDelete(true);
   const handleDeleteClose = () => setOpenDelete(false);
+
+  useEffect(() => {
+    if (!userId) {
+      dispatch(fetchProfile());
+    }
+  }, [userId, dispatch]);
 
   const handleLogoutAll = async () => {
     if (groupData?.group_id) {
@@ -99,6 +113,8 @@ function GroupSummary({ groupData }: Props) {
     }
   };
 
+  console.log(userId, groupData?.instructor.supervisor_id);
+
   return (
     <>
       <ConfirmModal
@@ -118,7 +134,7 @@ function GroupSummary({ groupData }: Props) {
         handleSubmit={onDeleteGroup}
       />
       <div className="flex lg:flex-row flex-col gap-x-4 lg:gap-y-0 gap-y-3 w-full">
-        <Card className="lg:w-1/3 w-full border-[1px] min-h-56">
+        <Card className=" w-full border-[1px] min-h-56">
           <CardBody className="space-y-2">
             <LabelValueText
               label={t("feature.group_exercises.label.group_name")}
@@ -148,21 +164,28 @@ function GroupSummary({ groupData }: Props) {
               label={t("feature.group_exercises.label.instructor")}
               value={`${groupData?.instructor.f_name} ${groupData?.instructor.l_name}`}
             />
-            <Button
-              variant="outlined"
-              color="red"
-              onClick={() => handleDeleteOpen()}
-              className="w-full"
-            >
-              {t("feature.group_exercises.button.delete_group")}
-            </Button>
+            {(userId === groupData?.instructor.supervisor_id ||
+              role === ROLE.beyonder) && (
+              <Button
+                variant="outlined"
+                color="red"
+                onClick={() => handleDeleteOpen()}
+                className="w-full"
+              >
+                {t("feature.group_exercises.button.delete_group")}
+              </Button>
+            )}
           </CardBody>
         </Card>
-        <Card className="lg:w-1/3 w-full border-[1px] min-h-56">
+        <Card className=" w-full border-[1px] min-h-56">
           <CardBody className="space-y-2">
             <LabelValueText
               label={t("feature.group_exercises.label.dept")}
-              value={i18n.language === LANGUAGE.th?groupData?.department.name_th:groupData?.department.name_en}
+              value={
+                i18n.language === LANGUAGE.th
+                  ? groupData?.department.name_th
+                  : groupData?.department.name_en
+              }
             />
             <LabelValueText
               label={t("feature.group_exercises.label.all_stu")}
@@ -184,62 +207,64 @@ function GroupSummary({ groupData }: Props) {
             </Button>
           </CardFooter>
         </Card>
-        <Card className="lg:w-1/3 w-full border-[1px] min-h-56">
-          <CardBody className="h-full">
-            <div className="flex h-full ">
-              <div className="w-full h-full flex flex-col justify-center items-center border-r-[1px] p-3">
-                <div className="w-16 h-16 flex justify-center items-center pb-3">
-                  <LockClosedIcon className="w-14 h-14" />
+        <RoleProtection acceptedPermission={[GROUP_ADMIN]}>
+          <Card className=" w-full border-[1px] min-h-56">
+            <CardBody className="h-full">
+              <div className="flex h-full ">
+                <div className="w-full h-full flex flex-col justify-center items-center border-r-[1px] p-3">
+                  <div className="w-16 h-16 flex justify-center items-center pb-3">
+                    <LockClosedIcon className="w-14 h-14" />
+                  </div>
+                  <Typography
+                    className=" font-semibold text-center min-h-16"
+                    color="blue-gray"
+                  >
+                    {t("feature.group_exercises.label.allow_login")}
+                  </Typography>
+                  <Switch
+                    crossOrigin=""
+                    color="green"
+                    ripple={false}
+                    className="h-full w-full checked:bg-[#2ec946]"
+                    containerProps={{
+                      className: "w-11 h-6",
+                    }}
+                    onClick={() => onToggleAllowLogin()}
+                    circleProps={{
+                      className: "before:hidden left-0.5 border-none",
+                    }}
+                    defaultChecked={groupData?.allow_login}
+                  />
                 </div>
-                <Typography
-                  className=" font-semibold text-center min-h-16"
-                  color="blue-gray"
-                >
-                  {t("feature.group_exercises.label.allow_login")}
-                </Typography>
-                <Switch
-                  crossOrigin=""
-                  color="green"
-                  ripple={false}
-                  className="h-full w-full checked:bg-[#2ec946]"
-                  containerProps={{
-                    className: "w-11 h-6",
-                  }}
-                  onClick={() => onToggleAllowLogin()}
-                  circleProps={{
-                    className: "before:hidden left-0.5 border-none",
-                  }}
-                  defaultChecked={groupData?.allow_login}
-                />
-              </div>
-              <div className="w-full h-full flex flex-col justify-center items-center p-3">
-                <div className="w-16 h-16 flex justify-center items-center pb-3">
-                  <PhotoIcon />
+                <div className="w-full h-full flex flex-col justify-center items-center p-3">
+                  <div className="w-16 h-16 flex justify-center items-center pb-3">
+                    <PhotoIcon />
+                  </div>
+                  <Typography
+                    className="font-semibold text-center min-h-16"
+                    color="blue-gray"
+                  >
+                    {t("feature.group_exercises.label.allow_profile")}
+                  </Typography>
+                  <Switch
+                    crossOrigin=""
+                    color="green"
+                    ripple={false}
+                    className="h-full w-full checked:bg-[#2ec946]"
+                    onClick={() => onToggleAlloUploadProfile()}
+                    containerProps={{
+                      className: "w-11 h-6",
+                    }}
+                    circleProps={{
+                      className: "before:hidden left-0.5 border-none",
+                    }}
+                    defaultChecked={groupData?.allow_upload_profile}
+                  />
                 </div>
-                <Typography
-                  className="font-semibold text-center min-h-16"
-                  color="blue-gray"
-                >
-                  {t("feature.group_exercises.label.allow_profile")}
-                </Typography>
-                <Switch
-                  crossOrigin=""
-                  color="green"
-                  ripple={false}
-                  className="h-full w-full checked:bg-[#2ec946]"
-                  onClick={() => onToggleAlloUploadProfile()}
-                  containerProps={{
-                    className: "w-11 h-6",
-                  }}
-                  circleProps={{
-                    className: "before:hidden left-0.5 border-none",
-                  }}
-                  defaultChecked={groupData?.allow_upload_profile}
-                />
               </div>
-            </div>
-          </CardBody>
-        </Card>
+            </CardBody>
+          </Card>
+        </RoleProtection>
       </div>
     </>
   );

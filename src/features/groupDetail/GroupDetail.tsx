@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { tabsValue } from "./constants";
 import { GroupExercises } from "../groupExercises";
 import GroupStudents from "../groupStudents/GroupStudents";
@@ -17,6 +17,9 @@ import { GroupLogs } from "../groupLogs";
 import { useAppSelector } from "../../hooks/store";
 import { getGroupExercise } from "../groupExercises/redux/groupExercisesSlice";
 import { useTranslation } from "react-i18next";
+import usePermission from "../../hooks/usePermission";
+import { isAcceptedPermission } from "../../utils";
+import { GROUP_ADMIN } from "../../constants/constants";
 
 interface Props {
   groupId: string;
@@ -25,8 +28,10 @@ interface Props {
 function GroupDetail({ groupId }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { permission } = usePermission();
   const groupDetail = useAppSelector(getGroupExercise);
   const [activeTab, setActiveTab] = useState<string>(tabsValue.EXERCISES);
+
   const TABS_MENU = [
     {
       label: t("feature.group_detail.tab.exercises"),
@@ -38,12 +43,14 @@ function GroupDetail({ groupId }: Props) {
       value: tabsValue.STUDENTS,
       component: <GroupStudents groupId={groupId} />,
     },
-    {
-      label: t("feature.group_detail.tab.logs"),
-      value: tabsValue.ACTIVITY_LOGS,
-      component: <GroupLogs groupId={groupId} />,
-    },
-  ];
+    isAcceptedPermission(permission || [], [GROUP_ADMIN])
+      ? {
+          label: t("feature.group_detail.tab.logs"),
+          value: tabsValue.ACTIVITY_LOGS,
+          component: <GroupLogs groupId={groupId} />,
+        }
+      : null,
+  ].filter(Boolean) as { label: string; value: string; component: ReactNode }[];
 
   return (
     <>

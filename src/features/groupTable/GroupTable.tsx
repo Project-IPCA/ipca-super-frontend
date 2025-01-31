@@ -16,6 +16,8 @@ import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { getDayFromDayEnum } from "../../utils";
+import RoleProtection from "../../components/roleProtection/RoleProtection";
+import { GROUP_ADMIN } from "../../constants/constants";
 
 interface Props {
   userId?: string;
@@ -174,7 +176,10 @@ function GroupTable({
                           variant="text"
                           disabled={
                             !!userId &&
-                            group.instructor.supervisor_id !== userId
+                            !(
+                              group.instructor.supervisor_id === userId ||
+                              group.staffs.find((s) => s.staff_id === userId)
+                            )
                           }
                         >
                           <EllipsisVerticalIcon className="w-5 h-5" />
@@ -189,16 +194,20 @@ function GroupTable({
                           {t("common.table.action.view")}
                         </MenuItem>
                         {handleSetGroupId && handleFormOpen && (
-                          <MenuItem
-                            className="flex justify-start items-center gap-2"
-                            onClick={() => {
-                              handleSetGroupId(group.group_id);
-                              handleFormOpen();
-                            }}
-                          >
-                            <PencilSquareIcon className="w-5 h-5" />
-                            {t("common.table.action.edit")}
-                          </MenuItem>
+                          <>
+                            <RoleProtection acceptedPermission={[GROUP_ADMIN]}>
+                              <MenuItem
+                                className="flex justify-start items-center gap-2"
+                                onClick={() => {
+                                  handleSetGroupId(group.group_id);
+                                  handleFormOpen();
+                                }}
+                              >
+                                <PencilSquareIcon className="w-5 h-5" />
+                                {t("common.table.action.edit")}
+                              </MenuItem>
+                            </RoleProtection>
+                          </>
                         )}
                       </MenuList>
                     </Menu>
