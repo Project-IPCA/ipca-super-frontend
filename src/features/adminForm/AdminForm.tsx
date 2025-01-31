@@ -81,7 +81,7 @@ function AdminForm({ open, onClose }: Props) {
   const ROLE_LIST = [
     ROLE.ta,
     ROLE.supervisor,
-    role === ROLE.beyonder ? ROLE.executive : null,
+    role === ROLE.beyonder || role === ROLE.supervisor ? ROLE.executive : null,
   ].filter(Boolean) as string[];
 
   useEffect(() => {
