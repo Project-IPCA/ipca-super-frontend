@@ -18,6 +18,7 @@ function MultiSelect({ field, staffs }: Props) {
       closeMenuOnSelect={false}
       components={animatedComponent}
       isMulti
+      menuPlacement="top"
       options={staffs}
       value={field.value}
       styles={{
