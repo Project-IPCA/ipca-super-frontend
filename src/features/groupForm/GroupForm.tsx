@@ -18,6 +18,7 @@ import {
   AVAILABLE_TIME,
   DAY_OF_WEEK,
   LANGUAGE,
+  ROLE,
   SEMESTER,
 } from "../../constants/constants";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
@@ -27,19 +28,26 @@ import {
   fetchDepartments,
   fetchGroupInfo,
   fetchStaffs,
+  fetchSupervisors,
   getDepartments,
   getGroupFormError,
   getGroupInfo,
   getStaffs,
+  getSupervisors,
   updateStudentGroup,
 } from "./redux/groupFormSlice";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import MultiSelect from "./components/MultiSelect";
 import { fetchMyGroups } from "../myGroupsList/redux/myGroupListSlice";
 import { showToast } from "../../utils/toast";
 import { useTranslation } from "react-i18next";
 import { getDayFromDayEnum } from "../../utils";
-import i18n from "../../locales";
+import {
+  fetchProfile,
+  getProfile,
+  getUserId,
+} from "../profileForm/redux/profileFormSlice";
+import usePermission from "../../hooks/usePermission";
 
 interface Props {
   open: boolean;
@@ -47,47 +55,62 @@ interface Props {
   groupId?: string | null;
 }
 
-const formDataSchema = yup.object({
-  groupName: yup
-    .string()
-    .required(i18n.t("feature.group_form.error.group_name")),
-  groupNumber: yup
-    .string()
-    .required(i18n.t("feature.group_form.error.group_number.required"))
-    .matches(
-      /^[0-9]+$/,
-      i18n.t("feature.group_form.error.group_number.number"),
-    ),
-  dayOfWeek: yup
-    .string()
-    .required(i18n.t("feature.group_form.error.day_of_week")),
-  classTime: yup
-    .string()
-    .required(i18n.t("feature.group_form.error.class_time")),
-  semester: yup.string().required(i18n.t("feature.group_form.error.semester")),
-  year: yup.string().required(i18n.t("feature.group_form.error.year")),
-  departmentId: yup.string().required(i18n.t("feature.group_form.error.dept")),
-  staffs: yup
-    .array()
-    .of(
-      yup.object({
-        value: yup.string().required(),
-        label: yup.string().required(),
-      }),
-    )
-    .required(),
-});
-
-export type FormData = yup.InferType<typeof formDataSchema>;
-
 function GroupForm({ open, onClose, groupId = null }: Props) {
   const dispatch = useAppDispatch();
+  const { role } = usePermission();
   const departments = useAppSelector(getDepartments);
   const groupFormError = useAppSelector(getGroupFormError);
   const groupInfo = useAppSelector(getGroupInfo);
   const staffs = useAppSelector(getStaffs);
+  const supervisors = useAppSelector(getSupervisors);
+  const userId = useAppSelector(getUserId);
+  const userInfo = useAppSelector(getProfile);
   const { t, i18n } = useTranslation();
   const initialized = useRef(false);
+
+  const formDataSchema = yup.object({
+    groupName: yup
+      .string()
+      .required(i18n.t("feature.group_form.error.group_name")),
+    groupNumber: yup
+      .string()
+      .required(i18n.t("feature.group_form.error.group_number.required"))
+      .matches(
+        /^[0-9]+$/,
+        i18n.t("feature.group_form.error.group_number.number"),
+      ),
+    dayOfWeek: yup
+      .string()
+      .required(i18n.t("feature.group_form.error.day_of_week")),
+    classTime: yup
+      .string()
+      .required(i18n.t("feature.group_form.error.class_time")),
+    semester: yup
+      .string()
+      .required(i18n.t("feature.group_form.error.semester")),
+    year: yup.string().required(i18n.t("feature.group_form.error.year")),
+    departmentId: yup
+      .string()
+      .required(i18n.t("feature.group_form.error.dept")),
+    staffs: yup
+      .array()
+      .of(
+        yup.object({
+          value: yup.string().required(),
+          label: yup.string().required(),
+        }),
+      )
+      .required(),
+    supervisor: yup.string().when("role", {
+      is: "supervisor_id",
+      then: (schema) =>
+        schema.required(i18n.t("feature.group_form.error.supervisor")),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+  });
+
+  type FormData = yup.InferType<typeof formDataSchema>;
+
   const defaultForm = {
     groupName: "",
     groupNumber: "",
@@ -97,6 +120,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
     year: "",
     departmentId: "",
     staffs: [],
+    supervisors: "",
   };
   const {
     control,
@@ -104,10 +128,14 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
     register,
     handleSubmit,
     reset,
+    watch,
   } = useForm<FormData>({
     resolver: yupResolver(formDataSchema),
     defaultValues: defaultForm,
   });
+
+  const supervisorsForm = watch("supervisor");
+  const staffsForm = watch("staffs");
 
   useEffect(() => {
     if (groupId && !groupInfo[groupId]) {
@@ -115,17 +143,37 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
     }
   }, [dispatch, groupId]);
 
+  useEffect(() => {
+    if (!userId) {
+      dispatch(fetchProfile());
+    }
+  }, [dispatch, userId]);
+
   const formatTime = (timeString: string) => {
     const [hours, minutes] = timeString.split(":");
     return `${parseInt(hours, 10)}:${minutes}`;
   };
 
   useEffect(() => {
+    if (!groupId && role != ROLE.supervisor && open) {
+      reset({
+        ...defaultForm,
+        staffs: [
+          {
+            value: userId,
+            label: `${userInfo.profile.f_name} ${userInfo.profile.l_name}`,
+          },
+        ],
+      });
+    }
+  }, [groupId, open, reset, role]);
+
+  useEffect(() => {
     if (groupId && groupInfo[groupId]) {
       const newGroupInfo = groupInfo[groupId];
       const classTime = `${formatTime(newGroupInfo.time_start)} - ${formatTime(newGroupInfo.time_end)}`;
       const staffs = newGroupInfo.staffs.map((staff) => ({
-        value: staff.supervisor_id,
+        value: staff.staff_id,
         label: `${staff.f_name} ${staff.l_name}`,
       }));
       reset({
@@ -137,6 +185,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
         year: newGroupInfo.year.toString(),
         departmentId: newGroupInfo.department.dept_id,
         staffs: staffs,
+        supervisor: newGroupInfo.instructor.supervisor_id,
       });
     }
   }, [groupId, groupInfo]);
@@ -146,13 +195,43 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
       initialized.current = true;
       dispatch(fetchDepartments());
       dispatch(fetchStaffs());
+      dispatch(fetchSupervisors());
     }
   }, [dispatch, initialized]);
 
-  const staffsOptions = staffs.map((staff) => ({
-    value: staff.supervisor_id,
-    label: `${staff.f_name} ${staff.l_name}`,
-  }));
+  const staffsOptions = useMemo(
+    () =>
+      staffs.reduce(
+        (acc, staff) => {
+          if (staff.staff_id !== userId && staff.staff_id !== supervisorsForm) {
+            acc.push({
+              value: staff.staff_id,
+              label: `${staff.f_name} ${staff.l_name}`,
+            });
+          }
+          return acc;
+        },
+        [] as { value: string; label: string }[],
+      ),
+    [staffs, userId, supervisorsForm],
+  );
+
+  const supervisorsOptions = useMemo(() => {
+    const staffSet = new Set(staffsForm.map((staff) => staff.value));
+
+    return supervisors.reduce(
+      (acc, sup) => {
+        if (!staffSet.has(sup.supervisor_id)) {
+          acc.push({
+            value: sup.supervisor_id,
+            label: `${sup.f_name} ${sup.l_name}`,
+          });
+        }
+        return acc;
+      },
+      [] as { value: string; label: string }[],
+    );
+  }, [supervisors, staffsForm]);
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: groupId ? 5 : 2 }, (_, i) =>
@@ -163,11 +242,16 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
     if (groupFormError) {
       showToast({
         variant: "error",
-        message: "groupFormError.error",
+        message: groupFormError.error,
       });
       dispatch(clearGroupFormError());
     }
   }, [dispatch, groupFormError]);
+
+  const handleClose = () => {
+    onClose();
+    reset(defaultForm);
+  };
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const classTime = data.classTime.split(" - ");
@@ -182,6 +266,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
       semester: parseInt(data.semester),
       dept_id: data.departmentId,
       staffs: staffs,
+      supervisor_id: role === ROLE.supervisor ? null : data.supervisor,
     };
     if (groupId) {
       const resultAction = await dispatch(
@@ -205,12 +290,17 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
     }
     dispatch(fetchMyGroups({ year: "All", page: 1 }));
     reset(defaultForm);
-    onClose();
+    handleClose();
   };
 
   return (
     <>
-      <Dialog size="sm" open={open} handler={onClose} className="p-4 !z-[500]">
+      <Dialog
+        size="sm"
+        open={open}
+        handler={() => handleClose()}
+        className="p-4 !z-[500]"
+      >
         <DialogHeader className="relative m-0 block">
           <Typography variant="h4" color="blue-gray">
             {groupId
@@ -222,8 +312,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
             variant="text"
             className="!absolute right-3.5 top-3.5"
             onClick={() => {
-              reset(defaultForm);
-              onClose();
+              handleClose();
             }}
           >
             <XMarkIcon className="h-4 w-4 stroke-2" />
@@ -510,6 +599,53 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
               </Typography>
             </div>
           </div>
+          {role !== ROLE.supervisor && !groupId && (
+            <div>
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="mb-2 text-left font-medium"
+              >
+                {t("feature.group_form.label.supervisor")}
+              </Typography>
+              <Controller
+                name="supervisor"
+                control={control}
+                render={({ field }) => {
+                  return (
+                    <AsyncSelect
+                      {...field}
+                      value={field.value}
+                      variant="outlined"
+                      size="lg"
+                      color="gray"
+                      error={!!errors.supervisor}
+                      containerProps={{
+                        className: "!min-w-full",
+                      }}
+                      labelProps={{
+                        className: "before:mr-0 after:ml-0",
+                      }}
+                    >
+                      {supervisorsOptions.map((sup) => (
+                        <Option key={sup.value} value={sup.value}>
+                          {sup.label}
+                        </Option>
+                      ))}
+                    </AsyncSelect>
+                  );
+                }}
+              />
+              <Typography
+                variant="small"
+                color="red"
+                className="mt-1 flex items-center gap-1 font-normal !text-xs"
+              >
+                {errors.supervisor ? errors.supervisor.message : ""}
+              </Typography>
+            </div>
+          )}
+
           <div>
             <Typography
               variant="small"
@@ -522,7 +658,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
               name="staffs"
               control={control}
               render={({ field }) => (
-                <MultiSelect field={field} staffs={staffsOptions} />
+                <MultiSelect field={field as any} staffs={staffsOptions} />
               )}
             />
             <Typography

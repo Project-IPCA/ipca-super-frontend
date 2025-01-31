@@ -1,11 +1,13 @@
 import { Button, Option, Typography } from "@material-tailwind/react";
 import { GroupTable } from "../groupTable";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import { fetchMyGroups, getMyGroups } from "./redux/myGroupListSlice";
 import { AsyncSelect } from "../../components";
 import { GroupForm } from "../groupForm";
 import { useTranslation } from "react-i18next";
+import RoleProtection from "../../components/roleProtection/RoleProtection";
+import { GROUP_ADMIN } from "../../constants/constants";
 
 function MyGroupsList() {
   const initialized = useRef(false);
@@ -63,10 +65,15 @@ function MyGroupsList() {
     }
   };
 
-  const yearOptions = [
-    "All",
-    ...(myGroups.filters.year || []).map((year) => year.toString()),
-  ];
+  const yearOptions = useMemo(
+    () => [
+      "All",
+      ...[...(myGroups.filters.year || [])]
+        .sort((a, b) => b - a)
+        .map((year) => year.toString()),
+    ],
+    [myGroups.filters.year],
+  );
 
   return (
     <>
@@ -92,13 +99,15 @@ function MyGroupsList() {
             ))}
           </AsyncSelect>
         </div>
-        <Button
-          className="w-full sm:w-fit"
-          size="md"
-          onClick={() => setFormOpen(true)}
-        >
-          {t("feature.my_groups_list.button.add_group")}
-        </Button>
+        <RoleProtection acceptedPermission={[GROUP_ADMIN]}>
+          <Button
+            className="w-full sm:w-fit"
+            size="md"
+            onClick={() => setFormOpen(true)}
+          >
+            {t("feature.my_groups_list.button.add_group")}
+          </Button>
+        </RoleProtection>
       </div>
       <GroupTable
         groups={myGroups.my_groups}

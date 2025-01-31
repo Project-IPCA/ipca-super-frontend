@@ -75,7 +75,7 @@ export const fetchProfile = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 export const updateProfile = createAsyncThunk(
@@ -104,7 +104,7 @@ export const updateProfile = createAsyncThunk(
       tel: string | null;
       dept_id: string | null;
     },
-    { rejectWithValue }
+    { rejectWithValue },
   ) => {
     try {
       let avatarUrl: string | null = null;
@@ -114,7 +114,7 @@ export const updateProfile = createAsyncThunk(
 
         const response = await axiosInstance.post(
           `/common/user_profile`,
-          formData
+          formData,
         );
 
         avatarUrl = response.data.object_url;
@@ -135,7 +135,7 @@ export const updateProfile = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 const profileFormSlice = createSlice({
@@ -179,6 +179,8 @@ const profileFormSlice = createSlice({
 export const { clearProfileError } = profileFormSlice.actions;
 
 export const getProfile = (state: RootState) => state.profileForm.data;
+export const getUserId = (state: RootState) =>
+  state.profileForm.data.profile.user_id;
 export const getProfileStatus = (state: RootState) =>
   state.profileForm.isFetching;
 export const getProfileUpdateStatus = (state: RootState) =>

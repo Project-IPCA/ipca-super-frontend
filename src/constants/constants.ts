@@ -102,11 +102,19 @@ export const SUBMISSION_STATUS = {
   rejected: "REJECTED",
 };
 
-export const ROLE_LIST = ["SUPERVISOR"];
+export const ROLE_LIST = ["TA", "SUPERVISOR", "EXECUTIVE"];
 export const ROLE_2_LANGUAGE = [
+  {
+    th: "ผู้ช่วยสอน",
+    en: "Teacher Assistant",
+  },
   {
     th: "อาจารย์ผู้สอน",
     en: "Supervisor",
+  },
+  {
+    th: "ผู้บริหาร",
+    en: "Executive",
   },
 ];
 
@@ -125,3 +133,56 @@ export const GENDER_2_LANGUAGE = [
     en: "Other",
   },
 ];
+
+export const ROLE = {
+  ta: "TA",
+  supervisor: "SUPERVISOR",
+  executive: "EXECUTIVE",
+  beyonder: "BEYONDER",
+  student: "STUDENT",
+};
+
+export const ROLE_DISPLAY_2_LANGUAGE = {
+  student: {
+    en: "Student",
+    th: "นักเรียน",
+  },
+  ta: {
+    en: "Teacher Assistant",
+    th: "ผู้ช่วยสอน",
+  },
+  supervisor: {
+    en: "Supervisor",
+    th: "อาจารย์",
+  },
+  executive: {
+    en: "Executive",
+    th: "ผู้บริหาร",
+  },
+  beyonder: {
+    en: "Beyonder",
+    th: "บียอนเดอร์",
+  },
+  invalid: {
+    en: "Invalid",
+    th: "ไม่ถูกต้อง",
+  },
+};
+
+export const ROLE_PERMISSION = [
+  "GROUP_ADMIN",
+  "STUDENT_ADMIN",
+  "EXERCISE_ADMIN",
+  "DASHBOARD_ADMIN",
+];
+
+export const GROUP_ADMIN = "GROUP_ADMIN";
+export const STUDENT_ADMIN = "STUDENT_ADMIN";
+export const EXERCISE_ADMIN = "EXERCISE_ADMIN";
+export const DASHBOARD_ADMIN = "DASHBOARD_ADMIN";
+
+export type Permission =
+  | "GROUP_ADMIN"
+  | "STUDENT_ADMIN"
+  | "EXERCISE_ADMIN"
+  | "DASHBOARD_ADMIN";

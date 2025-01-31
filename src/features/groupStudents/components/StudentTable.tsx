@@ -18,6 +18,11 @@ import { profileNone } from "../../../assets";
 import { StudentData } from "../GroupStudents";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import RoleProtection from "../../../components/roleProtection/RoleProtection";
+import { GROUP_ADMIN, STUDENT_ADMIN } from "../../../constants/constants";
+import { useMemo } from "react";
+import { isAcceptedPermission } from "../../../utils";
+import usePermission from "../../../hooks/usePermission";
 
 interface Props {
   page: number;
@@ -42,6 +47,7 @@ function StudentTable({
 }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { permission } = usePermission();
   const tableHeadersP1 = Array.isArray(
     t("feature.group_students.th_list.part1", {
       returnObjects: true,
@@ -51,15 +57,22 @@ function StudentTable({
         returnObjects: true,
       }) as string[])
     : [];
-  const tableHeadersP2 = Array.isArray(
-    t("feature.group_students.th_list.part2", {
+
+  const tableHeadersP2 = useMemo(() => {
+    const headers = t("feature.group_students.th_list.part2", {
       returnObjects: true,
-    }),
-  )
-    ? (t("feature.group_students.th_list.part2", {
-        returnObjects: true,
-      }) as string[])
-    : [];
+    });
+
+    if (!Array.isArray(headers)) {
+      return [];
+    }
+
+    return isAcceptedPermission(permission || [], [GROUP_ADMIN]) ||
+      isAcceptedPermission(permission || [], [STUDENT_ADMIN])
+      ? headers
+      : headers.slice(0, -1);
+  }, [t, permission]);
+
   const getTableHeader = () => {
     const labs = labInfo.map(
       (lab) =>
@@ -187,38 +200,54 @@ function StudentTable({
                     </Typography>
                   </td>
 
-                  <td className="p-2">
-                    <Menu placement="bottom-end">
-                      <MenuHandler>
-                        <IconButton variant="text">
-                          <EllipsisVerticalIcon className="w-5 h-5" />
-                        </IconButton>
-                      </MenuHandler>
-                      <MenuList>
-                        <MenuItem
-                          className="flex justify-start items-center gap-2"
-                          onClick={() => navigate(`/student/${student.stu_id}`)}
-                        >
-                          <EyeIcon className="w-5 h-5" />
-                          {t("common.table.action.view")}
-                        </MenuItem>
-                        <MenuItem
-                          className="flex justify-start items-center gap-2"
-                          onClick={() => {
-                            handleSetStudent({
-                              name: `${student.f_name} ${student.l_name}`,
-                              kmitlId: student.kmitl_id,
-                              studentId: student.stu_id,
-                            });
-                            handlePermFormOpen();
-                          }}
-                        >
-                          <Cog6ToothIcon className="w-5 h-5" />
-                          {t("common.table.action.perm")}
-                        </MenuItem>
-                      </MenuList>
-                    </Menu>
-                  </td>
+                  <RoleProtection
+                    acceptedPermission={[STUDENT_ADMIN, GROUP_ADMIN]}
+                  >
+                    <td className="p-2">
+                      <Menu placement="bottom-end">
+                        <MenuHandler>
+                          <IconButton variant="text">
+                            <EllipsisVerticalIcon className="w-5 h-5" />
+                          </IconButton>
+                        </MenuHandler>
+                        <MenuList>
+                          <>
+                            <RoleProtection
+                              acceptedPermission={[STUDENT_ADMIN]}
+                            >
+                              <MenuItem
+                                className="flex justify-start items-center gap-2"
+                                onClick={() =>
+                                  navigate(`/student/${student.stu_id}`)
+                                }
+                              >
+                                <EyeIcon className="w-5 h-5" />
+                                {t("common.table.action.view")}
+                              </MenuItem>
+                            </RoleProtection>
+                          </>
+                          <>
+                            <RoleProtection acceptedPermission={[GROUP_ADMIN]}>
+                              <MenuItem
+                                className="flex justify-start items-center gap-2"
+                                onClick={() => {
+                                  handleSetStudent({
+                                    name: `${student.f_name} ${student.l_name}`,
+                                    kmitlId: student.kmitl_id,
+                                    studentId: student.stu_id,
+                                  });
+                                  handlePermFormOpen();
+                                }}
+                              >
+                                <Cog6ToothIcon className="w-5 h-5" />
+                                {t("common.table.action.perm")}
+                              </MenuItem>
+                            </RoleProtection>
+                          </>
+                        </MenuList>
+                      </Menu>
+                    </td>
+                  </RoleProtection>
                 </tr>
               ))}
             </tbody>

@@ -17,6 +17,11 @@ import { ChapterData } from "../GroupExercises";
 import { StatusChip } from "./StatusChip";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import RoleProtection from "../../../components/roleProtection/RoleProtection";
+import { EXERCISE_ADMIN, GROUP_ADMIN } from "../../../constants/constants";
+import usePermission from "../../../hooks/usePermission";
+import { isAcceptedPermission } from "../../../utils";
+import { useMemo } from "react";
 
 interface Props {
   chapterList: GroupChapterPermission[] | [];
@@ -32,15 +37,23 @@ function ExerciseTable({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { groupId } = useParams();
-  const tableHeaders = Array.isArray(
-    t("feature.group_exercises.th_list", {
+  const { permission } = usePermission();
+
+  const tableHeaders = useMemo(() => {
+    const headers = t("feature.group_exercises.th_list", {
       returnObjects: true,
-    }),
-  )
-    ? (t("feature.group_exercises.th_list", {
-        returnObjects: true,
-      }) as string[])
-    : [];
+    });
+
+    if (!Array.isArray(headers)) {
+      return [];
+    }
+
+    return isAcceptedPermission(permission || [], [GROUP_ADMIN]) ||
+      isAcceptedPermission(permission || [], [EXERCISE_ADMIN])
+      ? headers
+      : headers.slice(0, -1);
+  }, [t, permission]);
+
   return (
     <div className="pt-8">
       <Card className="h-full w-full  shadow-none border-[1.5px]">
@@ -102,42 +115,56 @@ function ExerciseTable({
                       timeEnd={exercise.allow_submit.time_end}
                     />
                   </td>
-                  <td className="p-2">
-                    <Menu>
-                      <MenuHandler>
-                        <IconButton variant="text">
-                          <EllipsisVerticalIcon className="w-5 h-5" />
-                        </IconButton>
-                      </MenuHandler>
-                      <MenuList>
-                        <MenuItem
-                          className="flex justify-start items-center gap-2"
-                          onClick={() =>
-                            navigate(
-                              `/exercise_pool/group/${groupId}/chapter/${exercise.chapter_index}`,
-                            )
-                          }
-                        >
-                          <EyeIcon className="w-5 h-5" />
-                          {t("common.table.action.view")}
-                        </MenuItem>
-                        <MenuItem
-                          className="flex justify-start items-center gap-2"
-                          onClick={() => {
-                            handleAccessFormOpen();
-                            handleSetChapter({
-                              chapterId: exercise.chapter_id,
-                              chapterIndex: exercise.chapter_index,
-                              chapterName: exercise.name,
-                            });
-                          }}
-                        >
-                          <Cog6ToothIcon className="w-5 h-5" />
-                          {t("common.table.action.perm")}
-                        </MenuItem>
-                      </MenuList>
-                    </Menu>
-                  </td>
+                  <RoleProtection
+                    acceptedPermission={[EXERCISE_ADMIN, GROUP_ADMIN]}
+                  >
+                    <td className="p-2">
+                      <Menu>
+                        <MenuHandler>
+                          <IconButton variant="text">
+                            <EllipsisVerticalIcon className="w-5 h-5" />
+                          </IconButton>
+                        </MenuHandler>
+                        <MenuList>
+                          <>
+                            <RoleProtection
+                              acceptedPermission={[EXERCISE_ADMIN]}
+                            >
+                              <MenuItem
+                                className="flex justify-start items-center gap-2"
+                                onClick={() =>
+                                  navigate(
+                                    `/exercise_pool/group/${groupId}/chapter/${exercise.chapter_index}`,
+                                  )
+                                }
+                              >
+                                <EyeIcon className="w-5 h-5" />
+                                {t("common.table.action.view")}
+                              </MenuItem>
+                            </RoleProtection>
+                          </>
+                          <>
+                            <RoleProtection acceptedPermission={[GROUP_ADMIN]}>
+                              <MenuItem
+                                className="flex justify-start items-center gap-2"
+                                onClick={() => {
+                                  handleAccessFormOpen();
+                                  handleSetChapter({
+                                    chapterId: exercise.chapter_id,
+                                    chapterIndex: exercise.chapter_index,
+                                    chapterName: exercise.name,
+                                  });
+                                }}
+                              >
+                                <Cog6ToothIcon className="w-5 h-5" />
+                                {t("common.table.action.perm")}
+                              </MenuItem>
+                            </RoleProtection>
+                          </>
+                        </MenuList>
+                      </Menu>
+                    </td>
+                  </RoleProtection>
                 </tr>
               ))}
             </tbody>

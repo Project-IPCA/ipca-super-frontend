@@ -68,6 +68,7 @@
         "class_time": "Class Time",
         "year": "Year",
         "semester": "Semester",
+        "supervisor": "Supervisor",
         "staffs": "Staffs"
       },
       "error": {
@@ -97,11 +98,26 @@
     "admin_list": {
       "title": "Admins",
       "button": {
-        "add_admin": "Add Admin"
+        "add_admin": "Add Admin",
+        "conf_perm": "Configure Permissions"
+      },
+      "modal": {
+        "title": "Configure Role Permissions",
+        "role": {
+          "ta": "Teacher Assistant",
+          "exe": "Executive"
+        },
+        "th_list": [
+          "Role",
+          "Group Admin",
+          "Student Admin",
+          "Exercise Admin",
+          "Dashboard Admin"
+        ]
       }
     },
     "admin_table": {
-      "th_list": ["First Name", "Last Name"]
+      "th_list": ["First Name", "Last Name", "Role"]
     },
     "admin_form": {
       "title": "Create Admin",
