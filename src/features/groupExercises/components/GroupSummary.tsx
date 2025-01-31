@@ -44,7 +44,7 @@ interface Props {
 function GroupSummary({ groupData }: Props) {
   const { t, i18n } = useTranslation();
   const dispatch = useAppDispatch();
-  const { role } = usePermission();
+  const { role, permission } = usePermission();
   const userId = useAppSelector(getUserId);
   const navigate = useNavigate();
   const formatTime = (timeString: string) => {
@@ -197,74 +197,76 @@ function GroupSummary({ groupData }: Props) {
             />
           </CardBody>
           <CardFooter className="absolute bottom-0 w-full">
-            <Button
-              fullWidth
-              className="flex justify-center items-center gap-3 w-full"
-              onClick={() => handleLogoutAll()}
-            >
-              <ArrowRightStartOnRectangleIcon className="w-5 h-5" />
-              {t("feature.group_exercises.button.logout_all")}
-            </Button>
+            <RoleProtection acceptedPermission={[GROUP_ADMIN]}>
+              <Button
+                fullWidth
+                className="flex justify-center items-center gap-3 w-full"
+                onClick={() => handleLogoutAll()}
+              >
+                <ArrowRightStartOnRectangleIcon className="w-5 h-5" />
+                {t("feature.group_exercises.button.logout_all")}
+              </Button>
+            </RoleProtection>
           </CardFooter>
         </Card>
-        <RoleProtection acceptedPermission={[GROUP_ADMIN]}>
-          <Card className=" w-full border-[1px] min-h-56">
-            <CardBody className="h-full">
-              <div className="flex h-full ">
-                <div className="w-full h-full flex flex-col justify-center items-center border-r-[1px] p-3">
-                  <div className="w-16 h-16 flex justify-center items-center pb-3">
-                    <LockClosedIcon className="w-14 h-14" />
-                  </div>
-                  <Typography
-                    className=" font-semibold text-center min-h-16"
-                    color="blue-gray"
-                  >
-                    {t("feature.group_exercises.label.allow_login")}
-                  </Typography>
-                  <Switch
-                    crossOrigin=""
-                    color="green"
-                    ripple={false}
-                    className="h-full w-full checked:bg-[#2ec946]"
-                    containerProps={{
-                      className: "w-11 h-6",
-                    }}
-                    onClick={() => onToggleAllowLogin()}
-                    circleProps={{
-                      className: "before:hidden left-0.5 border-none",
-                    }}
-                    defaultChecked={groupData?.allow_login}
-                  />
+        <Card className=" w-full border-[1px] min-h-56">
+          <CardBody className="h-full">
+            <div className="flex h-full ">
+              <div className="w-full h-full flex flex-col justify-center items-center border-r-[1px] p-3">
+                <div className="w-16 h-16 flex justify-center items-center pb-3">
+                  <LockClosedIcon className="w-14 h-14" />
                 </div>
-                <div className="w-full h-full flex flex-col justify-center items-center p-3">
-                  <div className="w-16 h-16 flex justify-center items-center pb-3">
-                    <PhotoIcon />
-                  </div>
-                  <Typography
-                    className="font-semibold text-center min-h-16"
-                    color="blue-gray"
-                  >
-                    {t("feature.group_exercises.label.allow_profile")}
-                  </Typography>
-                  <Switch
-                    crossOrigin=""
-                    color="green"
-                    ripple={false}
-                    className="h-full w-full checked:bg-[#2ec946]"
-                    onClick={() => onToggleAlloUploadProfile()}
-                    containerProps={{
-                      className: "w-11 h-6",
-                    }}
-                    circleProps={{
-                      className: "before:hidden left-0.5 border-none",
-                    }}
-                    defaultChecked={groupData?.allow_upload_profile}
-                  />
-                </div>
+                <Typography
+                  className=" font-semibold text-center min-h-16"
+                  color="blue-gray"
+                >
+                  {t("feature.group_exercises.label.allow_login")}
+                </Typography>
+                <Switch
+                  crossOrigin=""
+                  color="green"
+                  ripple={false}
+                  className="h-full w-full checked:bg-[#2ec946]"
+                  containerProps={{
+                    className: "w-11 h-6",
+                  }}
+                  onClick={() => onToggleAllowLogin()}
+                  circleProps={{
+                    className: "before:hidden left-0.5 border-none",
+                  }}
+                  defaultChecked={groupData?.allow_login}
+                  disabled={!permission?.includes(GROUP_ADMIN)}
+                />
               </div>
-            </CardBody>
-          </Card>
-        </RoleProtection>
+              <div className="w-full h-full flex flex-col justify-center items-center p-3">
+                <div className="w-16 h-16 flex justify-center items-center pb-3">
+                  <PhotoIcon />
+                </div>
+                <Typography
+                  className="font-semibold text-center min-h-16"
+                  color="blue-gray"
+                >
+                  {t("feature.group_exercises.label.allow_profile")}
+                </Typography>
+                <Switch
+                  crossOrigin=""
+                  color="green"
+                  ripple={false}
+                  className="h-full w-full checked:bg-[#2ec946]"
+                  onClick={() => onToggleAlloUploadProfile()}
+                  containerProps={{
+                    className: "w-11 h-6",
+                  }}
+                  circleProps={{
+                    className: "before:hidden left-0.5 border-none",
+                  }}
+                  defaultChecked={groupData?.allow_upload_profile}
+                  disabled={!permission?.includes(GROUP_ADMIN)}
+                />
+              </div>
+            </div>
+          </CardBody>
+        </Card>
       </div>
     </>
   );
