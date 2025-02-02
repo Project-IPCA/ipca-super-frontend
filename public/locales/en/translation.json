@@ -144,7 +144,8 @@
       "tab": {
         "exercises": "Exercises",
         "students": "Students",
-        "logs": "Activity Logs"
+        "logs": "Activity Logs",
+        "overview": "Overview"
       }
     },
     "group_exercises": {
