@@ -8,6 +8,7 @@
   "layout": {
     "default": {
       "menu": {
+        "overview": "Dashboard",
         "groups": "Groups",
         "my_groups": "My Groups",
         "av_groups": "Available Groups",
