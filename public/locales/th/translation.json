@@ -8,6 +8,7 @@
   "layout": {
     "default": {
       "menu": {
+        "overview": "แดชบอร์ด",
         "groups": "กลุ่มเรียน",
         "my_groups": "กลุ่มของฉัน",
         "av_groups": "กลุ่มทั้งหมด",
