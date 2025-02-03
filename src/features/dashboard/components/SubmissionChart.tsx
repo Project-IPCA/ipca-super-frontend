@@ -3,17 +3,17 @@ import { ApexOptions } from "apexcharts";
 import Chart from "react-apexcharts";
 import { useTranslation } from "react-i18next";
 
-const AvgScoreChapterChart = () => {
+function SubmissionChart() {
   const { t } = useTranslation();
   const chartConfig = {
-    type: "bar",
+    type: "area",
     height: 300,
     series: [
       {
-        name: t("feature.dashboard.chart.avg_score"),
+        name: t("feature.dashboard.chart.submission_time"),
         data: Array.from(
-          { length: 17 },
-          () => Math.floor(Math.random() * 10) + 1,
+          { length: 7 },
+          () => Math.floor(Math.random() * 1000) + 1,
         ),
       },
     ],
@@ -48,13 +48,17 @@ const AvgScoreChapterChart = () => {
             fontWeight: 400,
           },
         },
-        categories: Array.from({ length: 17 }, (_, index: number) => [
-          t("feature.dashboard.chart.ch"),
-          `${index + 1}`,
-        ]),
+        categories: [
+          "08.00",
+          "10.00",
+          "12.00",
+          "14.00",
+          "16.00",
+          "18.00",
+          "20.00",
+        ],
       },
       yaxis: {
-        max: 10,
         labels: {
           style: {
             colors: "#616161",
@@ -86,16 +90,17 @@ const AvgScoreChapterChart = () => {
       },
     },
   } as { options: ApexOptions };
+
   return (
     <Card className="border-[1px]">
       <CardBody>
         <Typography variant="h5" color="blue-gray">
-          {t("feature.dashboard.chart.avg_score_ch")}
+          {t("feature.dashboard.chart.submission")}
         </Typography>
         <Chart {...chartConfig} />
       </CardBody>
     </Card>
   );
-};
+}
 
-export default AvgScoreChapterChart;
+export default SubmissionChart;

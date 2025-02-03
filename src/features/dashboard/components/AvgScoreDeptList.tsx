@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { LANGUAGE } from "../../../constants/constants";
 
 function AvgScoreDeptList() {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const getProgressColor = (score: number) => {
     if (score >= 8) {
       return "green";
@@ -25,12 +25,10 @@ function AvgScoreDeptList() {
     <Card className="border-[1px] h-full">
       <CardBody>
         <div className="flex items-center gap-x-1 pb-2">
-          <Typography variant="h6">Departments</Typography>
-          <Tooltip
-            content={
-              <div>Statistics of Average Score by Department (Out of 10)</div>
-            }
-          >
+          <Typography variant="h5" color="blue-gray">
+            {t("feature.dashboard.list.depts")}
+          </Typography>
+          <Tooltip content={<div>{t("feature.dashboard.list.tooltip")}</div>}>
             <InformationCircleIcon className="w-[20px] h-[20px] mt-[2px]" />
           </Tooltip>
         </div>

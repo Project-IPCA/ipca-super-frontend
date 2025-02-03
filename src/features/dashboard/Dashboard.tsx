@@ -1,10 +1,4 @@
-import {
-  Card,
-  CardBody,
-  CardFooter,
-  Option,
-  Typography,
-} from "@material-tailwind/react";
+import { Option, Typography } from "@material-tailwind/react";
 import { useTranslation } from "react-i18next";
 import { AsyncSelect } from "../../components";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -22,6 +16,7 @@ import {
 } from "@heroicons/react/24/solid";
 import AvgScoreChapterChart from "./components/AvgScoreChapterChart";
 import AvgScoreDeptList from "./components/AvgScoreDeptList";
+import SubmissionChart from "./components/SubmissionChart";
 
 function Dashboard() {
   const dispatch = useAppDispatch();
@@ -62,6 +57,29 @@ function Dashboard() {
     }
   };
 
+  const statsData = [
+    {
+      title: t("feature.dashboard.card.students"),
+      icon: <UserIcon />,
+      value: 685,
+    },
+    {
+      title: t("feature.dashboard.card.groups"),
+      icon: <AcademicCapIcon />,
+      value: 21,
+    },
+    {
+      title: t("feature.dashboard.card.staffs"),
+      icon: <UserGroupIcon />,
+      value: 45,
+    },
+    {
+      title: t("feature.dashboard.card.submission"),
+      icon: <CheckCircleIcon />,
+      value: 3546,
+    },
+  ];
+
   return (
     <>
       <div className="flex justify-between items-center pb-4 ">
@@ -83,50 +101,19 @@ function Dashboard() {
           </AsyncSelect>
         </div>
       </div>
-      <div className="w-full grid grid-cols-9 gap-6 pb-6">
-        <div className="col-span-2">
-          <StatsCard icon={<UserIcon />} label="Total students" value="546" />
-        </div>
-        <div className="col-span-2">
-          <StatsCard
-            icon={<AcademicCapIcon />}
-            label="Total groups"
-            value="21"
-          />
-        </div>
-        <div className="col-span-2">
-          <StatsCard icon={<UserGroupIcon />} label="Total staffs" value="45" />
-        </div>
+      <div className="w-full grid grid-cols-4 gap-6 pb-6">
+        {statsData.map((stat) => (
+          <StatsCard icon={stat.icon} label={stat.title} value={stat.value} />
+        ))}
+
         <div className="col-span-3">
-          {/*
-
-          <StatsCard
-        icon={<CheckCircleIcon />}
-        label="Total submissions"
-        value="1459"
-        />
-          */}
-          <Card color="gray" variant="gradient" className="h-full">
-            <CardBody className="h-full flex flex-col justify-between">
-              <div>
-                <Typography variant="h6">Upcoming </Typography>
-                <Typography variant="h6">Class Schedule</Typography>
-              </div>
-              <div className="flex items-center gap-x-1">
-                <Typography>Today at 13:30 - </Typography>
-                <Typography className="underline decoration-[0.5px] cursor-pointer underline-offset-2">
-                  Group 118
-                </Typography>
-              </div>
-            </CardBody>
-          </Card>
-        </div>
-
-        <div className="col-span-6">
           <AvgScoreChapterChart />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-1">
           <AvgScoreDeptList />
+        </div>
+        <div className="col-span-3">
+          <SubmissionChart />
         </div>
       </div>
     </>

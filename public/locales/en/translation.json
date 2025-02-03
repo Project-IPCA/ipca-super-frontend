@@ -437,6 +437,23 @@
       "title": "Dashboard",
       "filter": {
         "year": "Year"
+      },
+      "card": {
+        "students": "Students",
+        "groups": "Groups",
+        "staffs": "Staffs",
+        "submission": "Submissions"
+      },
+      "chart": {
+        "avg_score_ch": "Statistics of average score by chapter",
+        "ch": "Ch.",
+        "avg_score": "Avg. Score",
+        "submission": "Statistics submissions over time",
+        "submission_time": "Submission time"
+      },
+      "list": {
+        "depts": "Departments",
+        "tooltip": "Statistics of Average Score by Department (Out of 10)"
       }
     }
   },
