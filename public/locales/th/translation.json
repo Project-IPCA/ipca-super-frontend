@@ -441,6 +441,12 @@
         "confirm_password": "ยืนยันรหัสผ่านใหม่",
         "current_password": "รหัสผ่านปัจจุบัน"
       }
+    },
+    "dashboard": {
+      "title": "แดชบอร์ด",
+      "filter": {
+        "year": "ปี"
+      }
     }
   },
   "common": {

@@ -432,6 +432,12 @@
         "confirm_password": "Confirm Password",
         "current_password": "Current Password"
       }
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "filter": {
+        "year": "Year"
+      }
     }
   },
   "common": {
