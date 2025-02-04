@@ -11,10 +11,7 @@ const AvgScoreChapterChart = () => {
     series: [
       {
         name: t("feature.dashboard.chart.avg_score"),
-        data: Array.from(
-          { length: 17 },
-          () => Math.floor(Math.random() * 10) + 1,
-        ),
+        data: [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
       },
     ],
     options: {

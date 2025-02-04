@@ -2,19 +2,27 @@ import { Card, CardBody, Typography } from "@material-tailwind/react";
 import { ApexOptions } from "apexcharts";
 import Chart from "react-apexcharts";
 import { useTranslation } from "react-i18next";
+import { StatsSubmissionTime } from "../redux/DashboardSlice";
+import { useMemo } from "react";
 
-function SubmissionChart() {
+interface Props {
+  statsSubmissionTime: StatsSubmissionTime;
+}
+
+function SubmissionChart({ statsSubmissionTime }: Props) {
   const { t } = useTranslation();
+
+  const submissionList = useMemo(() => {
+    return statsSubmissionTime.date_list.map((date) => date.slice(5));
+  }, [statsSubmissionTime]);
+
   const chartConfig = {
     type: "area",
     height: 300,
     series: [
       {
         name: t("feature.dashboard.chart.submission_time"),
-        data: Array.from(
-          { length: 7 },
-          () => Math.floor(Math.random() * 1000) + 1,
-        ),
+        data: statsSubmissionTime?.submissions_list,
       },
     ],
     options: {
@@ -48,15 +56,7 @@ function SubmissionChart() {
             fontWeight: 400,
           },
         },
-        categories: [
-          "08.00",
-          "10.00",
-          "12.00",
-          "14.00",
-          "16.00",
-          "18.00",
-          "20.00",
-        ],
+        categories: submissionList,
       },
       yaxis: {
         labels: {

@@ -448,7 +448,7 @@
         "avg_score_ch": "Statistics of average score by chapter",
         "ch": "Ch.",
         "avg_score": "Avg. Score",
-        "submission": "Statistics submissions over time",
+        "submission": "Statistics of submissions in the last 7 days",
         "submission_time": "Submission time"
       },
       "list": {

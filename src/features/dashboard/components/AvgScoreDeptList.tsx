@@ -34,7 +34,7 @@ function AvgScoreDeptList() {
         </div>
         <div className=" divide-y-[1px] h-[18rem] overflow-auto">
           {mockDeptAvgScore.map((dept) => (
-            <div className="grid grid-cols-8 py-5">
+            <div className="grid grid-cols-8 py-5" key={dept.dept_name_en}>
               <div className="col-span-4 flex items-center gap-x-2">
                 <div className="w-2 h-2 bg-gray-700 rounded-full"></div>
                 <Typography className="text-sm font-normal">

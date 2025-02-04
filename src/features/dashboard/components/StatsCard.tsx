@@ -9,7 +9,7 @@ interface Props {
 
 function StatsCard({ icon, label, value }: Props) {
   return (
-    <Card className="border-[1px] h-40">
+    <Card className="border-[1px]">
       <CardBody className="flex flex-col justify-between h-full">
         <div className="flex justify-between">
           <div>
@@ -17,13 +17,10 @@ function StatsCard({ icon, label, value }: Props) {
               {label}
             </Typography>
             <Typography variant="h4" color="blue-gray">
-              {value.toLocaleString()}
+              {value?.toLocaleString?.() || ""}
             </Typography>
           </div>
           <div className="w-8 h-8 mb-3 text-blue-gray-900">{icon}</div>
-        </div>
-        <div>
-          <Typography>hello</Typography>
         </div>
       </CardBody>
     </Card>
