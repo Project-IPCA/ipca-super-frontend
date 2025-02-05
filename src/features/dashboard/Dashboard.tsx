@@ -28,7 +28,10 @@ import {
   fetchStatsScoreChapter,
   fetchStatsSubmissionTime,
   fetchStatsDeptScore,
+  getDashboardError,
+  clearDashboardError,
 } from "./redux/DashboardSlice";
+import { showToast } from "../../utils/toast";
 
 function Dashboard() {
   const dispatch = useAppDispatch();
@@ -42,6 +45,7 @@ function Dashboard() {
     statsDeptScore,
   } = useAppSelector(getDashboard);
   const initialized = useRef(false);
+  const error = useAppSelector(getDashboardError);
   const [selectedYear, setSelectedYear] = useState<string>("All");
   const { t } = useTranslation();
   const myGroups = useAppSelector(getMyGroups);
@@ -108,6 +112,16 @@ function Dashboard() {
       dispatch(fetchStatsDeptScore(year));
     }
   }, [selectedYear, dispatch]);
+
+  useEffect(() => {
+    if (error) {
+      showToast({
+        variant: "error",
+        message: error.error,
+      });
+    }
+    dispatch(clearDashboardError());
+  }, [error]);
 
   const statsData = [
     {

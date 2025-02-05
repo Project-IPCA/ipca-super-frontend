@@ -96,8 +96,9 @@ export const fetchTotalStudents = createAsyncThunk(
   "dashboard/fetchTotalStudents",
   async (request: FetchTotalStudentsRequest, { rejectWithValue }) => {
     const params = {
-      ...request,
-      group_id: request.groupId,
+      year: request.year,
+      groupId: request.groupId,
+      status: null,
     };
     try {
       const response = await axiosInstance.get("/supervisor/students/total", {
@@ -114,7 +115,7 @@ export const fetchTotalSubmissions = createAsyncThunk(
   "dashboard/fetchTotalSubmissions",
   async (request: FetchTotalRequest, { rejectWithValue }) => {
     const params = {
-      ...request,
+      year: request.year,
       group_id: request.groupId,
     };
     try {
@@ -152,8 +153,8 @@ export const fetchStatsScoreChapter = createAsyncThunk(
   "dashboard/fetchStatsScoreChapter",
   async (request: FetchTotalRequest, { rejectWithValue }) => {
     const params = {
-      ...request,
-      group_id: request.groupId,
+      year: request.year,
+      groupId: request.groupId,
     };
     try {
       const response = await axiosInstance.get(
@@ -173,7 +174,7 @@ export const fetchStatsSubmissionTime = createAsyncThunk(
   "dashboard/fetchStatsSubmissionTime",
   async (request: FetchTotalRequest, { rejectWithValue }) => {
     const params = {
-      ...request,
+      year: request.year,
       group_id: request.groupId,
     };
     try {
