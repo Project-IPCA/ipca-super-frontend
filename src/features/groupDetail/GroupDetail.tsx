@@ -19,7 +19,7 @@ import { getGroupExercise } from "../groupExercises/redux/groupExercisesSlice";
 import { useTranslation } from "react-i18next";
 import usePermission from "../../hooks/usePermission";
 import { isAcceptedPermission } from "../../utils";
-import { GROUP_ADMIN } from "../../constants/constants";
+import { DASHBOARD_ADMIN, GROUP_ADMIN } from "../../constants/constants";
 import { GroupDashboard } from "../groupDashboard";
 
 interface Props {
@@ -34,10 +34,10 @@ function GroupDetail({ groupId }: Props) {
   const [activeTab, setActiveTab] = useState<string>(tabsValue.OVERVIEW);
 
   const TABS_MENU = [
-    isAcceptedPermission(permission || [], [GROUP_ADMIN])
+    isAcceptedPermission(permission || [], [DASHBOARD_ADMIN])
       ? {
           label: t("feature.group_detail.tab.overview"),
-          value: tabsValue.ACTIVITY_LOGS,
+          value: tabsValue.OVERVIEW,
           component: <GroupDashboard groupId={groupId} />,
         }
       : null,
@@ -55,7 +55,7 @@ function GroupDetail({ groupId }: Props) {
     isAcceptedPermission(permission || [], [GROUP_ADMIN])
       ? {
           label: t("feature.group_detail.tab.logs"),
-          value: tabsValue.OVERVIEW,
+          value: tabsValue.ACTIVITY_LOGS,
           component: <GroupLogs groupId={groupId} />,
         }
       : null,

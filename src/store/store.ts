@@ -14,6 +14,7 @@ import exerciseFormSlice from "../features/exerciseForm/redux/exerciseFormSlice"
 import exerciseInfoSlice from "../features/exerciseInfo/redux/exerciseInfoSlice";
 import adminFormSlice from "../features/adminForm/redux/adminFormSlice";
 import adminListSlice from "../features/adminList/redux/AdminListSlice";
+import dashboardSlice from "../features/dashboard/redux/DashboardSlice";
 
 export const RESET_STATE = "RESET_STATE";
 
@@ -33,6 +34,7 @@ const appReducer = combineReducers({
   exerciseInfo: exerciseInfoSlice,
   adminForm: adminFormSlice,
   adminList: adminListSlice,
+  dashboard: dashboardSlice,
 });
 
 const rootReducer = (state: any, action: any) => {
