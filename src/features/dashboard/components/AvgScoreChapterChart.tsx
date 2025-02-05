@@ -1,5 +1,6 @@
 import { Card, CardBody, Typography } from "@material-tailwind/react";
 import { ApexOptions } from "apexcharts";
+import { useMemo } from "react";
 import Chart from "react-apexcharts";
 import { useTranslation } from "react-i18next";
 
@@ -9,13 +10,16 @@ interface Props {
 
 const AvgScoreChapterChart = ({ statsScoreChapter }: Props) => {
   const { t } = useTranslation();
+  const statsScoreChapterFloored = useMemo(() => {
+    return statsScoreChapter.map((score) => score.toFixed(2));
+  }, [statsScoreChapter]);
   const chartConfig = {
     type: "bar",
     height: 300,
     series: [
       {
         name: t("feature.dashboard.chart.avg_score"),
-        data: statsScoreChapter,
+        data: statsScoreChapterFloored,
       },
     ],
     options: {

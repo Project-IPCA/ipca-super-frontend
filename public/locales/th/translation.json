@@ -464,6 +464,18 @@
         "depts": "ภาควิชา",
         "tooltip": "สถิติคะแนนเฉลี่ยตามภาควิชา (เต็ม 10)"
       }
+    },
+    "group_dashboard": {
+      "card": {
+        "students": "นักเรียน",
+        "online": "ออนไลน์",
+        "offline": "ออฟไลน์",
+        "submission": "การส่ง"
+      },
+      "list": {
+        "ranking": "จัดอันดับ",
+        "see_all": "ทั้งหมด"
+      }
     }
   },
   "common": {

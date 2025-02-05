@@ -455,6 +455,18 @@
         "depts": "Departments",
         "tooltip": "Statistics of Average Score by Department (Out of 10)"
       }
+    },
+    "group_dashboard": {
+      "card": {
+        "students": "Students",
+        "online": "Online",
+        "offline": "Offline",
+        "submission": "Submissions"
+      },
+      "list": {
+        "ranking": "Ranking",
+        "see_all": "See all"
+      }
     }
   },
   "common": {

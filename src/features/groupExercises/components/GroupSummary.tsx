@@ -113,8 +113,6 @@ function GroupSummary({ groupData }: Props) {
     }
   };
 
-  console.log(userId, groupData?.instructor.supervisor_id);
-
   return (
     <>
       <ConfirmModal

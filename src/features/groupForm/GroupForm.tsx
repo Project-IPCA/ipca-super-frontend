@@ -299,7 +299,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
         size="sm"
         open={open}
         handler={() => handleClose()}
-        className="p-4 !z-[500]"
+        className="p-4 !z-[500] lg:mb-0 mb-12"
       >
         <DialogHeader className="relative m-0 block">
           <Typography variant="h4" color="blue-gray">
