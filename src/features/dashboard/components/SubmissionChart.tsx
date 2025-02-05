@@ -13,7 +13,10 @@ function SubmissionChart({ statsSubmissionTime }: Props) {
   const { t } = useTranslation();
 
   const submissionList = useMemo(() => {
-    return statsSubmissionTime.date_list.map((date) => date.slice(5));
+    return (
+      statsSubmissionTime &&
+      statsSubmissionTime?.date_list.map((date) => date.slice(5))
+    );
   }, [statsSubmissionTime]);
 
   const chartConfig = {

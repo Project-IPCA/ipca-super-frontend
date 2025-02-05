@@ -25,6 +25,12 @@ export interface StatsSubmissionTime {
   date_list: string[];
 }
 
+export interface StatDeptScore {
+  dept_name_en: string;
+  dept_name_th: string;
+  score: number;
+}
+
 interface DashboardState {
   totalStaffs: TotalStaffs;
   totalStudents: TotalStudents;
@@ -32,6 +38,7 @@ interface DashboardState {
   totalGroups: TotalGroups;
   statsScoreChapter: number[];
   statsSubmissionTime: StatsSubmissionTime;
+  statsDeptScore: StatDeptScore[];
   isFetching: boolean;
   error: API_ERROR_RESPONSE | null;
 }
@@ -59,6 +66,7 @@ const initialState: DashboardState = {
     submissions_list: [],
     date_list: [],
   },
+  statsDeptScore: [],
   isFetching: false,
   error: null,
 };
@@ -182,6 +190,26 @@ export const fetchStatsSubmissionTime = createAsyncThunk(
   },
 );
 
+export const fetchStatsDeptScore = createAsyncThunk(
+  "dashboard/fetchStatsDeptScore",
+  async (year: string | null, { rejectWithValue }) => {
+    const params = {
+      year: year,
+    };
+    try {
+      const response = await axiosInstance.get(
+        "/supervisor/average_dept_score",
+        {
+          params,
+        },
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(resolveApiError(error));
+    }
+  },
+);
+
 const dashboardSlice = createSlice({
   name: "dashboardSlice",
   initialState,
@@ -255,6 +283,17 @@ const dashboardSlice = createSlice({
         state.statsSubmissionTime = action.payload;
       })
       .addCase(fetchStatsSubmissionTime.rejected, (state, action) => {
+        state.isFetching = false;
+        state.error = action.payload as API_ERROR_RESPONSE;
+      })
+      .addCase(fetchStatsDeptScore.pending, (state, _) => {
+        state.isFetching = true;
+      })
+      .addCase(fetchStatsDeptScore.fulfilled, (state, action) => {
+        state.isFetching = false;
+        state.statsDeptScore = action.payload;
+      })
+      .addCase(fetchStatsDeptScore.rejected, (state, action) => {
         state.isFetching = false;
         state.error = action.payload as API_ERROR_RESPONSE;
       }),

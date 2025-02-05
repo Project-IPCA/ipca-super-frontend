@@ -3,7 +3,11 @@ import { ApexOptions } from "apexcharts";
 import Chart from "react-apexcharts";
 import { useTranslation } from "react-i18next";
 
-const AvgScoreChapterChart = () => {
+interface Props {
+  statsScoreChapter: number[];
+}
+
+const AvgScoreChapterChart = ({ statsScoreChapter }: Props) => {
   const { t } = useTranslation();
   const chartConfig = {
     type: "bar",
@@ -11,7 +15,7 @@ const AvgScoreChapterChart = () => {
     series: [
       {
         name: t("feature.dashboard.chart.avg_score"),
-        data: [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+        data: statsScoreChapter,
       },
     ],
     options: {
@@ -45,10 +49,13 @@ const AvgScoreChapterChart = () => {
             fontWeight: 400,
           },
         },
-        categories: Array.from({ length: 17 }, (_, index: number) => [
-          t("feature.dashboard.chart.ch"),
-          `${index + 1}`,
-        ]),
+        categories: Array.from(
+          { length: statsScoreChapter.length },
+          (_, index: number) => [
+            t("feature.dashboard.chart.ch"),
+            `${index + 1}`,
+          ],
+        ),
       },
       yaxis: {
         max: 10,

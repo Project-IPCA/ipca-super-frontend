@@ -27,6 +27,7 @@ import {
   fetchTotalGroups,
   fetchStatsScoreChapter,
   fetchStatsSubmissionTime,
+  fetchStatsDeptScore,
 } from "./redux/DashboardSlice";
 
 function Dashboard() {
@@ -38,6 +39,7 @@ function Dashboard() {
     totalGroups,
     statsScoreChapter,
     statsSubmissionTime,
+    statsDeptScore,
   } = useAppSelector(getDashboard);
   const initialized = useRef(false);
   const [selectedYear, setSelectedYear] = useState<string>("All");
@@ -64,6 +66,7 @@ function Dashboard() {
       dispatch(fetchStatsScoreChapter(basicRequest));
       dispatch(fetchTotalStaffs(null));
       dispatch(fetchStatsSubmissionTime(basicRequest));
+      dispatch(fetchStatsDeptScore(year));
     }
     return () => {};
   }, [dispatch, initialized]);
@@ -102,6 +105,7 @@ function Dashboard() {
       dispatch(fetchStatsScoreChapter(basicRequest));
       dispatch(fetchTotalStaffs(null));
       dispatch(fetchStatsSubmissionTime(basicRequest));
+      dispatch(fetchStatsDeptScore(year));
     }
   }, [selectedYear, dispatch]);
 
@@ -149,7 +153,7 @@ function Dashboard() {
           </AsyncSelect>
         </div>
       </div>
-      <div className="w-full grid grid-cols-4 gap-6 pb-6">
+      <div className="w-full grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1  gap-6 pb-6">
         {statsData.map((stat) => (
           <StatsCard
             key={stat.title}
@@ -159,13 +163,13 @@ function Dashboard() {
           />
         ))}
 
-        <div className="col-span-3">
-          <AvgScoreChapterChart />
+        <div className="lg:col-span-3 md:col-span-2 col-span-1">
+          <AvgScoreChapterChart statsScoreChapter={statsScoreChapter} />
         </div>
-        <div className="col-span-1">
-          <AvgScoreDeptList />
+        <div className="lg:col-span-1 md:col-span-2 col-span-1">
+          <AvgScoreDeptList statsDeptScore={statsDeptScore} />
         </div>
-        <div className="col-span-4">
+        <div className="lg:col-span-4 md:col-span-2 col-span-1">
           <SubmissionChart statsSubmissionTime={statsSubmissionTime} />
         </div>
       </div>

@@ -1,16 +1,20 @@
 import {
   Card,
   CardBody,
-  Progress,
+  Chip,
   Tooltip,
   Typography,
 } from "@material-tailwind/react";
-import { mockDeptAvgScore } from "../constants";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { useTranslation } from "react-i18next";
 import { LANGUAGE } from "../../../constants/constants";
+import { StatDeptScore } from "../redux/DashboardSlice";
 
-function AvgScoreDeptList() {
+interface Props {
+  statsDeptScore: StatDeptScore[];
+}
+
+function AvgScoreDeptList({ statsDeptScore }: Props) {
   const { t, i18n } = useTranslation();
   const getProgressColor = (score: number) => {
     if (score >= 8) {
@@ -33,9 +37,12 @@ function AvgScoreDeptList() {
           </Tooltip>
         </div>
         <div className=" divide-y-[1px] h-[18rem] overflow-auto">
-          {mockDeptAvgScore.map((dept) => (
-            <div className="grid grid-cols-8 py-5" key={dept.dept_name_en}>
-              <div className="col-span-4 flex items-center gap-x-2">
+          {statsDeptScore.map((dept) => (
+            <div
+              className="flex justify-between items-center py-5"
+              key={dept.dept_name_en}
+            >
+              <div className=" flex items-center gap-x-2">
                 <div className="w-2 h-2 bg-gray-700 rounded-full"></div>
                 <Typography className="text-sm font-normal">
                   {i18n.language === LANGUAGE.th
@@ -43,17 +50,12 @@ function AvgScoreDeptList() {
                     : dept.dept_name_en}
                 </Typography>
               </div>
-              <div className="col-span-3 px-3 flex items-center">
-                <Progress
-                  value={dept.score * 10}
-                  variant="filled"
-                  size="sm"
-                  color={getProgressColor(dept.score)}
-                />
-              </div>
-              <Typography className="text-sm col-span-1">
-                {dept.score}
-              </Typography>
+              <Chip
+                className="w-fit"
+                value={`${dept.score.toFixed(1)}/10`}
+                color={getProgressColor(dept.score)}
+                size="sm"
+              />
             </div>
           ))}
         </div>
