@@ -3,15 +3,16 @@ import { ApexOptions } from "apexcharts";
 import { useMemo } from "react";
 import Chart from "react-apexcharts";
 import { useTranslation } from "react-i18next";
+import { StatsScoreChapter } from "../redux/DashboardSlice";
 
 interface Props {
-  statsScoreChapter: number[];
+  statsScoreChapter: StatsScoreChapter;
 }
 
 const AvgScoreChapterChart = ({ statsScoreChapter }: Props) => {
   const { t } = useTranslation();
   const statsScoreChapterFloored = useMemo(() => {
-    return statsScoreChapter.map((score) => score.toFixed(2));
+    return statsScoreChapter.data.map((score) => score.toFixed(2));
   }, [statsScoreChapter]);
   const chartConfig = {
     type: "bar",
@@ -54,7 +55,7 @@ const AvgScoreChapterChart = ({ statsScoreChapter }: Props) => {
           },
         },
         categories: Array.from(
-          { length: statsScoreChapter.length },
+          { length: statsScoreChapter.data.length },
           (_, index: number) => [
             t("feature.dashboard.chart.ch"),
             `${index + 1}`,
@@ -62,7 +63,7 @@ const AvgScoreChapterChart = ({ statsScoreChapter }: Props) => {
         ),
       },
       yaxis: {
-        max: 10,
+        max: statsScoreChapter.max_range,
         labels: {
           style: {
             colors: "#616161",

@@ -48,6 +48,7 @@ function StudentRankingModal({ open, handleOpen, studentRanking }: Props) {
               key={stu.student.id}
             >
               <div className=" flex items-center gap-x-3">
+                <Typography className=" font-bold">{index + 1}</Typography>
                 <Avatar
                   src={stu.student.profile || profileNone}
                   alt="avatar"

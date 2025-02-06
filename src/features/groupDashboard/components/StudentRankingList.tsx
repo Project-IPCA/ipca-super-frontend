@@ -49,12 +49,13 @@ function StudentRankingList({ studentRanking }: Props) {
             </Button>
           </div>
           <div className=" divide-y-[1px] h-[18rem] overflow-auto">
-            {studentRanking.slice(0, 10).map((stu) => (
+            {studentRanking.slice(0, 10).map((stu, index) => (
               <div
                 className="flex justify-between items-center py-5"
                 key={stu.student.id}
               >
                 <div className=" flex items-center gap-x-3">
+                  <Typography className=" font-bold">{index + 1}</Typography>
                   <Avatar
                     src={stu.student.profile || profileNone}
                     alt="avatar"
