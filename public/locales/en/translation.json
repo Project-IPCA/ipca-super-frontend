@@ -453,7 +453,7 @@
       },
       "list": {
         "depts": "Departments",
-        "tooltip": "Statistics of Average Score by Department (Out of 10)"
+        "tooltip": "Statistics of Average Score by Department (Out of "
       }
     },
     "group_dashboard": {

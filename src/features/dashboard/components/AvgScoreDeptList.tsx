@@ -11,7 +11,7 @@ import { LANGUAGE } from "../../../constants/constants";
 import { StatDeptScore } from "../redux/DashboardSlice";
 
 interface Props {
-  statsDeptScore: StatDeptScore[];
+  statsDeptScore: StatDeptScore;
 }
 
 function AvgScoreDeptList({ statsDeptScore }: Props) {
@@ -32,12 +32,19 @@ function AvgScoreDeptList({ statsDeptScore }: Props) {
           <Typography variant="h5" color="blue-gray">
             {t("feature.dashboard.list.depts")}
           </Typography>
-          <Tooltip content={<div>{t("feature.dashboard.list.tooltip")}</div>}>
+          <Tooltip
+            content={
+              <div>
+                {t("feature.dashboard.list.tooltip")}
+                {statsDeptScore.max_range})
+              </div>
+            }
+          >
             <InformationCircleIcon className="w-[20px] h-[20px] mt-[2px]" />
           </Tooltip>
         </div>
         <div className=" divide-y-[1px] h-[18rem] overflow-auto">
-          {statsDeptScore.map((dept) => (
+          {statsDeptScore.data.map((dept) => (
             <div
               className="flex justify-between items-center py-5"
               key={dept.dept_name_en}
@@ -52,7 +59,7 @@ function AvgScoreDeptList({ statsDeptScore }: Props) {
               </div>
               <Chip
                 className="w-fit"
-                value={`${dept.score.toFixed(1)}/10`}
+                value={`${dept.score.toFixed(1)}/${statsDeptScore.max_range}`}
                 color={getProgressColor(dept.score)}
                 size="sm"
               />

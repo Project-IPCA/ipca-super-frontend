@@ -26,9 +26,17 @@ export interface StatsSubmissionTime {
 }
 
 export interface StatDeptScore {
-  dept_name_en: string;
-  dept_name_th: string;
-  score: number;
+  data: {
+    dept_name_en: string;
+    dept_name_th: string;
+    score: number;
+  }[];
+  max_range: number;
+}
+
+export interface StatsScoreChapter {
+  data: number[];
+  max_range: number;
 }
 
 interface DashboardState {
@@ -36,9 +44,9 @@ interface DashboardState {
   totalStudents: TotalStudents;
   totalSubmissions: TotalSubmissions;
   totalGroups: TotalGroups;
-  statsScoreChapter: number[];
+  statsScoreChapter: StatsScoreChapter;
   statsSubmissionTime: StatsSubmissionTime;
-  statsDeptScore: StatDeptScore[];
+  statsDeptScore: StatDeptScore;
   isFetching: boolean;
   error: API_ERROR_RESPONSE | null;
 }
@@ -61,12 +69,18 @@ const initialState: DashboardState = {
   totalGroups: {
     total_groups: 0,
   },
-  statsScoreChapter: [],
+  statsScoreChapter: {
+    data: [],
+    max_range: 170,
+  },
   statsSubmissionTime: {
     submissions_list: [],
     date_list: [],
   },
-  statsDeptScore: [],
+  statsDeptScore: {
+    data: [],
+    max_range: 10,
+  },
   isFetching: false,
   error: null,
 };
