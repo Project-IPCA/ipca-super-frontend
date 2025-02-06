@@ -17,9 +17,9 @@ interface Props {
 function AvgScoreDeptList({ statsDeptScore }: Props) {
   const { t, i18n } = useTranslation();
   const getProgressColor = (score: number) => {
-    if (score >= 8) {
+    if (score >= statsDeptScore.max_range * 0.8) {
       return "green";
-    } else if (score >= 6) {
+    } else if (score >= statsDeptScore.max_range * 0.4) {
       return "amber";
     } else {
       return "red";
