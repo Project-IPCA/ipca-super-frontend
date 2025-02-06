@@ -465,7 +465,9 @@
       },
       "list": {
         "ranking": "Ranking",
-        "see_all": "See all"
+        "see_all": "See all",
+        "no_student_msg1": "No Students",
+        "no_student_msg2": "There are no students in the group."
       }
     }
   },
