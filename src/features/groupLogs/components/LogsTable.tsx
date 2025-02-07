@@ -1,21 +1,22 @@
-import { Card, Tooltip, Typography } from "@material-tailwind/react";
-import { ActivityLog } from "../GroupLogs";
+import { Card, Spinner, Tooltip, Typography } from "@material-tailwind/react";
 import LogRow from "./LogRow";
 import { format } from "date-fns";
-import { RefObject } from "react";
+import { RefObject, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { ActivityLog } from "../redux/groupLogSlice";
 
 interface Props {
+  loading: boolean;
   logs: ActivityLog[];
   tableRef: RefObject<HTMLDivElement>;
 }
 
-function LogsTable({ logs, tableRef }: Props) {
+function LogsTable({ loading, logs, tableRef}: Props) {
   const { t } = useTranslation();
   const thList = Array.isArray(
     t("feature.group_logs.th_list", {
       returnObjects: true,
-    }),
+    })
   )
     ? (t("feature.group_logs.th_list", {
         returnObjects: true,
@@ -48,6 +49,12 @@ function LogsTable({ logs, tableRef }: Props) {
     },
   ];
 
+  const logsRef = useRef<ActivityLog[]>(logs);
+
+  if (logs !== logsRef.current) {
+    logsRef.current = logs;
+  }
+
   return (
     <>
       <Card className="h-full w-full shadow-none border-[1.5px]">
@@ -74,8 +81,18 @@ function LogsTable({ logs, tableRef }: Props) {
                 ))}
               </tr>
             </thead>
+
             <tbody>
-              {logs.map((log) => (
+              {loading ? (
+                <tr>
+                  <td colSpan={tableHeaders.length} className="text-center p-4">
+                    <Spinner className="h-16 w-16 inline-block" />
+                  </td>
+                </tr>
+              ) : (
+                ""
+              )}
+              {logsRef.current.map((log) => (
                 <tr key={log.log_id} className="even:bg-blue-gray-50/50 ">
                   <td className="p-2">
                     <Tooltip
