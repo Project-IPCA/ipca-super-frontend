@@ -7,7 +7,11 @@ import {
 import Layout from "./layouts/Layout";
 import { AnonymousRoutes, ProtectedRoutes, SpinnerLoading } from "./components";
 import RoleProtectedRoute from "./components/roleProtectedRoutes/RoleProtectedRoute";
-import { EXERCISE_ADMIN, STUDENT_ADMIN } from "./constants/constants";
+import {
+  DASHBOARD_ADMIN,
+  EXERCISE_ADMIN,
+  STUDENT_ADMIN,
+} from "./constants/constants";
 
 const ProfilePage = lazy(() => import("./pages/profilePage/ProfilePage"));
 const LoginPage = lazy(() => import("./pages/loginPage/LoginPage"));
@@ -36,6 +40,8 @@ const AdminPage = lazy(() => import("./pages/adminPage/AdminPage"));
 const ErrorPage = lazy(() => import("./pages/errorPage/ErrorPage"));
 
 const ForbiddenPage = lazy(() => import("./pages/forbiddenPage/ForbiddenPage"));
+
+const DashboardPage = lazy(() => import("./pages/dashboardPage/DashboardPage"));
 
 const router = createBrowserRouter([
   {
@@ -128,6 +134,21 @@ const router = createBrowserRouter([
                 element: (
                   <Suspense fallback={<SpinnerLoading />}>
                     <ExerciseInfoPage />
+                  </Suspense>
+                ),
+              },
+            ],
+          },
+          {
+            element: (
+              <RoleProtectedRoute acceptedPermission={DASHBOARD_ADMIN} />
+            ),
+            children: [
+              {
+                path: "/dashboard",
+                element: (
+                  <Suspense fallback={<SpinnerLoading />}>
+                    <DashboardPage />
                   </Suspense>
                 ),
               },

@@ -12,9 +12,12 @@ import {
   UserGroupIcon,
   ChevronDownIcon,
   AcademicCapIcon,
+  Squares2X2Icon,
 } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import usePermission from "../../hooks/usePermission";
+import { DASHBOARD_ADMIN } from "../../constants/constants";
 
 interface Props {
   handleCloseDrawer: () => void;
@@ -24,6 +27,7 @@ function MenuList({ handleCloseDrawer }: Props) {
   const [open, setOpen] = useState(0);
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { permission } = usePermission();
 
   const handleOpen = (value: any) => {
     setOpen(open === value ? 0 : value);
@@ -33,18 +37,21 @@ function MenuList({ handleCloseDrawer }: Props) {
     "select-none hover:bg-gray-100 focus:bg-gray-100 active:bg-gray-100 hover:text-gray-900 focus:text-gray-900 active:text-gray-900 data-[selected=true]:text-gray-900";
 
   const menuItems = [
+    ...(permission?.includes(DASHBOARD_ADMIN)
+      ? [
+          {
+            label: t("layout.default.menu.overview"),
+            icon: Squares2X2Icon,
+            path: "/dashboard",
+          },
+        ]
+      : []),
     {
       label: t("layout.default.menu.groups"),
       icon: AcademicCapIcon,
       subItems: [
-        {
-          label: t("layout.default.menu.my_groups"),
-          path: "/my-groups",
-        },
-        {
-          label: t("layout.default.menu.av_groups"),
-          path: "/groups",
-        },
+        { label: t("layout.default.menu.my_groups"), path: "/my-groups" },
+        { label: t("layout.default.menu.av_groups"), path: "/groups" },
       ],
     },
     {

@@ -8,6 +8,7 @@
   "layout": {
     "default": {
       "menu": {
+        "overview": "Dashboard",
         "groups": "Groups",
         "my_groups": "My Groups",
         "av_groups": "Available Groups",
@@ -143,7 +144,8 @@
       "tab": {
         "exercises": "Exercises",
         "students": "Students",
-        "logs": "Activity Logs"
+        "logs": "Activity Logs",
+        "overview": "Overview"
       }
     },
     "group_exercises": {
@@ -429,6 +431,43 @@
         "new_password": "New Password",
         "confirm_password": "Confirm Password",
         "current_password": "Current Password"
+      }
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "filter": {
+        "year": "Year"
+      },
+      "card": {
+        "students": "Students",
+        "groups": "Groups",
+        "staffs": "Staffs",
+        "submission": "Submissions"
+      },
+      "chart": {
+        "avg_score_ch": "Statistics of average score by chapter",
+        "ch": "Ch.",
+        "avg_score": "Avg. Score",
+        "submission": "Statistics of submissions in the last 7 days",
+        "submission_time": "Submission time"
+      },
+      "list": {
+        "depts": "Departments",
+        "tooltip": "Statistics of Average Score by Department (Out of "
+      }
+    },
+    "group_dashboard": {
+      "card": {
+        "students": "Students",
+        "online": "Online",
+        "offline": "Offline",
+        "submission": "Submissions"
+      },
+      "list": {
+        "ranking": "Ranking",
+        "see_all": "See all",
+        "no_student_msg1": "No Students",
+        "no_student_msg2": "There are no students in the group."
       }
     }
   },

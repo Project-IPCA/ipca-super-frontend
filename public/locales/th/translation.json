@@ -8,6 +8,7 @@
   "layout": {
     "default": {
       "menu": {
+        "overview": "แดชบอร์ด",
         "groups": "กลุ่มเรียน",
         "my_groups": "กลุ่มของฉัน",
         "av_groups": "กลุ่มทั้งหมด",
@@ -145,7 +146,8 @@
       "tab": {
         "exercises": "แบบฝึกหัด",
         "students": "นักเรียน",
-        "logs": "บันทึกกิจกรรม"
+        "logs": "บันทึกกิจกรรม",
+        "overview": "ภาพรวม"
       }
     },
     "group_exercises": {
@@ -438,6 +440,43 @@
         "new_password": "รหัสผ่านใหม่",
         "confirm_password": "ยืนยันรหัสผ่านใหม่",
         "current_password": "รหัสผ่านปัจจุบัน"
+      }
+    },
+    "dashboard": {
+      "title": "แดชบอร์ด",
+      "filter": {
+        "year": "ปี"
+      },
+      "card": {
+        "students": "นักเรียน",
+        "groups": "กลุ่ม",
+        "staffs": "ผู้ช่วยสอน",
+        "submission": "การส่ง"
+      },
+      "chart": {
+        "avg_score_ch": "สถิติคะแนนเฉลี่ยตามบทเรียน",
+        "ch": "บทที่",
+        "avg_score": "คะแนนเฉลี่ย",
+        "submission": "สถิติจำนวนการส่งคำตอบ 7 วันล่าสุด",
+        "submission_time": "จำนวนการส่งคำตอบ"
+      },
+      "list": {
+        "depts": "ภาควิชา",
+        "tooltip": "สถิติคะแนนเฉลี่ยตามภาควิชา (เต็ม "
+      }
+    },
+    "group_dashboard": {
+      "card": {
+        "students": "นักเรียน",
+        "online": "ออนไลน์",
+        "offline": "ออฟไลน์",
+        "submission": "การส่ง"
+      },
+      "list": {
+        "ranking": "จัดอันดับ",
+        "see_all": "ทั้งหมด",
+        "no_student_msg1": "ไม่มีนักเรียน",
+        "no_student_msg2": "ยังไม่มีนักเรียนในกลุ่ม"
       }
     }
   },

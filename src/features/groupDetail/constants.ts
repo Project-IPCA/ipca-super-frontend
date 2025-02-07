@@ -2,4 +2,5 @@ export const tabsValue = {
   EXERCISES: "EXERCISES",
   STUDENTS: "STUDENTS",
   ACTIVITY_LOGS: "ACTIVITY_LOGS",
+  OVERVIEW: "OVERVIEW",
 };
