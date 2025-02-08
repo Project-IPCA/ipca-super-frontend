@@ -191,7 +191,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <Navigate to="/my-groups" replace />,
+    element: <Navigate to="/dashboard" replace />,
   },
   {
     path: "*",

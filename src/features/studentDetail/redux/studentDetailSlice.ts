@@ -88,13 +88,13 @@ export const fetchStudentChapterList = createAsyncThunk(
         `/supervisor/student_chapter_list`,
         {
           params: params,
-        }
+        },
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 export const deleteStudent = createAsyncThunk(
@@ -102,13 +102,13 @@ export const deleteStudent = createAsyncThunk(
   async (studentId: string, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.delete(
-        `/supervisor/student/${studentId}`
+        `/supervisor/student/${studentId}`,
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 export const resetStudentPasword = createAsyncThunk(
@@ -116,13 +116,13 @@ export const resetStudentPasword = createAsyncThunk(
   async (studentId: string, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.put(
-        `/supervisor/reset_student_password/${studentId}`
+        `/supervisor/reset_student_password/${studentId}`,
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 export const fetchStudentInfo = createAsyncThunk(
@@ -130,13 +130,13 @@ export const fetchStudentInfo = createAsyncThunk(
   async (studentId: string, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(
-        `/supervisor/student_info/${studentId}`
+        `/supervisor/student_info/${studentId}`,
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 const studentDetailSlice = createSlice({
@@ -191,7 +191,7 @@ const studentDetailSlice = createSlice({
         state[studentId] = {
           studentInfo: existStudentInfo?.studentInfo || null,
           chapterList: action.payload,
-          isFetching: true,
+          isFetching: false,
           error: null,
         };
       })

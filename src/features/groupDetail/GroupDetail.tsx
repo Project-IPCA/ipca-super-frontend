@@ -15,12 +15,17 @@ import { GroupExercises } from "../groupExercises";
 import GroupStudents from "../groupStudents/GroupStudents";
 import { GroupLogs } from "../groupLogs";
 import { useAppSelector } from "../../hooks/store";
-import { getGroupExercise } from "../groupExercises/redux/groupExercisesSlice";
+import {
+  getGroupExercise,
+  getGroupExerciseStatus,
+} from "../groupExercises/redux/groupExercisesSlice";
 import { useTranslation } from "react-i18next";
 import usePermission from "../../hooks/usePermission";
 import { isAcceptedPermission } from "../../utils";
 import { DASHBOARD_ADMIN, GROUP_ADMIN } from "../../constants/constants";
 import { GroupDashboard } from "../groupDashboard";
+import { getDashboardStatus } from "../dashboard/redux/DashboardSlice";
+import { getGroupDashboardStatus } from "../groupDashboard/redux/groupDashboardSlice";
 
 interface Props {
   groupId: string;
@@ -31,6 +36,11 @@ function GroupDetail({ groupId }: Props) {
   const navigate = useNavigate();
   const { permission } = usePermission();
   const groupDetail = useAppSelector(getGroupExercise);
+  const dashboardFetching = useAppSelector(getDashboardStatus);
+  const groupDashboardFetching = useAppSelector(getGroupDashboardStatus);
+  const groupExerciseFetching = useAppSelector(getGroupExerciseStatus);
+  const isFetching =
+    dashboardFetching || groupDashboardFetching || groupExerciseFetching;
   const [activeTab, setActiveTab] = useState<string>(tabsValue.OVERVIEW);
 
   const TABS_MENU = [
@@ -67,9 +77,23 @@ function GroupDetail({ groupId }: Props) {
         <IconButton variant="text" onClick={() => navigate(-1)}>
           <ArrowLeftIcon className="w-5 h-5" />
         </IconButton>
-        <Typography variant="h3">
-          {t("feature.group_detail.title")} {groupDetail?.group_no}
-        </Typography>
+
+        <div className="flex justify-start items-center gap-x-2">
+          <Typography variant="h3">
+            {t("feature.group_detail.title")}
+          </Typography>
+          {isFetching ? (
+            <Typography
+              as="div"
+              variant="h3"
+              className="h-6 w-32 rounded-full bg-gray-300 "
+            >
+              &nbsp;
+            </Typography>
+          ) : (
+            <Typography variant="h3">{groupDetail?.group_no}</Typography>
+          )}
+        </div>
       </div>
       <Tabs value={activeTab}>
         <TabsHeader
@@ -85,6 +109,7 @@ function GroupDetail({ groupId }: Props) {
               value={value}
               onClick={() => setActiveTab(value)}
               className={activeTab === value ? "text-gray-900" : ""}
+              disabled={isFetching}
             >
               {label}
             </Tab>

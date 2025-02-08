@@ -21,6 +21,7 @@ import {
 import TextEditor from "../exerciseForm/components/TextEditor";
 import { showToast } from "../../utils/toast";
 import { useTranslation } from "react-i18next";
+import SubmissionSkeleton from "./components/SubmissionSkeleton";
 
 function ExerciseDetail() {
   const dispatch = useAppDispatch();
@@ -35,6 +36,7 @@ function ExerciseDetail() {
   const exerciseDetail = exerciseDetailState[key]?.exceriseDetail;
   const submissionHistory = exerciseDetailState[key]?.submissionHistory;
   const error = exerciseDetailState[key]?.error;
+  const isFetching = exerciseDetailState[key]?.isFetching;
 
   useEffect(() => {
     if (error) {
@@ -100,22 +102,70 @@ function ExerciseDetail() {
       </div>
       <Card className="border-[1px] mb-4">
         <CardBody>
-          <Typography variant="small" className="font-medium">
-            {t("feature.exercise_detail.label.chapter")}{" "}
-            {exerciseDetail?.chapter_index}{" "}
-            {t("feature.exercise_detail.label.chapter")} {exerciseDetail?.level}
-          </Typography>
-          <Typography variant="h4" className="pt-1 pb-2">
-            {exerciseDetail?.name || ""}
-          </Typography>
-          <TextEditor value={exerciseDetail?.content ?? ""} isEdit={false} />
+          {isFetching ? (
+            <>
+              <Typography
+                as="div"
+                variant="small"
+                className="block  h-3 w-24 rounded-lg bg-gray-300"
+              >
+                &nbsp;
+              </Typography>
+              <Typography
+                as="div"
+                variant="small"
+                className="block mt-4 mb-6 h-5 w-56 rounded-lg bg-gray-300"
+              >
+                &nbsp;
+              </Typography>
+            </>
+          ) : (
+            <>
+              <Typography variant="small" className="font-medium">
+                {t("feature.exercise_detail.label.chapter")}{" "}
+                {exerciseDetail?.chapter_index}{" "}
+                {t("feature.exercise_detail.label.chapter")}{" "}
+                {exerciseDetail?.level}
+              </Typography>
+              <Typography variant="h4" className="pt-1 pb-2">
+                {exerciseDetail?.name || ""}
+              </Typography>
+            </>
+          )}
+          {isFetching ? (
+            <>
+              {Array.from({ length: 9 }).map((_, index) => (
+                <Typography
+                  as="div"
+                  variant="paragraph"
+                  className="mb-3 h-2 w-full rounded-full bg-gray-300"
+                  key={index}
+                >
+                  &nbsp;
+                </Typography>
+              ))}
+              <Typography
+                as="div"
+                variant="paragraph"
+                className="mb-3 h-2 w-11/12 rounded-full bg-gray-300"
+              >
+                &nbsp;
+              </Typography>
+            </>
+          ) : (
+            <TextEditor value={exerciseDetail?.content ?? ""} isEdit={false} />
+          )}
         </CardBody>
       </Card>
-      <SubmissionHistoryList
-        submissionHistory={submissionHistory}
-        exerciseDetail={exerciseDetail}
-        studentInfo={studentInfo}
-      />
+      {isFetching ? (
+        <SubmissionSkeleton />
+      ) : (
+        <SubmissionHistoryList
+          submissionHistory={submissionHistory}
+          exerciseDetail={exerciseDetail}
+          studentInfo={studentInfo}
+        />
+      )}
     </>
   );
 }
