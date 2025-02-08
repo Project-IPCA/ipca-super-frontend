@@ -89,13 +89,13 @@ export const logoutAllStudents = createAsyncThunk(
   async (groupId: string, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.put(
-        `/supervisor/logout_all_student/${groupId}`
+        `/supervisor/logout_all_student/${groupId}`,
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 export const fetchGroupExercises = createAsyncThunk(
@@ -107,7 +107,7 @@ export const fetchGroupExercises = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 export const updateAllowGroupLogin = createAsyncThunk(
@@ -119,13 +119,13 @@ export const updateAllowGroupLogin = createAsyncThunk(
         {
           group_id: groupId,
           allow_login: allow,
-        }
+        },
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 export const updateAllowGroupUploadProfile = createAsyncThunk(
@@ -137,13 +137,13 @@ export const updateAllowGroupUploadProfile = createAsyncThunk(
         {
           group_id: groupId,
           allow_upload_picture: allow,
-        }
+        },
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 export const deleteGroup = createAsyncThunk(
@@ -151,13 +151,13 @@ export const deleteGroup = createAsyncThunk(
   async (groupId: string, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.delete(
-        `supervisor/group/${groupId}`
+        `supervisor/group/${groupId}`,
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 const groupDetailSlice = createSlice({
@@ -194,6 +194,8 @@ export const { clearGroupExercisesError } = groupDetailSlice.actions;
 
 export const getGroupExercise = (state: RootState) =>
   state.groupExercise.groupDetail;
+export const getGroupExerciseStatus = (state: RootState) =>
+  state.groupExercise.isFetching;
 
 export const getGroupExerciseError = (state: RootState) =>
   state.groupExercise.error;

@@ -9,10 +9,10 @@ i18n
   .use(initReactI18next)
   .init({
     react: {
-      useSuspense: false,
+      useSuspense: true,
     },
     fallbackLng: "th",
-    debug: true,
+    debug: false,
     backend: {
       loadPath: "/locales/{{lng}}/translation.json",
     },

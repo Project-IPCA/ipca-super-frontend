@@ -7,9 +7,10 @@ import { useTranslation } from "react-i18next";
 interface Props {
   studentId: string;
   chapterList: GroupChapterPermission[];
+  isFetching: boolean;
 }
 
-function ChapterListCard({ chapterList, studentId }: Props) {
+function ChapterListCard({ chapterList, studentId, isFetching }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const getItemColor = (
@@ -26,7 +27,60 @@ function ChapterListCard({ chapterList, studentId }: Props) {
     }
     return "gray";
   };
-  return (
+  return isFetching ? (
+    <div className={`divide-y divide-gray-200 `}>
+      {[...Array(5)].map((_, index) => (
+        <div
+          className={`flex justify-between lg:items-center gap-x-4 py-9 px-6 lg:flex-row flex-col  `}
+          key={index}
+        >
+          <div className="space-y-4 md:mb-0 mb-4">
+            <Typography
+              as="div"
+              variant="h5"
+              className="block h-3  w-36 rounded-full bg-gray-300"
+            >
+              &nbsp;
+            </Typography>
+            <Typography
+              as="div"
+              variant="h5"
+              className="block h-2  w-20 rounded-full bg-gray-300"
+            >
+              &nbsp;
+            </Typography>
+          </div>
+          <div className="flex items-center  md:gap-x-8 gap-x-2 md:flex-nowrap flex-wrap md:gap-y-0 gap-y-2 ">
+            {[...Array(5)].map((_, index) => (
+              <Typography
+                key={index}
+                as="div"
+                className="block h-16  w-16 rounded-lg bg-gray-300"
+              >
+                &nbsp;
+              </Typography>
+            ))}
+            <div className="space-y-3 md:block hidden">
+              <Typography
+                key={index}
+                as="div"
+                className="block h-2  w-10 rounded-lg bg-gray-300"
+              >
+                &nbsp;
+              </Typography>
+              <Typography
+                key={index}
+                as="div"
+                className="block h-2 w-10 rounded-lg bg-gray-300"
+              >
+                &nbsp;
+              </Typography>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  ) : (
     <div className="divide-y divide-gray-200 min-h-screen">
       {chapterList?.map((chapter) => (
         <div

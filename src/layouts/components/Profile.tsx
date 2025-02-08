@@ -6,6 +6,8 @@ import {
 } from "@material-tailwind/react";
 import { profileNone } from "../../assets";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../hooks/store";
+import { getProfileStatus } from "../../features/profileForm/redux/profileFormSlice";
 
 interface Props {
   profileImage: string;
@@ -21,6 +23,7 @@ function Profile({
   handleCloseDrawer,
 }: Props) {
   const navigate = useNavigate();
+  const isFetching = useAppSelector(getProfileStatus);
 
   const handleClick = () => {
     navigate("/profile");
@@ -33,11 +36,23 @@ function Profile({
         onClick={() => handleClick()}
       >
         <ListItemPrefix>
-          <Avatar size="sm" src={profileImage || profileNone} />
+          {isFetching ? (
+            <Typography as="div" className="h-9 w-9 rounded-full bg-gray-300 ">
+              &nbsp;
+            </Typography>
+          ) : (
+            <Avatar size="sm" src={profileImage || profileNone} />
+          )}
         </ListItemPrefix>
-        <Typography className="mr-auto font-normal text-inherit">
-          {`${firstName} ${lastName}`}
-        </Typography>
+        {isFetching ? (
+          <Typography as="div" className="h-3 w-1/2 rounded-full bg-gray-300 ">
+            &nbsp;
+          </Typography>
+        ) : (
+          <Typography className="mr-auto font-normal text-inherit">
+            {`${firstName} ${lastName}`}
+          </Typography>
+        )}
       </ListItem>
       <hr className="my-2 border-gray-200" />
     </>

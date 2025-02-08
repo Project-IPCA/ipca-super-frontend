@@ -3,13 +3,16 @@ import { ApexOptions } from "apexcharts";
 import { useMemo } from "react";
 import Chart from "react-apexcharts";
 import { useTranslation } from "react-i18next";
-import { StatsScoreChapter } from "../redux/DashboardSlice";
+import { getDashboardStatus, StatsScoreChapter } from "../redux/DashboardSlice";
+import { useAppSelector } from "../../../hooks/store";
+import { BarChartSkeleton } from "../../../components";
 
 interface Props {
   statsScoreChapter: StatsScoreChapter;
 }
 
 const AvgScoreChapterChart = ({ statsScoreChapter }: Props) => {
+  const isFetching = useAppSelector(getDashboardStatus);
   const { t } = useTranslation();
   const statsScoreChapterFloored = useMemo(() => {
     return statsScoreChapter.data.map((score) => score.toFixed(2));
@@ -98,10 +101,20 @@ const AvgScoreChapterChart = ({ statsScoreChapter }: Props) => {
   return (
     <Card className="border-[1px]">
       <CardBody>
-        <Typography variant="h5" color="blue-gray">
-          {t("feature.dashboard.chart.avg_score_ch")}
-        </Typography>
-        <Chart {...chartConfig} />
+        {isFetching ? (
+          <Typography
+            as="div"
+            variant="h5"
+            className="h-4 w-60 rounded-full bg-gray-300 mb-3"
+          >
+            &nbsp;
+          </Typography>
+        ) : (
+          <Typography variant="h5" color="blue-gray">
+            {t("feature.dashboard.chart.avg_score_ch")}
+          </Typography>
+        )}
+        {isFetching ? <BarChartSkeleton /> : <Chart {...chartConfig} />}
       </CardBody>
     </Card>
   );
