@@ -60,7 +60,10 @@ function AvgScoreDeptList({ statsDeptScore }: Props) {
         {isFetching ? (
           <div className="divide-y-[1px] h-[18rem] ">
             {[...Array(4)].map((_, index) => (
-              <div className="py-7 flex justify-between items-center ">
+              <div
+                className="py-7 flex justify-between items-center "
+                key={index}
+              >
                 <Typography
                   key={index}
                   as="div"

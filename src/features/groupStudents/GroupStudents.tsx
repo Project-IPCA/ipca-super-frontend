@@ -9,6 +9,7 @@ import {
   setOnlineStudents,
   getOnlineStudents,
   VITE_IPCA_RT,
+  getGroupStudentsStatus,
 } from "./redux/GroupStudentsSlice";
 import AddStudentForm from "./components/AddStudentForm";
 import { StudentPermissionForm } from "../studentPermissionForm";
@@ -40,6 +41,7 @@ function GroupStudents({ groupId }: Props) {
   const [studentSelected, setStudentSelected] = useState<StudentData | null>(
     null,
   );
+  const isFetching = useAppSelector(getGroupStudentsStatus);
 
   const handlePermFormClose = () => setOpenPermForm(false);
   const handlePermFormOpen = () => setOpenPermForm(true);
@@ -123,32 +125,43 @@ function GroupStudents({ groupId }: Props) {
       </RoleProtection>
 
       <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 justify-between items-center pb-4">
-        <div className="flex gap-x-5">
-          <div className="flex items-center gap-x-1">
-            <span className="mx-auto mb-1 block h-3 w-3 rounded-full bg-green-900 content-['']" />
-            <Typography variant="h6" color="blue-gray">
-              {`${t("feature.group_students.online")}: ${onlineStudent.length}`}
-            </Typography>
-          </div>
-          <div className="flex items-center gap-x-1">
-            <span className="mx-auto mb-1 block h-3 w-3 rounded-full bg-red-900 content-['']" />
-            <Typography variant="h6" color="blue-gray">
-              {`${t("feature.group_students.offline")}: ${groupStudent.total_student - onlineStudent.length}`}
-            </Typography>
-          </div>
-          <Typography variant="h6" color="blue-gray">
-            {`${t("feature.group_students.total")}: ${groupStudent.total_student}`}
-          </Typography>
-        </div>
-        <RoleProtection acceptedPermission={[GROUP_ADMIN]}>
-          <Button
-            className="w-full sm:w-fit"
-            size="md"
-            onClick={() => setOpenStudentForm(true)}
+        {isFetching ? (
+          <Typography
+            as="div"
+            className="h-3 w-60 rounded-full bg-gray-300 mb-4"
           >
-            {t("feature.group_students.button.add")}
-          </Button>
-        </RoleProtection>
+            &nbsp;
+          </Typography>
+        ) : (
+          <>
+            <div className="flex gap-x-5">
+              <div className="flex items-center gap-x-1">
+                <span className="mx-auto mb-1 block h-3 w-3 rounded-full bg-green-900 content-['']" />
+                <Typography variant="h6" color="blue-gray">
+                  {`${t("feature.group_students.online")}: ${onlineStudent.length}`}
+                </Typography>
+              </div>
+              <div className="flex items-center gap-x-1">
+                <span className="mx-auto mb-1 block h-3 w-3 rounded-full bg-red-900 content-['']" />
+                <Typography variant="h6" color="blue-gray">
+                  {`${t("feature.group_students.offline")}: ${groupStudent.total_student - onlineStudent.length}`}
+                </Typography>
+              </div>
+              <Typography variant="h6" color="blue-gray">
+                {`${t("feature.group_students.total")}: ${groupStudent.total_student}`}
+              </Typography>
+            </div>
+            <RoleProtection acceptedPermission={[GROUP_ADMIN]}>
+              <Button
+                className="w-full sm:w-fit"
+                size="md"
+                onClick={() => setOpenStudentForm(true)}
+              >
+                {t("feature.group_students.button.add")}
+              </Button>
+            </RoleProtection>
+          </>
+        )}
       </div>
       <StudentTable
         page={page}
