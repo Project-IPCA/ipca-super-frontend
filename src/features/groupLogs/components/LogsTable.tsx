@@ -9,10 +9,10 @@ interface Props {
   loading: boolean;
   logs: ActivityLog[];
   tableRef: RefObject<HTMLDivElement>;
-  scrollToBottom : () => void 
+  scrollToBottom: () => void;
 }
 
-function LogsTable({ loading, logs, tableRef,scrollToBottom }: Props) {
+function LogsTable({ loading, logs, tableRef, scrollToBottom }: Props) {
   const { t } = useTranslation();
   const prevLogsLength = useRef(logs.length);
   const prevScrollHeight = useRef(0);
@@ -20,7 +20,7 @@ function LogsTable({ loading, logs, tableRef,scrollToBottom }: Props) {
   const thList = Array.isArray(
     t("feature.group_logs.th_list", {
       returnObjects: true,
-    })
+    }),
   )
     ? (t("feature.group_logs.th_list", {
         returnObjects: true,
@@ -54,7 +54,7 @@ function LogsTable({ loading, logs, tableRef,scrollToBottom }: Props) {
     if (tableRef.current && prevScrollHeight.current === 0) {
       prevScrollHeight.current = tableRef.current.scrollHeight;
     }
-    scrollToBottom()
+    scrollToBottom();
   }, []);
 
   return (
