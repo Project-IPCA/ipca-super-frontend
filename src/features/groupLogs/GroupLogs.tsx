@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import LogsTable from "./components/LogsTable";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import {
+  clearAllGroupActivityLog,
   fetchLastTimeLog,
   FetchLastTimeLogReq,
   getActivityLog,
@@ -26,14 +27,12 @@ function GroupLogs({ groupId }: Props) {
   const tableRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    if (tableRef.current && logs.length > 0) {
-      setTimeout(() => {
-        tableRef.current?.scrollTo({
-          top: tableRef.current.scrollHeight,
-          behavior: "smooth",
-        });
-      }, 100);
-    }
+    setTimeout(() => {
+      tableRef.current?.scrollTo({
+        top: tableRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }, 100);
   };
 
   const isScrolledToTop = () => {
@@ -63,6 +62,7 @@ function GroupLogs({ groupId }: Props) {
     };
     return () => {
       evtSource.close();
+      dispatch(clearAllGroupActivityLog());
     };
   }, []);
 
@@ -90,7 +90,7 @@ function GroupLogs({ groupId }: Props) {
 
   return (
     <div>
-      <LogsTable logs={logs} tableRef={tableRef} loading={fetching}/>
+      <LogsTable logs={logs} tableRef={tableRef} loading={fetching} scrollToBottom={scrollToBottom}/>
     </div>
   );
 }
