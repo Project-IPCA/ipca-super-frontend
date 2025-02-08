@@ -75,6 +75,13 @@ const groupActivityLogSlice = createSlice({
     clearGroupActivityLogError: (state) => {
       state.error = null;
     },
+    clearAllGroupActivityLog: (state) => {
+      state.logs = [];
+      state.total = 0;
+      state.lastTime = null;
+      state.error = null;
+      state.isFetching = false;
+    },
     pushLogs: (state, action: PayloadAction<ActivityLog>) => {
       state.logs.push(action.payload);
     },
@@ -99,8 +106,12 @@ const groupActivityLogSlice = createSlice({
       }),
 });
 
-export const { clearGroupActivityLogError, pushLogs, setLasttime } =
-  groupActivityLogSlice.actions;
+export const {
+  clearGroupActivityLogError,
+  pushLogs,
+  setLasttime,
+  clearAllGroupActivityLog,
+} = groupActivityLogSlice.actions;
 export const getActivityLog = (state: RootState) => state.groupActivityLog;
 export const getGroupActivityLogStatus = (state: RootState) =>
   state.groupActivityLog.isFetching;

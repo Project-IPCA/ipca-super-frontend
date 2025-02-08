@@ -1,5 +1,5 @@
 import { Typography, Tooltip } from "@material-tailwind/react";
-import { ActionData } from "../GroupLogs";
+import { ActionData } from "../redux/groupLogSlice";
 import { NEGATIVE_ACTION, statusProperties } from "../constants";
 
 interface Props {
@@ -14,8 +14,8 @@ function LogRow({ action }: Props) {
           className={`${
             NEGATIVE_ACTION.includes(action) ||
             ["reject"].includes(action.split(" ")[0])
-              ? "bg-red-500"
-              : "bg-blue-600"
+              ? "bg-red-400"
+              : "bg-blue-400"
           } px-2.5 py-[2.5px] rounded-full text-white mr-2`}
         >
           Action
@@ -29,22 +29,27 @@ function LogRow({ action }: Props) {
   ) : typeof action === "object" ? (
     <div className="w-[500px] text-white">
       <div
-        className={`flex flex-row gap-[5px] p-[5px] rounded-t-lg`}
-        style={{
-          backgroundColor: statusProperties[action.status].color,
-        }}
+        className={`flex flex-row gap-[5px] p-[5px] rounded-t-lg ${
+          statusProperties[action.status].color
+            ? statusProperties[action.status].color
+            : ""
+        }`}
       >
-        <Typography>Action</Typography>
-        <Typography className="flex items-center">: Exercise submit</Typography>
+        <Typography variant="h6">Action</Typography>
+        <Typography className="flex items-center " variant="h6">
+          : Exercise submit
+        </Typography>
       </div>
 
-      <div className="p-[10px] bg-black rounded-b-lg">
+      <div className="p-[10px] bg-gray-800 rounded-b-lg">
         {Object.entries(action).map(
           ([key, value]) =>
             !["job_id"].includes(key) && (
               <div key={key} className="flex flex-row gap-[5px]">
-                <Typography className="text-right w-[150px]">{key}</Typography>
-                <Typography className="flex items-center">
+                <Typography className="text-right w-[150px]" color="white">
+                  {key}
+                </Typography>
+                <Typography className="flex items-center" color="white">
                   :{" "}
                   {value === undefined || value === null ? "running..." : value}
                 </Typography>
