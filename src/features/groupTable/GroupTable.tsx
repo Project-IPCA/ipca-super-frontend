@@ -15,7 +15,11 @@ import {
   Staffs,
 } from "../myGroupsList/redux/myGroupListSlice";
 import { truncate } from "lodash";
-import { EyeIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import {
+  EyeIcon,
+  LockClosedIcon,
+  PencilSquareIcon,
+} from "@heroicons/react/24/outline";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -24,6 +28,7 @@ import RoleProtection from "../../components/roleProtection/RoleProtection";
 import { GROUP_ADMIN } from "../../constants/constants";
 import { useAppSelector } from "../../hooks/store";
 import { getAvailableGroupsStatus } from "../availableGroupList/redux/AvailableGroupListSlice";
+import { useEffect, useRef } from "react";
 
 interface Props {
   userId?: string;
@@ -51,6 +56,7 @@ function GroupTable({
   const availableGroupFetching = useAppSelector(getAvailableGroupsStatus);
   const myGroupFetching = useAppSelector(getMyGroupsStatus);
   const isFetching = availableGroupFetching || myGroupFetching;
+
   const formatStaffNames = (staffs: Staffs[]): string => {
     const staffList = staffs
       .map((staff) => `${staff.f_name} ${staff.l_name}`)
@@ -213,7 +219,15 @@ function GroupTable({
                               )
                             }
                           >
-                            <EllipsisVerticalIcon className="w-5 h-5" />
+                            {userId &&
+                            (group.instructor.supervisor_id === userId ||
+                              group.staffs.find(
+                                (s) => s.staff_id === userId,
+                              )) ? (
+                              <EllipsisVerticalIcon className="w-5 h-5" />
+                            ) : (
+                              <LockClosedIcon className="w-5 h-5" />
+                            )}
                           </IconButton>
                         </MenuHandler>
                         <MenuList>
