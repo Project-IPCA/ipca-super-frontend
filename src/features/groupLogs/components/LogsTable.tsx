@@ -53,8 +53,8 @@ function LogsTable({ loading, logs, tableRef,scrollToBottom }: Props) {
   useEffect(() => {
     if (tableRef.current && prevScrollHeight.current === 0) {
       prevScrollHeight.current = tableRef.current.scrollHeight;
-      scrollToBottom()
     }
+    scrollToBottom()
   }, []);
 
   return (
