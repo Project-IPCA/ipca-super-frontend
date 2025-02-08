@@ -60,6 +60,7 @@ const router = createBrowserRouter([
   },
   {
     element: <ProtectedRoutes />,
+    errorElement: <Navigate to="/error" replace />,
     children: [
       {
         element: <Layout />,
