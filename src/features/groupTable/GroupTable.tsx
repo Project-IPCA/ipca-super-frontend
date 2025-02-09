@@ -28,7 +28,6 @@ import RoleProtection from "../../components/roleProtection/RoleProtection";
 import { GROUP_ADMIN } from "../../constants/constants";
 import { useAppSelector } from "../../hooks/store";
 import { getAvailableGroupsStatus } from "../availableGroupList/redux/AvailableGroupListSlice";
-import { useEffect, useRef } from "react";
 
 interface Props {
   userId?: string;

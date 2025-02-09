@@ -54,7 +54,12 @@ function LogsTable({ loading, logs, tableRef, scrollToBottom }: Props) {
     if (tableRef.current && prevScrollHeight.current === 0) {
       prevScrollHeight.current = tableRef.current.scrollHeight;
     }
-    scrollToBottom();
+
+    const scrollTimeOut = setTimeout(scrollToBottom,2000)
+
+    return (
+      clearTimeout(scrollTimeOut)
+    )
   }, []);
 
   return (
