@@ -218,10 +218,9 @@ function GroupTable({
                               )
                             }
                           >
-                            {userId &&
-                            (group.instructor.supervisor_id === userId ||
-                              group.staffs.find(
-                                (s) => s.staff_id === userId,
+                            {!userId || (!!userId && (
+                                group.instructor.supervisor_id === userId ||
+                                group.staffs.find((s) => s.staff_id === userId)
                               )) ? (
                               <EllipsisVerticalIcon className="w-5 h-5" />
                             ) : (
