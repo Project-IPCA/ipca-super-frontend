@@ -9,23 +9,23 @@ export const NEGATIVE_ACTION = ["Logout", "Logout All", "Login Repeat"];
 export const statusProperties = {
   ACCEPTED: {
     message: "Accepted",
-    color: "#4CAF50",
+    color: "bg-green-400",
   },
   WRONG_ANSWER: {
     message: "Wrong Answer",
-    color: "#F44336",
+    color: "bg-red-400",
   },
   PENDING: {
     message: "Pending",
-    color: "#607D8B",
+    color: "bg-gray-500",
   },
   ERROR: {
     message: "Error",
-    color: "#FF5722",
+    color: "bg-red-400",
   },
   REJECTED: {
     message: "Rejected",
-    color: "#FF5722",
+    color: "bg-red-400",
   },
 };
 

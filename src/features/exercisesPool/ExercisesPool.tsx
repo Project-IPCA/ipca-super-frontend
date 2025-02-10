@@ -11,6 +11,7 @@ import ExerciseCard from "./components/ExerciseCard";
 import { ExerciseForm } from "../exerciseForm";
 import { showToast } from "../../utils/toast";
 import { useTranslation } from "react-i18next";
+import ExerciseCardSkeleton from "./components/ExerciseCardSkeleton";
 
 export interface FormUseData {
   chapterId: string;
@@ -32,6 +33,7 @@ function ExercisesPool() {
 
   const exercisesPool = exercisesPoolState[key]?.chapterDetail;
   const error = exercisesPoolState[key]?.error;
+  const isFetching = exercisesPoolState[key]?.isFetching;
 
   const handleToggleForm = () => setFormOpen(!formOpen);
 
@@ -72,25 +74,45 @@ function ExercisesPool() {
         <IconButton variant="text">
           <ArrowLeftIcon className="w-5 h-5" onClick={() => navigate(-1)} />
         </IconButton>
-        <Typography variant="h3">
-          {t("feature.exercise_pool.title")} {chapterIdx}{" "}
-          {exercisesPool?.chapter_name}
-        </Typography>
+        <div className="flex justify-start items-center gap-x-2">
+          <Typography variant="h3">
+            {t("feature.exercise_pool.title")}{" "}
+          </Typography>
+          {isFetching ? (
+            <Typography
+              as="div"
+              variant="h3"
+              className="h-6 w-32 rounded-full bg-gray-300 "
+            >
+              &nbsp;
+            </Typography>
+          ) : (
+            <Typography variant="h3">
+              {chapterIdx} {exercisesPool?.chapter_name}
+            </Typography>
+          )}
+        </div>
       </div>
       <div className="space-y-6">
-        {Object.entries(exercisesPool?.lab_list || {}).map(
-          ([level, labItems]) => (
-            <ExerciseCard
-              key={level}
-              level={level}
-              chapterId={exercisesPool?.chapter_id || ""}
-              labItems={labItems}
-              selectedItems={exercisesPool?.group_selected_labs[level] || []}
-              handleToggleForm={handleToggleForm}
-              handleSetFormUseData={handleSetFormUseData}
-            />
-          ),
-        )}
+        {isFetching
+          ? [...Array(2)].map((_, index) => (
+              <ExerciseCardSkeleton key={index} />
+            ))
+          : Object.entries(exercisesPool?.lab_list || {}).map(
+              ([level, labItems]) => (
+                <ExerciseCard
+                  key={level}
+                  level={level}
+                  chapterId={exercisesPool?.chapter_id || ""}
+                  labItems={labItems}
+                  selectedItems={
+                    exercisesPool?.group_selected_labs[level] || []
+                  }
+                  handleToggleForm={handleToggleForm}
+                  handleSetFormUseData={handleSetFormUseData}
+                />
+              ),
+            )}
       </div>
     </>
   );

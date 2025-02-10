@@ -11,6 +11,11 @@ import {
   ROLE_LIST,
 } from "../constants/constants";
 import { format, parseISO } from "date-fns";
+import {
+  ActionData,
+  ActivityLog,
+} from "../features/groupLogs/redux/groupLogSlice";
+import { pageName } from "../features/groupLogs/constants";
 
 export const resolveApiError = (error: unknown): API_ERROR_RESPONSE => {
   if (!isAxiosError(error) || !error.response) {
@@ -67,7 +72,17 @@ export const getRoleFromEnum = (role: string, lang: string) => {
 
 export const isAcceptedPermission = (
   perms: Permission[],
-  acceptedPermission: Permission[],
+  acceptedPermission: Permission[]
 ) => {
   return perms.some((i) => acceptedPermission.includes(i));
+};
+
+export const processData = (log: ActivityLog): ActivityLog => {
+  if (log.page_name === pageName.ExerciseSubmit) {
+    return {
+      ...log,
+      action: JSON.parse(log.action as string) as ActionData,
+    };
+  }
+  return log;
 };

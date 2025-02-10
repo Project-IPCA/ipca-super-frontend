@@ -6,6 +6,21 @@ const axiosInstance = axios.create({
   baseURL: VITE_IPCA_API,
 });
 
+// NOTE: To test skeleton uncomment it!
+// axiosInstance.interceptors.request.use(
+//   async function (config) {
+//     await new Promise((resolve) => setTimeout(resolve, 500));
+//     const token = localStorage.getItem("access_token");
+//     if (token) {
+//       config.headers["Authorization"] = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   function (error) {
+//     return Promise.reject(error);
+//   },
+// );
+
 axiosInstance.interceptors.request.use(
   function (config) {
     const token = localStorage.getItem("access_token");
@@ -16,7 +31,7 @@ axiosInstance.interceptors.request.use(
   },
   function (error) {
     return Promise.reject(error);
-  }
+  },
 );
 
 axiosInstance.interceptors.response.use(
@@ -42,15 +57,14 @@ axiosInstance.interceptors.response.use(
               headers: {
                 Authorization: `Bearer ${refreshToken}`,
               },
-            }
+            },
           );
           if (response.status === 200) {
             localStorage.setItem("access_token", response.data.accessToken);
             localStorage.setItem("refresh_token", response.data.refreshToken);
 
-            originalRequest.headers[
-              "Authorization"
-            ] = `Bearer ${response.data.accessToken}`;
+            originalRequest.headers["Authorization"] =
+              `Bearer ${response.data.accessToken}`;
 
             return axiosInstance(originalRequest);
           }
@@ -64,7 +78,7 @@ axiosInstance.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosInstance;

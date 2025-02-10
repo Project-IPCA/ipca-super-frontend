@@ -29,6 +29,7 @@ function StudentDetail() {
   const studentInfo = studentState[String(studentId)]?.studentInfo;
   const chapterList = studentState[String(studentId)]?.chapterList;
   const error = studentState[String(studentId)]?.error;
+  const isFetching = studentState[String(studentId)]?.isFetching;
 
   useEffect(() => {
     if (error) {
@@ -53,10 +54,21 @@ function StudentDetail() {
           <ArrowLeftIcon className="w-5 h-5" onClick={() => navigate(-1)} />
         </IconButton>
         <Typography variant="h3">
-          {t("feature.exercise_detail.title")} {studentInfo?.kmitl_id}
+          {t("feature.exercise_detail.title")}
         </Typography>
+        {isFetching ? (
+          <Typography
+            as="div"
+            variant="h5"
+            className="block h-5  w-36 rounded-full bg-gray-300"
+          >
+            &nbsp;
+          </Typography>
+        ) : (
+          <Typography variant="h3">{studentInfo?.kmitl_id || ""}</Typography>
+        )}
       </div>
-      <StudentSummary studentInfo={studentInfo} />
+      <StudentSummary studentInfo={studentInfo} isFetching={isFetching} />
       <Card
         className="border-[1px]  mt-8 sm:mb-0 md:mb-44 lg:mb-0"
         shadow={false}
@@ -64,6 +76,7 @@ function StudentDetail() {
         <ChapterListCard
           studentId={String(studentId)}
           chapterList={chapterList}
+          isFetching={isFetching}
         />
       </Card>
     </>

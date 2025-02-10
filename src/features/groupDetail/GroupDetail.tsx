@@ -8,30 +8,77 @@ import {
   TabsHeader,
   Typography,
 } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
-import { ReactNode, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { ReactNode, useEffect, useState } from "react";
 import { tabsValue } from "./constants";
 import { GroupExercises } from "../groupExercises";
 import GroupStudents from "../groupStudents/GroupStudents";
 import { GroupLogs } from "../groupLogs";
 import { useAppSelector } from "../../hooks/store";
-import { getGroupExercise } from "../groupExercises/redux/groupExercisesSlice";
+import {
+  getGroupExercise,
+  getGroupExerciseStatus,
+} from "../groupExercises/redux/groupExercisesSlice";
 import { useTranslation } from "react-i18next";
 import usePermission from "../../hooks/usePermission";
 import { isAcceptedPermission } from "../../utils";
 import { DASHBOARD_ADMIN, GROUP_ADMIN } from "../../constants/constants";
 import { GroupDashboard } from "../groupDashboard";
+import { getDashboardStatus } from "../dashboard/redux/DashboardSlice";
+import { getGroupDashboardStatus } from "../groupDashboard/redux/groupDashboardSlice";
+import { getProfileStatus } from "../profileForm/redux/profileFormSlice";
+import { getGroupStudentsStatus } from "../groupStudents/redux/GroupStudentsSlice";
 
 interface Props {
   groupId: string;
 }
 
 function GroupDetail({ groupId }: Props) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const defaultTab = searchParams.get("tab") || tabsValue.OVERVIEW;
+  const [activeTab, setActiveTab] = useState<string>(defaultTab);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { permission } = usePermission();
   const groupDetail = useAppSelector(getGroupExercise);
-  const [activeTab, setActiveTab] = useState<string>(tabsValue.OVERVIEW);
+  const dashboardFetching = useAppSelector(getDashboardStatus);
+  const groupDashboardFetching = useAppSelector(getGroupDashboardStatus);
+  const groupExerciseFetching = useAppSelector(getGroupExerciseStatus);
+  const userIdFetching = useAppSelector(getProfileStatus);
+  const groupStudentFetching = useAppSelector(getGroupStudentsStatus);
+
+  const isFetching =
+    dashboardFetching || groupDashboardFetching || groupExerciseFetching;
+
+  const getIsFetchingByTab = () => {
+    switch (activeTab) {
+      case tabsValue.OVERVIEW:
+        return (
+          dashboardFetching || groupDashboardFetching || groupExerciseFetching
+        );
+      case tabsValue.EXERCISES:
+        return userIdFetching || groupStudentFetching || groupExerciseFetching;
+      case tabsValue.STUDENTS:
+        return groupStudentFetching || groupExerciseFetching;
+      default:
+        return;
+    }
+  };
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab && Object.values(tabsValue).includes(tab)) {
+      setActiveTab(tab);
+    } else {
+      setSearchParams({ tab: tabsValue.OVERVIEW }, { replace: true });
+      setActiveTab(tabsValue.OVERVIEW);
+    }
+  }, [searchParams]);
+
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+    setSearchParams({ tab: newTab }, { replace: true });
+  };
 
   const TABS_MENU = [
     isAcceptedPermission(permission || [], [DASHBOARD_ADMIN])
@@ -67,10 +114,25 @@ function GroupDetail({ groupId }: Props) {
         <IconButton variant="text" onClick={() => navigate(-1)}>
           <ArrowLeftIcon className="w-5 h-5" />
         </IconButton>
-        <Typography variant="h3">
-          {t("feature.group_detail.title")} {groupDetail?.group_no}
-        </Typography>
+
+        <div className="flex justify-start items-center gap-x-2">
+          <Typography variant="h3">
+            {t("feature.group_detail.title")}
+          </Typography>
+          {getIsFetchingByTab() ? (
+            <Typography
+              as="div"
+              variant="h3"
+              className="h-6 w-32 rounded-full bg-gray-300 "
+            >
+              &nbsp;
+            </Typography>
+          ) : (
+            <Typography variant="h3">{groupDetail?.group_no || ""}</Typography>
+          )}
+        </div>
       </div>
+
       <Tabs value={activeTab}>
         <TabsHeader
           className="rounded-none border-b border-blue-gray-50 bg-transparent p-0"
@@ -83,8 +145,9 @@ function GroupDetail({ groupId }: Props) {
             <Tab
               key={value}
               value={value}
-              onClick={() => setActiveTab(value)}
+              onClick={() => handleTabChange(value)}
               className={activeTab === value ? "text-gray-900" : ""}
+              disabled={isFetching}
             >
               {label}
             </Tab>

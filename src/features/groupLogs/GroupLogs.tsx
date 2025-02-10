@@ -1,87 +1,96 @@
-import { useEffect, useRef, useState } from "react";
-import { pageName, StatusType } from "./constants";
+import { useEffect, useRef } from "react";
 import LogsTable from "./components/LogsTable";
+import { useAppDispatch, useAppSelector } from "../../hooks/store";
+import {
+  clearAllGroupActivityLog,
+  fetchLastTimeLog,
+  FetchLastTimeLogReq,
+  getActivityLog,
+  getGroupActivityLogStatus,
+  pushLogs,
+} from "./redux/groupLogSlice";
+import { processData } from "../../utils";
 
 const VITE_IPCA_RT = import.meta.env.VITE_IPCA_RT;
+
+const LIMIT_LOG = 20;
 
 interface Props {
   groupId: string;
 }
 
-export interface ActivityLog {
-  log_id: string;
-  timestamp: Date;
-  group_id: string | null;
-  username: string;
-  remote_ip: string;
-  remote_port: number | null;
-  agent: string | null;
-  page_name: string;
-  action: string | ActionData;
-  ci: number | null;
-}
-
-export interface ActionData {
-  stu_id: string;
-  job_id: string;
-  status: StatusType;
-  submission_id: string;
-  attempt: string;
-  sourcecode_filename: string;
-  marking: number | null;
-}
-
 function GroupLogs({ groupId }: Props) {
   const initialized = useRef(false);
-  const [logs, setLogs] = useState<ActivityLog[]>([]);
+  const dispatch = useAppDispatch();
+  const fetching = useAppSelector(getGroupActivityLogStatus);
+  const { logs, total, lastTime } = useAppSelector(getActivityLog);
   const tableRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      tableRef.current?.scrollTo({
+        top: tableRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }, 100);
+  };
+
+  const isScrolledToTop = () => {
+    if (!tableRef.current) return false;
+    return tableRef.current.scrollTop === 0;
+  };
+
+  const handleScroll = () => {
+    if (isScrolledToTop() && logs.length < total) {
+      const request: FetchLastTimeLogReq = {
+        groupId: groupId,
+        limit: LIMIT_LOG,
+        lastTime: lastTime,
+      };
+      dispatch(fetchLastTimeLog(request));
+    }
+  };
+
+  useEffect(() => {
+    const evtSource = new EventSource(`${VITE_IPCA_RT}/class-log/${groupId}`);
+    evtSource.onmessage = (event) => {
+      if (event.data) {
+        const rawData = JSON.parse(event.data);
+        dispatch(pushLogs(processData(rawData)));
+        scrollToBottom();
+      }
+    };
+    return () => {
+      evtSource.close();
+      dispatch(clearAllGroupActivityLog());
+    };
+  }, []);
 
   useEffect(() => {
     if (!initialized.current) {
       initialized.current = true;
-      const evtSource = new EventSource(`${VITE_IPCA_RT}/class-log/${groupId}`);
-      evtSource.onmessage = (event) => {
-        if (event.data) {
-          const rawData = JSON.parse(event.data);
-
-          const processData = (log: ActivityLog): ActivityLog => {
-            if (log.page_name === pageName.ExerciseSubmit) {
-              return {
-                ...log,
-                action: JSON.parse(log.action as string) as ActionData,
-              };
-            }
-            return log;
-          };
-
-          if (Array.isArray(rawData)) {
-            setLogs(rawData.map(processData));
-          } else {
-            setLogs((prevLogs) => [...prevLogs, processData(rawData)]);
-          }
-        }
+      const request: FetchLastTimeLogReq = {
+        groupId: groupId,
+        limit: LIMIT_LOG,
+        lastTime: lastTime,
       };
-
-      return () => {
-        evtSource.close();
-      };
+      dispatch(fetchLastTimeLog(request));
     }
   }, [initialized]);
 
   useEffect(() => {
-    if (tableRef.current && logs.length > 0) {
-      setTimeout(() => {
-        tableRef.current?.scrollTo({
-          top: tableRef.current.scrollHeight,
-          behavior: "smooth",
-        });
-      }, 100);
+    const currentTableRef = tableRef.current;
+    if (currentTableRef) {
+      currentTableRef.addEventListener("scroll", handleScroll);
+      return () => {
+        currentTableRef.removeEventListener("scroll", handleScroll);
+      };
     }
   }, [logs]);
 
   return (
     <div>
-      <LogsTable logs={logs} tableRef={tableRef} />
+      <LogsTable logs={logs} tableRef={tableRef} loading={fetching} scrollToBottom={scrollToBottom}/>
     </div>
   );
 }

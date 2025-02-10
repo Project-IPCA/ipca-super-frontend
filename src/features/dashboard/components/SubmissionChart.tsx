@@ -2,8 +2,13 @@ import { Card, CardBody, Typography } from "@material-tailwind/react";
 import { ApexOptions } from "apexcharts";
 import Chart from "react-apexcharts";
 import { useTranslation } from "react-i18next";
-import { StatsSubmissionTime } from "../redux/DashboardSlice";
+import {
+  getDashboardStatus,
+  StatsSubmissionTime,
+} from "../redux/DashboardSlice";
 import { useMemo } from "react";
+import { useAppSelector } from "../../../hooks/store";
+import { AreaChartSkeleton } from "../../../components";
 
 interface Props {
   statsSubmissionTime: StatsSubmissionTime;
@@ -11,6 +16,7 @@ interface Props {
 
 function SubmissionChart({ statsSubmissionTime }: Props) {
   const { t } = useTranslation();
+  const isFetching = useAppSelector(getDashboardStatus);
 
   const submissionList = useMemo(() => {
     return (
@@ -97,10 +103,20 @@ function SubmissionChart({ statsSubmissionTime }: Props) {
   return (
     <Card className="border-[1px]">
       <CardBody>
-        <Typography variant="h5" color="blue-gray">
-          {t("feature.dashboard.chart.submission")}
-        </Typography>
-        <Chart {...chartConfig} />
+        {isFetching ? (
+          <Typography
+            as="div"
+            variant="h5"
+            className="h-4 w-60 rounded-full bg-gray-300 mb-3"
+          >
+            &nbsp;
+          </Typography>
+        ) : (
+          <Typography variant="h5" color="blue-gray">
+            {t("feature.dashboard.chart.submission")}
+          </Typography>
+        )}
+        {isFetching ? <AreaChartSkeleton /> : <Chart {...chartConfig} />}
       </CardBody>
     </Card>
   );

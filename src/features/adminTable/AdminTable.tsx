@@ -1,11 +1,12 @@
 import { Card, Typography } from "@material-tailwind/react";
-import { Staffs } from "../groupForm/redux/groupFormSlice";
+import { getGroupFormStatus, Staffs } from "../groupForm/redux/groupFormSlice";
 import { useTranslation } from "react-i18next";
 import {
   LANGUAGE,
   ROLE,
   ROLE_DISPLAY_2_LANGUAGE,
 } from "../../constants/constants";
+import { useAppSelector } from "../../hooks/store";
 
 interface Props {
   staffs: Staffs[];
@@ -14,6 +15,7 @@ interface Props {
 function AdminTable({ staffs }: Props) {
   const { i18n } = useTranslation();
   const { t } = useTranslation();
+  const isFetching = useAppSelector(getGroupFormStatus);
   const tableHeaders = Array.isArray(
     t("feature.admin_table.th_list", {
       returnObjects: true,
@@ -80,39 +82,59 @@ function AdminTable({ staffs }: Props) {
                 ))}
               </tr>
             </thead>
-            <tbody>
-              {staffs.map((staff) => (
-                <tr key={staff.staff_id} className="even:bg-blue-gray-50/50 ">
-                  <td className="p-4">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      {staff.f_name}
-                    </Typography>
-                  </td>
-                  <td className="p-4">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      {staff.l_name}
-                    </Typography>
-                  </td>
-                  <td className="p-4">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      {getRoleDisplay(staff.role)}
-                    </Typography>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+            {isFetching ? (
+              <tbody>
+                {[...Array(10)].map((_, rIndex) => (
+                  <tr key={rIndex} className="even:bg-blue-gray-50/50 ">
+                    {[...Array(tableHeaders.length)].map((_, cIndex) => (
+                      <td className="text-center p-5">
+                        <Typography
+                          key={`${rIndex}${cIndex}`}
+                          as="div"
+                          className="h-3 rounded-full bg-gray-300 "
+                        >
+                          &nbsp;
+                        </Typography>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            ) : (
+              <tbody>
+                {staffs.map((staff) => (
+                  <tr key={staff.staff_id} className="even:bg-blue-gray-50/50 ">
+                    <td className="p-4">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {staff.f_name}
+                      </Typography>
+                    </td>
+                    <td className="p-4">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {staff.l_name}
+                      </Typography>
+                    </td>
+                    <td className="p-4">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {getRoleDisplay(staff.role)}
+                      </Typography>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            )}
           </table>
         </div>
       </Card>
