@@ -95,7 +95,7 @@ function StudentRankingList({ studentRanking }: Props) {
                           size="sm"
                         />
                         <Tooltip
-                          content={`${stu.student.firstname} ${stu.student.lastname} ${stu.student.nickname ? " (" + stu.student.nickname + "" : ""}`}
+                          content={`${stu.student.firstname} ${stu.student.lastname} ${stu.student.nickname ? " (" + stu.student.nickname + ")" : ""}`}
                         >
                           <Typography
                             className={`text-sm font-bold ${permission?.includes(STUDENT_ADMIN) ? "hover:underline hover:decoration-[1px] cursor-pointer" : ""}`}
