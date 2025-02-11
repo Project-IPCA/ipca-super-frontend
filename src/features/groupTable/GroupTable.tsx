@@ -28,6 +28,7 @@ import RoleProtection from "../../components/roleProtection/RoleProtection";
 import { GROUP_ADMIN } from "../../constants/constants";
 import { useAppSelector } from "../../hooks/store";
 import { getAvailableGroupsStatus } from "../availableGroupList/redux/AvailableGroupListSlice";
+import { Fragment } from "react";
 
 interface Props {
   userId?: string;
@@ -80,10 +81,10 @@ function GroupTable({
           <table className="w-full min-w-max table-auto text-left">
             <thead>
               <tr>
-                {tableHeaders.map((head) => (
+                {tableHeaders.map((head, index) => (
                   <th
                     key={head}
-                    className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                    className={`border-b border-blue-gray-100 bg-blue-gray-50 p-4 ${index === 0 ? "sticky left-0 z-10" : ""}`}
                   >
                     <Typography
                       variant="small"
@@ -99,11 +100,11 @@ function GroupTable({
             {isFetching ? (
               <tbody>
                 {[...Array(10)].map((_, rIndex) => (
-                  <tr key={rIndex} className="even:bg-blue-gray-50/50 ">
+                  <tr key={rIndex} className="h-[57px]">
                     {[...Array(tableHeaders.length)].map((_, cIndex) => (
                       <td
                         key={`${rIndex}${cIndex}`}
-                        className={`px-5 py-[1.375rem]`}
+                        className={`px-5 py-[1.375rem]  bg-white`}
                       >
                         <Typography
                           key={`${rIndex}${cIndex}`}
@@ -119,146 +120,183 @@ function GroupTable({
               </tbody>
             ) : (
               <tbody>
-                {groups.map((group) => (
-                  <tr key={group.group_id} className="even:bg-blue-gray-50/50 ">
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {group.group_no}
-                      </Typography>
-                    </td>
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {group.year}
-                      </Typography>
-                    </td>
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {group.semester}
-                      </Typography>
-                    </td>
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-medium"
-                      >
-                        {`${getDayFromDayEnum(group.day, i18n.language)}, ${group.time_start} - ${group.time_end}`}
-                      </Typography>
-                    </td>
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-medium"
-                      >
-                        {group.student_amount}
-                      </Typography>
-                    </td>
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-medium"
-                      >
-                        {`${group.instructor.f_name} ${group.instructor.l_name}`}
-                      </Typography>
-                    </td>
-                    <td className="p-4">
-                      {group.staffs.length > 0 ? (
-                        <Tooltip
-                          content={group.staffs.map((staff) => (
-                            <Typography
-                              key={staff.staff_id}
-                              variant="small"
-                              className="font-medium"
-                            >{`${staff.f_name} ${staff.l_name}`}</Typography>
-                          ))}
-                          placement="bottom-start"
+                {groups.map((group, index) => {
+                  const classes =
+                    index === 9 ? "" : "border-b border-blue-gray-50";
+                  return (
+                    <Fragment key={group.group_id}>
+                      <tr key={group.group_id}>
+                        <td
+                          className={`p-4 sticky left-0 z-10 ${classes} bg-white`}
                         >
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {group.group_no}
+                          </Typography>
+                        </td>
+                        <td className={`p-4  ${classes}`}>
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {group.year}
+                          </Typography>
+                        </td>
+                        <td className={`p-4  ${classes}`}>
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {group.semester}
+                          </Typography>
+                        </td>
+                        <td className={`p-4 ${classes}`}>
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-medium"
                           >
-                            {formatStaffNames(group.staffs)}
+                            {`${getDayFromDayEnum(group.day, i18n.language)}, ${group.time_start} - ${group.time_end}`}
                           </Typography>
-                        </Tooltip>
-                      ) : (
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-medium"
-                        >
-                          {t("feature.group_table.tr.no_staff")}
-                        </Typography>
-                      )}
-                    </td>
-                    <td className="p-2">
-                      <Menu placement="bottom-end">
-                        <MenuHandler>
-                          <IconButton
-                            variant="text"
-                            disabled={
-                              !!userId &&
-                              !(
-                                group.instructor.supervisor_id === userId ||
-                                group.staffs.find((s) => s.staff_id === userId)
-                              )
-                            }
+                        </td>
+                        <td className={`p-4 ${classes}`}>
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-medium"
                           >
-                            {!userId || (!!userId && (
-                                group.instructor.supervisor_id === userId ||
-                                group.staffs.find((s) => s.staff_id === userId)
-                              )) ? (
-                              <EllipsisVerticalIcon className="w-5 h-5" />
-                            ) : (
-                              <LockClosedIcon className="w-5 h-5" />
-                            )}
-                          </IconButton>
-                        </MenuHandler>
-                        <MenuList>
-                          <MenuItem
-                            className="flex justify-start items-center gap-2"
-                            onClick={() => navigate(`/group/${group.group_id}`)}
+                            {group.student_amount}
+                          </Typography>
+                        </td>
+                        <td className={`p-4 ${classes}`}>
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-medium"
                           >
-                            <EyeIcon className="w-5 h-5" />
-                            {t("common.table.action.view")}
-                          </MenuItem>
-                          {handleSetGroupId && handleFormOpen && (
-                            <>
-                              <RoleProtection
-                                acceptedPermission={[GROUP_ADMIN]}
+                            {`${group.instructor.f_name} ${group.instructor.l_name}`}
+                          </Typography>
+                        </td>
+                        <td className={`p-4 ${classes}`}>
+                          {group.staffs.length > 0 ? (
+                            <Tooltip
+                              content={group.staffs.map((staff) => (
+                                <Typography
+                                  key={staff.staff_id}
+                                  variant="small"
+                                  className="font-medium"
+                                >{`${staff.f_name} ${staff.l_name}`}</Typography>
+                              ))}
+                              placement="bottom-start"
+                            >
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-medium"
                               >
-                                <MenuItem
-                                  className="flex justify-start items-center gap-2"
-                                  onClick={() => {
-                                    handleSetGroupId(group.group_id);
-                                    handleFormOpen();
-                                  }}
-                                >
-                                  <PencilSquareIcon className="w-5 h-5" />
-                                  {t("common.table.action.edit")}
-                                </MenuItem>
-                              </RoleProtection>
-                            </>
+                                {formatStaffNames(group.staffs)}
+                              </Typography>
+                            </Tooltip>
+                          ) : (
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-medium"
+                            >
+                              {t("feature.group_table.tr.no_staff")}
+                            </Typography>
                           )}
-                        </MenuList>
-                      </Menu>
-                    </td>
-                  </tr>
-                ))}
+                        </td>
+                        <td className={`p-2 ${classes}`}>
+                          <Menu placement="bottom-end">
+                            <MenuHandler>
+                              <IconButton
+                                variant="text"
+                                disabled={
+                                  !!userId &&
+                                  !(
+                                    group.instructor.supervisor_id === userId ||
+                                    group.staffs.find(
+                                      (s) => s.staff_id === userId,
+                                    )
+                                  )
+                                }
+                              >
+                                {!userId ||
+                                (!!userId &&
+                                  (group.instructor.supervisor_id === userId ||
+                                    group.staffs.find(
+                                      (s) => s.staff_id === userId,
+                                    ))) ? (
+                                  <EllipsisVerticalIcon className="w-5 h-5" />
+                                ) : (
+                                  <LockClosedIcon className="w-5 h-5" />
+                                )}
+                              </IconButton>
+                            </MenuHandler>
+                            <MenuList>
+                              <MenuItem
+                                className="flex justify-start items-center gap-2"
+                                onClick={() =>
+                                  navigate(`/group/${group.group_id}`)
+                                }
+                              >
+                                <EyeIcon className="w-5 h-5" />
+                                {t("common.table.action.view")}
+                              </MenuItem>
+                              {handleSetGroupId && handleFormOpen && (
+                                <>
+                                  <RoleProtection
+                                    acceptedPermission={[GROUP_ADMIN]}
+                                  >
+                                    <MenuItem
+                                      className="flex justify-start items-center gap-2"
+                                      onClick={() => {
+                                        handleSetGroupId(group.group_id);
+                                        handleFormOpen();
+                                      }}
+                                    >
+                                      <PencilSquareIcon className="w-5 h-5" />
+                                      {t("common.table.action.edit")}
+                                    </MenuItem>
+                                  </RoleProtection>
+                                </>
+                              )}
+                            </MenuList>
+                          </Menu>
+                        </td>
+                      </tr>
+                    </Fragment>
+                  );
+                })}
+                {groups.length < 10 &&
+                  [...Array(10 - groups.length)].map((_, cIndex) => (
+                    <tr key={cIndex} className=" h-[57px]">
+                      {[...Array(tableHeaders.length)].map((_, rIndex) => (
+                        <td
+                          className={
+                            cIndex === 9 - groups.length
+                              ? ""
+                              : "border-b border-blue-gray-50"
+                          }
+                          key={rIndex}
+                        >
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            &nbsp;
+                          </Typography>
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
               </tbody>
             )}
           </table>
