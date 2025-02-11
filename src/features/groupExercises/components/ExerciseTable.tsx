@@ -85,7 +85,7 @@ function ExerciseTable({
             {isFetching ? (
               <tbody>
                 {[...Array(10)].map((_, rIndex) => (
-                  <tr key={rIndex} className="even:bg-blue-gray-50/50 ">
+                  <tr key={rIndex}>
                     {[...Array(tableHeaders.length)].map((_, cIndex) => (
                       <td
                         key={`${rIndex}${cIndex}`}
@@ -105,97 +105,100 @@ function ExerciseTable({
               </tbody>
             ) : (
               <tbody>
-                {chapterList.map((exercise) => (
-                  <tr
-                    key={exercise.chapter_id}
-                    className="even:bg-blue-gray-50/50 "
-                  >
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {`${exercise.chapter_index}. ${exercise.name}`}
-                      </Typography>
-                    </td>
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {exercise.full_mark}
-                      </Typography>
-                    </td>
-                    <td className="p-4 ">
-                      <StatusChip
-                        type={exercise.allow_access.type}
-                        timeStart={exercise.allow_access.time_start}
-                        timeEnd={exercise.allow_access.time_end}
-                      />
-                    </td>
-                    <td className="p-4 ">
-                      <StatusChip
-                        type={exercise.allow_submit.type}
-                        timeStart={exercise.allow_submit.time_start}
-                        timeEnd={exercise.allow_submit.time_end}
-                      />
-                    </td>
-                    <RoleProtection
-                      acceptedPermission={[EXERCISE_ADMIN, GROUP_ADMIN]}
-                    >
-                      <td className="p-2">
-                        <Menu>
-                          <MenuHandler>
-                            <IconButton variant="text">
-                              <EllipsisVerticalIcon className="w-5 h-5" />
-                            </IconButton>
-                          </MenuHandler>
-                          <MenuList>
-                            <>
-                              <RoleProtection
-                                acceptedPermission={[EXERCISE_ADMIN]}
-                              >
-                                <MenuItem
-                                  className="flex justify-start items-center gap-2"
-                                  onClick={() =>
-                                    navigate(
-                                      `/exercise_pool/group/${groupId}/chapter/${exercise.chapter_index}`,
-                                    )
-                                  }
-                                >
-                                  <EyeIcon className="w-5 h-5" />
-                                  {t("common.table.action.view")}
-                                </MenuItem>
-                              </RoleProtection>
-                            </>
-                            <>
-                              <RoleProtection
-                                acceptedPermission={[GROUP_ADMIN]}
-                              >
-                                <MenuItem
-                                  className="flex justify-start items-center gap-2"
-                                  onClick={() => {
-                                    handleAccessFormOpen();
-                                    handleSetChapter({
-                                      chapterId: exercise.chapter_id,
-                                      chapterIndex: exercise.chapter_index,
-                                      chapterName: exercise.name,
-                                    });
-                                  }}
-                                >
-                                  <Cog6ToothIcon className="w-5 h-5" />
-                                  {t("common.table.action.perm")}
-                                </MenuItem>
-                              </RoleProtection>
-                            </>
-                          </MenuList>
-                        </Menu>
+                {chapterList.map((exercise, index) => {
+                  const classes =
+                    index === chapterList.length - 1
+                      ? ""
+                      : "border-b border-blue-gray-50";
+                  return (
+                    <tr key={exercise.chapter_id}>
+                      <td className={`p-4 ${classes}`}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {`${exercise.chapter_index}. ${exercise.name}`}
+                        </Typography>
                       </td>
-                    </RoleProtection>
-                  </tr>
-                ))}
+                      <td className={`p-4 ${classes}`}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {exercise.full_mark}
+                        </Typography>
+                      </td>
+                      <td className={`p-4 ${classes}`}>
+                        <StatusChip
+                          type={exercise.allow_access.type}
+                          timeStart={exercise.allow_access.time_start}
+                          timeEnd={exercise.allow_access.time_end}
+                        />
+                      </td>
+                      <td className={`p-4 ${classes}`}>
+                        <StatusChip
+                          type={exercise.allow_submit.type}
+                          timeStart={exercise.allow_submit.time_start}
+                          timeEnd={exercise.allow_submit.time_end}
+                        />
+                      </td>
+                      <RoleProtection
+                        acceptedPermission={[EXERCISE_ADMIN, GROUP_ADMIN]}
+                      >
+                        <td className={`p-2 ${classes}`}>
+                          <Menu>
+                            <MenuHandler>
+                              <IconButton variant="text">
+                                <EllipsisVerticalIcon className="w-5 h-5" />
+                              </IconButton>
+                            </MenuHandler>
+                            <MenuList>
+                              <>
+                                <RoleProtection
+                                  acceptedPermission={[EXERCISE_ADMIN]}
+                                >
+                                  <MenuItem
+                                    className="flex justify-start items-center gap-2"
+                                    onClick={() =>
+                                      navigate(
+                                        `/exercise_pool/group/${groupId}/chapter/${exercise.chapter_index}`,
+                                      )
+                                    }
+                                  >
+                                    <EyeIcon className="w-5 h-5" />
+                                    {t("common.table.action.view")}
+                                  </MenuItem>
+                                </RoleProtection>
+                              </>
+                              <>
+                                <RoleProtection
+                                  acceptedPermission={[GROUP_ADMIN]}
+                                >
+                                  <MenuItem
+                                    className="flex justify-start items-center gap-2"
+                                    onClick={() => {
+                                      handleAccessFormOpen();
+                                      handleSetChapter({
+                                        chapterId: exercise.chapter_id,
+                                        chapterIndex: exercise.chapter_index,
+                                        chapterName: exercise.name,
+                                      });
+                                    }}
+                                  >
+                                    <Cog6ToothIcon className="w-5 h-5" />
+                                    {t("common.table.action.perm")}
+                                  </MenuItem>
+                                </RoleProtection>
+                              </>
+                            </MenuList>
+                          </Menu>
+                        </td>
+                      </RoleProtection>
+                    </tr>
+                  );
+                })}
               </tbody>
             )}
           </table>

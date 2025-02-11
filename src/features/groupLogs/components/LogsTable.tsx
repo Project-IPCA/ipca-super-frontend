@@ -55,11 +55,9 @@ function LogsTable({ loading, logs, tableRef, scrollToBottom }: Props) {
       prevScrollHeight.current = tableRef.current.scrollHeight;
     }
 
-    const scrollTimeOut = setTimeout(scrollToBottom,2000)
+    const scrollTimeOut = setTimeout(scrollToBottom, 2000);
 
-    return (
-      clearTimeout(scrollTimeOut)
-    )
+    return clearTimeout(scrollTimeOut);
   }, []);
 
   return (
@@ -96,70 +94,74 @@ function LogsTable({ loading, logs, tableRef, scrollToBottom }: Props) {
                 </td>
               </tr>
             )}
-            {logs.map((log) => (
-              <tr key={log.log_id} className="even:bg-blue-gray-50/50">
-                <td className="p-2">
-                  <Tooltip
-                    content={format(log.timestamp, "MMM dd, yyyy HH:mm:ss")}
-                  >
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal whitespace-nowrap overflow-x-hidden w-[150px]"
+            {logs.map((log, index) => {
+              const classes =
+                index === logs.length - 1 ? "" : "border-b border-blue-gray-50";
+              return (
+                <tr key={log.log_id}>
+                  <td className={`p-2 ${classes}`}>
+                    <Tooltip
+                      content={format(log.timestamp, "MMM dd, yyyy HH:mm:ss")}
                     >
-                      {format(log.timestamp, "MMM dd, yyyy HH:mm:ss")}
-                    </Typography>
-                  </Tooltip>
-                </td>
-                <td className="p-2">
-                  <Tooltip content={log.remote_ip}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal whitespace-nowrap overflow-x-hidden w-[70px]"
-                    >
-                      {log.remote_ip}
-                    </Typography>
-                  </Tooltip>
-                </td>
-                <td className="p-2">
-                  <Tooltip content={log.agent}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal whitespace-nowrap overflow-x-hidden w-[150px]"
-                    >
-                      {log.agent}
-                    </Typography>
-                  </Tooltip>
-                </td>
-                <td className="p-2">
-                  <Tooltip content={log.page_name}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal whitespace-nowrap overflow-x-hidden w-[140px]"
-                    >
-                      {log.page_name}
-                    </Typography>
-                  </Tooltip>
-                </td>
-                <td className="p-2">
-                  <Tooltip content={log.username}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal whitespace-nowrap overflow-x-hidden w-[70px]"
-                    >
-                      {log.username}
-                    </Typography>
-                  </Tooltip>
-                </td>
-                <td className="p-2 w-[500px]">
-                  <LogRow action={log.action} />
-                </td>
-              </tr>
-            ))}
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal whitespace-nowrap overflow-x-hidden w-[150px]"
+                      >
+                        {format(log.timestamp, "MMM dd, yyyy HH:mm:ss")}
+                      </Typography>
+                    </Tooltip>
+                  </td>
+                  <td className={`p-2 ${classes}`}>
+                    <Tooltip content={log.remote_ip}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal whitespace-nowrap overflow-x-hidden w-[70px]"
+                      >
+                        {log.remote_ip}
+                      </Typography>
+                    </Tooltip>
+                  </td>
+                  <td className={`p-2 ${classes}`}>
+                    <Tooltip content={log.agent}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal whitespace-nowrap overflow-x-hidden w-[150px]"
+                      >
+                        {log.agent}
+                      </Typography>
+                    </Tooltip>
+                  </td>
+                  <td className={`p-2 ${classes}`}>
+                    <Tooltip content={log.page_name}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal whitespace-nowrap overflow-x-hidden w-[140px]"
+                      >
+                        {log.page_name}
+                      </Typography>
+                    </Tooltip>
+                  </td>
+                  <td className={`p-2 ${classes}`}>
+                    <Tooltip content={log.username}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal whitespace-nowrap overflow-x-hidden w-[70px]"
+                      >
+                        {log.username}
+                      </Typography>
+                    </Tooltip>
+                  </td>
+                  <td className={`p-2 ${classes} w-[500px]`}>
+                    <LogRow action={log.action} />
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

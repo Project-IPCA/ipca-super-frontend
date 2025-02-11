@@ -85,9 +85,9 @@ function AdminTable({ staffs }: Props) {
             {isFetching ? (
               <tbody>
                 {[...Array(10)].map((_, rIndex) => (
-                  <tr key={rIndex} className="even:bg-blue-gray-50/50 ">
+                  <tr key={rIndex}>
                     {[...Array(tableHeaders.length)].map((_, cIndex) => (
-                      <td className="text-center p-5">
+                      <td className="text-center p-5" key={cIndex}>
                         <Typography
                           key={`${rIndex}${cIndex}`}
                           as="div"
@@ -102,37 +102,43 @@ function AdminTable({ staffs }: Props) {
               </tbody>
             ) : (
               <tbody>
-                {staffs.map((staff) => (
-                  <tr key={staff.staff_id} className="even:bg-blue-gray-50/50 ">
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {staff.f_name}
-                      </Typography>
-                    </td>
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {staff.l_name}
-                      </Typography>
-                    </td>
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {getRoleDisplay(staff.role)}
-                      </Typography>
-                    </td>
-                  </tr>
-                ))}
+                {staffs.map((staff, index) => {
+                  const classes =
+                    index === staffs.length - 1
+                      ? ""
+                      : "border-b border-blue-gray-50";
+                  return (
+                    <tr key={staff.staff_id}>
+                      <td className={`p-4 ${classes}`}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {staff.f_name}
+                        </Typography>
+                      </td>
+                      <td className={`p-4 ${classes}`}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {staff.l_name}
+                        </Typography>
+                      </td>
+                      <td className={`p-4 ${classes}`}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {getRoleDisplay(staff.role)}
+                        </Typography>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             )}
           </table>

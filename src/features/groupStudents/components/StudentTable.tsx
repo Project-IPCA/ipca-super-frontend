@@ -94,10 +94,10 @@ function StudentTable({
           <table className="w-full min-w-max table-auto text-left">
             <thead>
               <tr>
-                {getTableHeader().map((head) => (
+                {getTableHeader().map((head, index) => (
                   <th
                     key={head}
-                    className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                    className={`border-b border-blue-gray-100 bg-blue-gray-50 p-4 ${index === 3 ? "sticky left-0 z-10" : ""}`}
                   >
                     <Typography
                       variant="small"
@@ -113,7 +113,7 @@ function StudentTable({
             {isFetching ? (
               <tbody>
                 {[...Array(10)].map((_, rIndex) => (
-                  <tr key={rIndex} className="even:bg-blue-gray-50/50 ">
+                  <tr key={rIndex} className="h-[81px]">
                     {[...Array(getTableHeader().length)].map((_, cIndex) => (
                       <td
                         key={`${rIndex}${cIndex}`}
@@ -133,165 +133,194 @@ function StudentTable({
               </tbody>
             ) : (
               <tbody>
-                {students.map((student) => (
-                  <tr key={student.stu_id} className="even:bg-blue-gray-50/50 ">
-                    <td className="p-4">
-                      <Avatar
-                        src={student.avatar ? student.avatar : profileNone}
-                        alt="avatar"
-                      />
-                    </td>
-                    <td className="p-4">
-                      <Chip
-                        variant="ghost"
-                        color={
-                          onlineStudent.includes(student.stu_id)
-                            ? "green"
-                            : "red"
-                        }
-                        size="sm"
-                        value={
-                          onlineStudent.includes(student.stu_id)
-                            ? t("feature.group_students.online")
-                            : t("feature.group_students.offline")
-                        }
-                        icon={
-                          <span
-                            className={`mx-auto mt-1 block h-2 w-2 rounded-full ${
-                              onlineStudent.includes(student.stu_id)
-                                ? "bg-green-900 "
-                                : "bg-red-500"
-                            } content-['']`}
-                          />
-                        }
-                      />
-                    </td>
-                    <td className="p-4">
-                      <Chip
-                        className="w-fit"
-                        variant="ghost"
-                        color={student.can_submit ? "green" : "red"}
-                        size="sm"
-                        value={
-                          student.can_submit
-                            ? t("common.table.perm.allow")
-                            : t("common.table.perm.deny")
-                        }
-                      />
-                    </td>
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
+                {students.map((student, index) => {
+                  const classes =
+                    index === 9 ? "" : "border-b border-blue-gray-50";
+                  return (
+                    <tr key={student.stu_id}>
+                      <td className={`p-4 ${classes}`}>
+                        <Avatar
+                          src={student.avatar ? student.avatar : profileNone}
+                          alt="avatar"
+                        />
+                      </td>
+                      <td className={`p-4 ${classes}`}>
+                        <Chip
+                          variant="ghost"
+                          color={
+                            onlineStudent.includes(student.stu_id)
+                              ? "green"
+                              : "red"
+                          }
+                          size="sm"
+                          value={
+                            onlineStudent.includes(student.stu_id)
+                              ? t("feature.group_students.online")
+                              : t("feature.group_students.offline")
+                          }
+                          icon={
+                            <span
+                              className={`mx-auto mt-1 block h-2 w-2 rounded-full ${
+                                onlineStudent.includes(student.stu_id)
+                                  ? "bg-green-900 "
+                                  : "bg-red-500"
+                              } content-['']`}
+                            />
+                          }
+                        />
+                      </td>
+                      <td className={`p-4 ${classes}`}>
+                        <Chip
+                          className="w-fit"
+                          variant="ghost"
+                          color={student.can_submit ? "green" : "red"}
+                          size="sm"
+                          value={
+                            student.can_submit
+                              ? t("common.table.perm.allow")
+                              : t("common.table.perm.deny")
+                          }
+                        />
+                      </td>
+                      <td
+                        className={`p-4 ${classes} sticky left-0 z-10 bg-white`}
                       >
-                        {student.kmitl_id}
-                      </Typography>
-                    </td>
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {student.kmitl_id}
+                        </Typography>
+                      </td>
+                      <td className={`p-4 ${classes}`}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {`${student.f_name} ${student.l_name}`}
+                        </Typography>
+                      </td>
+                      {Object.entries(student.chapter_score).map(
+                        ([key, value]) => (
+                          <td className={`p-4 ${classes}`} key={key}>
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {value}
+                            </Typography>
+                          </td>
+                        ),
+                      )}
+                      <td className={`p-4 ${classes}`}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {Object.values(student.chapter_score).reduce(
+                            (total, value) => total + value,
+                            0,
+                          )}
+                        </Typography>
+                      </td>
+                      <td className={`p-4 ${classes}`}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {student.midterm_score}
+                        </Typography>
+                      </td>
+
+                      <RoleProtection
+                        acceptedPermission={[STUDENT_ADMIN, GROUP_ADMIN]}
                       >
-                        {`${student.f_name} ${student.l_name}`}
-                      </Typography>
-                    </td>
-                    {Object.entries(student.chapter_score).map(
-                      ([key, value]) => (
-                        <td className="p-4" key={key}>
+                        <td className={`p-4 ${classes}`}>
+                          <Menu placement="bottom-end">
+                            <MenuHandler>
+                              <IconButton variant="text">
+                                <EllipsisVerticalIcon className="w-5 h-5" />
+                              </IconButton>
+                            </MenuHandler>
+                            <MenuList>
+                              <>
+                                <RoleProtection
+                                  acceptedPermission={[STUDENT_ADMIN]}
+                                >
+                                  <MenuItem
+                                    className="flex justify-start items-center gap-2"
+                                    onClick={() =>
+                                      navigate(`/student/${student.stu_id}`)
+                                    }
+                                  >
+                                    <EyeIcon className="w-5 h-5" />
+                                    {t("common.table.action.view")}
+                                  </MenuItem>
+                                </RoleProtection>
+                              </>
+                              <>
+                                <RoleProtection
+                                  acceptedPermission={[GROUP_ADMIN]}
+                                >
+                                  <MenuItem
+                                    className="flex justify-start items-center gap-2"
+                                    onClick={() => {
+                                      handleSetStudent({
+                                        name: `${student.f_name} ${student.l_name}`,
+                                        kmitlId: student.kmitl_id,
+                                        studentId: student.stu_id,
+                                      });
+                                      handlePermFormOpen();
+                                    }}
+                                  >
+                                    <Cog6ToothIcon className="w-5 h-5" />
+                                    {t("common.table.action.perm")}
+                                  </MenuItem>
+                                </RoleProtection>
+                              </>
+                            </MenuList>
+                          </Menu>
+                        </td>
+                      </RoleProtection>
+                    </tr>
+                  );
+                })}
+                {students.length < 10 &&
+                  [...Array(10 - students.length)].map((_, cIndex) => (
+                    <tr key={cIndex} className=" h-[81px]">
+                      {[...Array(getTableHeader().length)].map((_, rIndex) => (
+                        <td
+                          className={
+                            cIndex === 9 - students.length
+                              ? ""
+                              : "border-b border-blue-gray-50"
+                          }
+                          key={rIndex}
+                        >
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {value}
+                            &nbsp;
                           </Typography>
                         </td>
-                      ),
-                    )}
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {Object.values(student.chapter_score).reduce(
-                          (total, value) => total + value,
-                          0,
-                        )}
-                      </Typography>
-                    </td>
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {student.midterm_score}
-                      </Typography>
-                    </td>
-
-                    <RoleProtection
-                      acceptedPermission={[STUDENT_ADMIN, GROUP_ADMIN]}
-                    >
-                      <td className="p-2">
-                        <Menu placement="bottom-end">
-                          <MenuHandler>
-                            <IconButton variant="text">
-                              <EllipsisVerticalIcon className="w-5 h-5" />
-                            </IconButton>
-                          </MenuHandler>
-                          <MenuList>
-                            <>
-                              <RoleProtection
-                                acceptedPermission={[STUDENT_ADMIN]}
-                              >
-                                <MenuItem
-                                  className="flex justify-start items-center gap-2"
-                                  onClick={() =>
-                                    navigate(`/student/${student.stu_id}`)
-                                  }
-                                >
-                                  <EyeIcon className="w-5 h-5" />
-                                  {t("common.table.action.view")}
-                                </MenuItem>
-                              </RoleProtection>
-                            </>
-                            <>
-                              <RoleProtection
-                                acceptedPermission={[GROUP_ADMIN]}
-                              >
-                                <MenuItem
-                                  className="flex justify-start items-center gap-2"
-                                  onClick={() => {
-                                    handleSetStudent({
-                                      name: `${student.f_name} ${student.l_name}`,
-                                      kmitlId: student.kmitl_id,
-                                      studentId: student.stu_id,
-                                    });
-                                    handlePermFormOpen();
-                                  }}
-                                >
-                                  <Cog6ToothIcon className="w-5 h-5" />
-                                  {t("common.table.action.perm")}
-                                </MenuItem>
-                              </RoleProtection>
-                            </>
-                          </MenuList>
-                        </Menu>
-                      </td>
-                    </RoleProtection>
-                  </tr>
-                ))}
+                      ))}
+                    </tr>
+                  ))}
               </tbody>
             )}
           </table>
         </div>
         <div className="flex items-center justify-between border-t border-blue-gray-50 p-4">
           <Typography variant="small" color="blue-gray" className="font-normal">
-            {t("common.table.page.page")} {page} {t("common.table.page.of")}{" "}
-            {pages}
+            {t("common.table.page.page")} {pages ? page : 0}{" "}
+            {t("common.table.page.of")} {pages}
           </Typography>
           <div className="flex gap-2">
             <Button
