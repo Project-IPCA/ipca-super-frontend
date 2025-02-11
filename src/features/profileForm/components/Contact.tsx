@@ -30,7 +30,9 @@ function Contact({ register, setValue, formData }: Props) {
   }, [formData]);
 
   useEffect(() => {
-    setValue("dept_id", selectedDept ? selectedDept : "");
+    setValue("dept_id", selectedDept ? selectedDept : "", {
+      shouldDirty: true,
+    });
   }, [selectedDept]);
 
   return isFetching ? (

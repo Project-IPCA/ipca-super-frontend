@@ -150,6 +150,9 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
   const exerciseInfoState = useAppSelector(getExercisesInfoState);
   const exerciseInfoKey = `${exerciseId}`;
   const exercise = exerciseInfoState[exerciseInfoKey]?.exerciseInfo;
+  const [tempConstraint, setTempConstraint] =
+    useState<IKeywordConstraints>(defaultConstraints);
+  const [isConstraintDirty, setIsConstraintDirty] = useState<boolean>(false);
   const { groupId, chapterIdx } = useParams();
   const [jobId, setJobId] = useState<string>();
 
@@ -162,10 +165,10 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
   const defaultForm = {
     name: "",
     sourecode: "",
-    content: "",
+    content: "<p><br></p>",
   };
   const {
-    formState: { errors },
+    formState: { errors, isDirty },
     register,
     handleSubmit,
     reset,
@@ -189,8 +192,20 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
           user_defined_constraints: exercise?.user_defined_constraints,
         };
       });
+      setTempConstraint(() => {
+        return {
+          suggested_constraints: exercise?.suggested_constraints,
+          user_defined_constraints: exercise?.user_defined_constraints,
+        };
+      });
     }
   }, [exercise]);
+
+  useEffect(() => {
+    setIsConstraintDirty(
+      JSON.stringify(constraints) !== JSON.stringify(tempConstraint),
+    );
+  }, [constraints, tempConstraint]);
 
   const handleToggleAndReset = () => {
     handleToggle();
@@ -507,7 +522,9 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
             </Typography>
             <TextEditor
               value={formData.content}
-              onChange={(val) => setValue("content", val)}
+              onChange={(val) =>
+                setValue("content", val, { shouldDirty: true })
+              }
               errors={errors}
               exerciseId={exerciseId}
             />
@@ -550,7 +567,9 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
                 className="focus:!outline-none focus:ring-0 focus:border-none "
                 value={formData.sourecode}
                 extensions={[python()]}
-                onChange={(val) => setValue("sourecode", val)}
+                onChange={(val) =>
+                  setValue("sourecode", val, { shouldDirty: true })
+                }
                 placeholder={t("feature.exercise_form.placeholder.code")}
               />
             </Card>
@@ -596,7 +615,11 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
           </div>
         </DialogBody>
         <DialogFooter className="space-x-2">
-          <Button className="ml-auto" onClick={handleSubmit(onSubmit)}>
+          <Button
+            className="ml-auto"
+            onClick={handleSubmit(onSubmit)}
+            disabled={!(isDirty || isConstraintDirty)}
+          >
             {t("common.button.submit")}
           </Button>
         </DialogFooter>

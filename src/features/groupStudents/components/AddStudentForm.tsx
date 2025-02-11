@@ -37,7 +37,7 @@ export type FormData = yup.InferType<typeof formDataSchema>;
 function AddStudentForm({ open, handleClose, groupId }: Props) {
   const dispatch = useAppDispatch();
   const {
-    formState: { errors },
+    formState: { errors, isDirty },
     register,
     handleSubmit,
     reset,
@@ -115,7 +115,11 @@ function AddStudentForm({ open, handleClose, groupId }: Props) {
         </div>
       </DialogBody>
       <DialogFooter>
-        <Button className="ml-auto" onClick={handleSubmit(onSubmit)}>
+        <Button
+          className="ml-auto"
+          onClick={handleSubmit(onSubmit)}
+          disabled={!isDirty}
+        >
           submit
         </Button>
       </DialogFooter>
