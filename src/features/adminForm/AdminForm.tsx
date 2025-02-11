@@ -69,7 +69,7 @@ function AdminForm({ open, onClose }: Props) {
   };
   const {
     control,
-    formState: { errors },
+    formState: { errors, isDirty },
     register,
     handleSubmit,
     reset,
@@ -382,7 +382,11 @@ function AdminForm({ open, onClose }: Props) {
           </div>
         </DialogBody>
         <DialogFooter>
-          <Button className="ml-auto" onClick={handleSubmit(onSubmit)}>
+          <Button
+            className="ml-auto"
+            onClick={handleSubmit(onSubmit)}
+            disabled={!isDirty}
+          >
             {t("common.button.submit")}
           </Button>
         </DialogFooter>

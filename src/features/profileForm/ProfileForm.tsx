@@ -40,7 +40,13 @@ function ProfileForm() {
   const isUpdating = useAppSelector(getProfileUpdateStatus);
   const error = useAppSelector(getProfileError);
   const isFetching = useAppSelector(getProfileStatus);
-  const { register, handleSubmit, reset, setValue } = useForm<ProfileInfo>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { isDirty },
+  } = useForm<ProfileInfo>();
   const [profileImage, setProfileImage] = useState<string>("");
   const [profileFile, setProfileFile] = useState<File | null>(null);
 
@@ -66,7 +72,12 @@ function ProfileForm() {
         confirm_new_password: "",
         current_password: "",
         new_password: "",
-        ...data.profile,
+        ...Object.fromEntries(
+          Object.entries(data.profile ?? {}).map(([key, value]) => [
+            key,
+            value ?? "",
+          ]),
+        ),
       });
     }
   }, [reset, data]);
@@ -212,7 +223,7 @@ function ProfileForm() {
             ) : (
               <Button
                 onClick={handleSubmit(onSubmit)}
-                disabled={isUpdating}
+                disabled={isUpdating || !isDirty}
                 loading={isUpdating}
               >
                 {t("common.button.save")}
