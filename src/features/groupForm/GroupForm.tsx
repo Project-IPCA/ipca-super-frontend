@@ -31,6 +31,7 @@ import {
   fetchSupervisors,
   getDepartments,
   getGroupFormError,
+  getGroupFormStatus,
   getGroupInfo,
   getStaffs,
   getSupervisors,
@@ -60,6 +61,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
   const { role } = usePermission();
   const departments = useAppSelector(getDepartments);
   const groupFormError = useAppSelector(getGroupFormError);
+  const isFetching = useAppSelector(getGroupFormStatus);
   const groupInfo = useAppSelector(getGroupInfo);
   const staffs = useAppSelector(getStaffs);
   const supervisors = useAppSelector(getSupervisors);
@@ -290,7 +292,9 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
     }
     dispatch(fetchMyGroups({ year: "All", page: 1 }));
     reset(defaultForm);
-    handleClose();
+    if (!isFetching) {
+      handleClose();
+    }
   };
 
   return (
@@ -675,6 +679,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
             className="ml-auto"
             onClick={handleSubmit(onSubmit)}
             disabled={!isDirty}
+            loading={isFetching}
           >
             {t("common.button.submit")}
           </Button>

@@ -151,7 +151,7 @@ function TestcaseInfo({
           >
             <Typography variant="small" className="whitespace-pre break-words">
               {!testcase.testcase_error
-                ? testcase.testcase_output
+                ? testcase.testcase_output || ""
                 : testcase.testcase_error}
             </Typography>
           </div>

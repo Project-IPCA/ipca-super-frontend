@@ -199,10 +199,23 @@ const groupFormSlice = createSlice({
         state.isFetching = false;
         state.error = action.payload as API_ERROR_RESPONSE;
       })
+      .addCase(createStudentGroup.pending, (state, _) => {
+        state.isFetching = true;
+      })
+      .addCase(createStudentGroup.fulfilled, (state, _) => {
+        state.isFetching = false;
+      })
       .addCase(createStudentGroup.rejected, (state, action) => {
         state.error = action.payload as API_ERROR_RESPONSE;
       })
+      .addCase(updateStudentGroup.pending, (state, _) => {
+        state.isFetching = true;
+      })
+      .addCase(updateStudentGroup.fulfilled, (state, _) => {
+        state.isFetching = false;
+      })
       .addCase(updateStudentGroup.rejected, (state, action) => {
+        state.isFetching = true;
         state.error = action.payload as API_ERROR_RESPONSE;
       }),
 });

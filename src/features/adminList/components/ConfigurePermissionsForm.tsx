@@ -17,6 +17,7 @@ import {
   fetchRolePermission,
   getRolePermission,
   getRolePermissionError,
+  getUpdatePermStatus,
   RolePermission,
   updateRolePermission,
 } from "../redux/AdminListSlice";
@@ -34,6 +35,7 @@ function ConfigurePermissionsForm({ open, handleOpen }: Props) {
   const error = useAppSelector(getRolePermissionError);
   const rolePermissions = useAppSelector(getRolePermission);
   const initialized = useRef(false);
+  const isFetching = useAppSelector(getUpdatePermStatus);
 
   const [formData, setFormData] = useState<RolePermission[]>([
     {
@@ -153,6 +155,7 @@ function ConfigurePermissionsForm({ open, handleOpen }: Props) {
           className="ml-auto"
           onClick={() => onSubmit()}
           disabled={!isDirty}
+          loading={isFetching}
         >
           {t("common.button.submit")}
         </Button>

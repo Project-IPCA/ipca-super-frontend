@@ -34,6 +34,8 @@ function ExercisesPool() {
   const exercisesPool = exercisesPoolState[key]?.chapterDetail;
   const error = exercisesPoolState[key]?.error;
   const isFetching = exercisesPoolState[key]?.isFetching;
+  const isUpdateExercise = exercisesPoolState[key]?.isUpdateExercise;
+  const updateExerciseLevel = exercisesPoolState[key]?.updateExerciseLevel;
 
   const handleToggleForm = () => setFormOpen(!formOpen);
 
@@ -104,7 +106,9 @@ function ExercisesPool() {
                   key={level}
                   level={level}
                   chapterId={exercisesPool?.chapter_id || ""}
+                  isUpdateExercise={isUpdateExercise}
                   labItems={labItems}
+                  updateExerciseLevel={updateExerciseLevel}
                   selectedItems={
                     exercisesPool?.group_selected_labs[level] || []
                   }

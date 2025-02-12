@@ -12,8 +12,12 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import * as yup from "yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useAppDispatch } from "../../../hooks/store";
-import { addStudents, fetchGroupStudents } from "../redux/GroupStudentsSlice";
+import { useAppDispatch, useAppSelector } from "../../../hooks/store";
+import {
+  addStudents,
+  fetchGroupStudents,
+  getAddStudentStatus,
+} from "../redux/GroupStudentsSlice";
 import { showToast } from "../../../utils/toast";
 
 interface Props {
@@ -36,6 +40,7 @@ export type FormData = yup.InferType<typeof formDataSchema>;
 
 function AddStudentForm({ open, handleClose, groupId }: Props) {
   const dispatch = useAppDispatch();
+  const isAddStudent = useAppSelector(getAddStudentStatus);
   const {
     formState: { errors, isDirty },
     register,
@@ -65,7 +70,9 @@ function AddStudentForm({ open, handleClose, groupId }: Props) {
     }
     await dispatch(fetchGroupStudents({ groupId: groupId, page: 1 }));
     reset();
-    handleClose();
+    if (!isAddStudent) {
+      handleClose();
+    }
   };
   return (
     <Dialog size="md" open={open} handler={handleClose} className="p-4 ">
@@ -119,6 +126,7 @@ function AddStudentForm({ open, handleClose, groupId }: Props) {
           className="ml-auto"
           onClick={handleSubmit(onSubmit)}
           disabled={!isDirty}
+          loading={isAddStudent}
         >
           submit
         </Button>

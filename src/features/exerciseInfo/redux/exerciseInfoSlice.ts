@@ -38,6 +38,7 @@ interface LabExercise {
 interface ExerciseInfoState {
   exerciseInfo: LabExercise | null;
   isFetching: boolean;
+  isUpdateTestcase: boolean;
   error: API_ERROR_RESPONSE | null;
 }
 
@@ -57,13 +58,13 @@ export const fetchExercisesInfo = createAsyncThunk(
   async (exerciseId: string, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(
-        `/supervisor/get_exercise_data/${exerciseId}`
+        `/supervisor/get_exercise_data/${exerciseId}`,
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 export const updateExerciseTestcase = createAsyncThunk(
@@ -72,13 +73,13 @@ export const updateExerciseTestcase = createAsyncThunk(
     try {
       const response = await axiosInstance.post(
         `${VITE_IPCA_API}/supervisor/save_exercise_testcase`,
-        request
+        request,
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 const exerciseInfoSlice = createSlice({
@@ -94,22 +95,60 @@ const exerciseInfoSlice = createSlice({
           exerciseInfo: existState?.exerciseInfo || null,
           isFetching: true,
           error: null,
+          isUpdateTestcase: existState?.isUpdateTestcase || false,
         };
       })
       .addCase(fetchExercisesInfo.fulfilled, (state, action) => {
         const key = action.meta.arg;
+        const existState = state[key];
         state[key] = {
           exerciseInfo: action.payload,
           isFetching: false,
           error: null,
+          isUpdateTestcase: existState?.isUpdateTestcase || false,
         };
       })
       .addCase(fetchExercisesInfo.rejected, (state, action) => {
         const key = action.meta.arg;
+        const existState = state[key];
         state[key] = {
           exerciseInfo: null,
           isFetching: false,
           error: action.payload as API_ERROR_RESPONSE,
+          isUpdateTestcase: existState?.isUpdateTestcase || false,
+        };
+      })
+      .addCase(updateExerciseTestcase.pending, (state, action) => {
+        const { exercise_id } = action.meta.arg;
+        const key = exercise_id;
+        const existState = state[key];
+        state[key] = {
+          exerciseInfo: existState?.exerciseInfo || null,
+          isFetching: existState?.isFetching || false,
+          error: existState?.error || null,
+          isUpdateTestcase: true,
+        };
+      })
+      .addCase(updateExerciseTestcase.fulfilled, (state, action) => {
+        const { exercise_id } = action.meta.arg;
+        const key = exercise_id;
+        const existState = state[key];
+        state[key] = {
+          exerciseInfo: existState?.exerciseInfo || null,
+          isFetching: existState?.isFetching || false,
+          error: existState?.error || null,
+          isUpdateTestcase: false,
+        };
+      })
+      .addCase(updateExerciseTestcase.rejected, (state, action) => {
+        const { exercise_id } = action.meta.arg;
+        const key = exercise_id;
+        const existState = state[key];
+        state[key] = {
+          exerciseInfo: existState?.exerciseInfo || null,
+          isFetching: existState?.isFetching || false,
+          error: existState?.error || null,
+          isUpdateTestcase: false,
         };
       }),
 });

@@ -44,6 +44,7 @@ interface GroupStudentState {
   groupStudent: GroupStudent;
   onlineStudents: string[];
   isFetching: boolean;
+  isAddStudent: boolean;
   error: API_ERROR_RESPONSE | null;
 }
 
@@ -61,6 +62,7 @@ const initialState: GroupStudentState = {
   },
   onlineStudents: [],
   isFetching: false,
+  isAddStudent: false,
   error: null,
 };
 
@@ -89,20 +91,20 @@ export const addStudents = createAsyncThunk(
       };
       const response = await axiosInstance.post(
         `/supervisor/students`,
-        request
+        request,
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 export const updateStudentCanSubmit = createAsyncThunk(
   "groupStudents/updateStudentCanSubmit",
   async (
     { studentId, canSubmit }: UpdateStudentCanSubmitRequest,
-    { rejectWithValue }
+    { rejectWithValue },
   ) => {
     try {
       const request = {
@@ -110,13 +112,13 @@ export const updateStudentCanSubmit = createAsyncThunk(
       };
       const response = await axiosInstance.put(
         `/supervisor/student_can_submit/${studentId}`,
-        request
+        request,
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 export const fetchGroupStudents = createAsyncThunk(
@@ -132,13 +134,13 @@ export const fetchGroupStudents = createAsyncThunk(
         `/supervisor/get_student_group_list`,
         {
           params,
-        }
+        },
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 const groupStudentsSlice = createSlice({
@@ -165,7 +167,14 @@ const groupStudentsSlice = createSlice({
         state.error = action.payload as API_ERROR_RESPONSE;
         state.isFetching = false;
       })
+      .addCase(addStudents.pending, (state, _) => {
+        state.isAddStudent = true;
+      })
+      .addCase(addStudents.fulfilled, (state, _) => {
+        state.isAddStudent = false;
+      })
       .addCase(addStudents.rejected, (state, action) => {
+        state.isAddStudent = false;
         state.error = action.payload as API_ERROR_RESPONSE;
       }),
 });
@@ -180,4 +189,6 @@ export const getGroupStudentsStatus = (state: RootState) =>
   state.groupStudent.isFetching;
 export const getGroupStudentsError = (state: RootState) =>
   state.groupStudent.error;
+export const getAddStudentStatus = (state: RootState) =>
+  state.groupStudent.isAddStudent;
 export default groupStudentsSlice.reducer;

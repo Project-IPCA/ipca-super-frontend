@@ -16,6 +16,7 @@ interface Props {
   description: string | ReactNode;
   confirmLabel: string;
   type?: Type;
+  isFetching?: boolean;
   handleClose: () => void;
   handleSubmit: () => void;
 }
@@ -26,6 +27,7 @@ function ConfirmModal({
   description,
   type = "default",
   confirmLabel,
+  isFetching = false,
   handleClose,
   handleSubmit,
 }: Props) {
@@ -50,7 +52,12 @@ function ConfirmModal({
           <Button variant="text" onClick={handleClose} className="mr-1">
             {t("common.button.cancel")}
           </Button>
-          <Button variant="gradient" color={getColor()} onClick={handleSubmit}>
+          <Button
+            variant="gradient"
+            color={getColor()}
+            onClick={handleSubmit}
+            loading={isFetching}
+          >
             {confirmLabel}
           </Button>
         </DialogFooter>

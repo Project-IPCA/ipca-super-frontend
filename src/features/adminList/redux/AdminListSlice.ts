@@ -17,6 +17,7 @@ interface AdminListState {
     role: string | null;
   };
   isFetching: boolean;
+  isUpdatePerm: boolean;
   error: API_ERROR_RESPONSE | null;
 }
 
@@ -27,6 +28,7 @@ const initialState: AdminListState = {
     role: null,
   },
   isFetching: false,
+  isUpdatePerm: false,
   error: null,
 };
 
@@ -114,6 +116,12 @@ const adminListSlice = createSlice({
         state.isFetching = false;
         state.error = action.payload as API_ERROR_RESPONSE;
       })
+      .addCase(updateRolePermission.pending, (state, _) => {
+        state.isUpdatePerm = true;
+      })
+      .addCase(updateRolePermission.fulfilled, (state, _) => {
+        state.isUpdatePerm = false;
+      })
       .addCase(updateRolePermission.rejected, (state, action) => {
         state.error = action.payload as API_ERROR_RESPONSE;
       }),
@@ -124,6 +132,8 @@ export const getRolePermission = (state: RootState) =>
   state.adminList.rolePermission;
 export const getRolePermissionError = (state: RootState) =>
   state.adminList.error;
+export const getUpdatePermStatus = (state: RootState) =>
+  state.adminList.isUpdatePerm;
 export const getRoleStatus = (state: RootState) => state.adminList.isFetching;
 export const getMyPerm = (state: RootState) =>
   state.adminList.myPermissions.permission;

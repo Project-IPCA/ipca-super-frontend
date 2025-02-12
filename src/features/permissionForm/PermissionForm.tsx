@@ -12,10 +12,13 @@ import {
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { updateChapterPermission } from "./redux/permissionFormSlice";
+import {
+  getPermissionFormStatus,
+  updateChapterPermission,
+} from "./redux/permissionFormSlice";
 import { PERMISSION_VALUE, TABS_VALUE, TIME_RANGE } from "./constants";
 import { ChapterData } from "../groupExercises/GroupExercises";
-import { useAppDispatch } from "../../hooks/store";
+import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import { ALLOW_TYPE, PERMISIION_PREFIX } from "../../constants/constants";
 import { fetchGroupExercises } from "../groupExercises/redux/groupExercisesSlice";
 import SinglePermission from "./components/SinglePermission";
@@ -38,6 +41,7 @@ interface Props {
 function PermissionForm({ open, handleClose, chapterSelected }: Props) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const isFetching = useAppSelector(getPermissionFormStatus);
   const { groupId } = useParams();
 
   const [permSelected, setPermSelected] = useState<string>(
@@ -219,7 +223,9 @@ function PermissionForm({ open, handleClose, chapterSelected }: Props) {
     if (groupId) {
       dispatch(fetchGroupExercises(groupId));
     }
-    handleClose();
+    if (!isFetching) {
+      handleClose();
+    }
   };
 
   useEffect(() => {
@@ -341,7 +347,11 @@ function PermissionForm({ open, handleClose, chapterSelected }: Props) {
           )}
         </DialogBody>
         <DialogFooter>
-          <Button className="ml-auto" onClick={() => handleSubmit()}>
+          <Button
+            className="ml-auto"
+            onClick={() => handleSubmit()}
+            loading={isFetching}
+          >
             {t("common.button.submit")}
           </Button>
         </DialogFooter>

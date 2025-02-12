@@ -17,6 +17,8 @@ import adminListSlice from "../features/adminList/redux/AdminListSlice";
 import dashboardSlice from "../features/dashboard/redux/DashboardSlice";
 import groupDashboardSlice from "../features/groupDashboard/redux/groupDashboardSlice";
 import groupActivityLogSlice from "../features/groupLogs/redux/groupLogSlice";
+import studentPermissionFormSlice from "../features/studentPermissionForm/redux/StudentPermissionFormSlice";
+import permissionFormSlice from "../features/permissionForm/redux/permissionFormSlice";
 
 export const RESET_STATE = "RESET_STATE";
 
@@ -39,6 +41,8 @@ const appReducer = combineReducers({
   dashboard: dashboardSlice,
   groupDashboard: groupDashboardSlice,
   groupActivityLog: groupActivityLogSlice,
+  studentPermissionForm: studentPermissionFormSlice,
+  permissionForm: permissionFormSlice,
 });
 
 const rootReducer = (state: any, action: any) => {

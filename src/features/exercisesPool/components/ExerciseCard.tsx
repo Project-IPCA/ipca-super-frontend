@@ -20,12 +20,15 @@ import { useMemo, useState } from "react";
 import { useAppDispatch } from "../../../hooks/store";
 import { showToast } from "../../../utils/toast";
 import { useTranslation } from "react-i18next";
+import { parseInt } from "lodash";
 
 interface Props {
   level: string;
   labItems: LabItem[];
   chapterId: string;
   selectedItems: string[];
+  isUpdateExercise: boolean;
+  updateExerciseLevel: number;
   handleToggleForm: () => void;
   handleSetFormUseData: (chapterId: string, level: string) => void;
 }
@@ -35,6 +38,8 @@ function ExerciseCard({
   labItems,
   selectedItems,
   chapterId,
+  isUpdateExercise,
+  updateExerciseLevel,
   handleToggleForm,
   handleSetFormUseData,
 }: Props) {
@@ -177,6 +182,7 @@ function ExerciseCard({
         <Button
           size="sm"
           variant="outlined"
+          loading={isUpdateExercise && parseInt(level) == updateExerciseLevel}
           onClick={() => handleUpdatedAssingedExercise()}
         >
           {t("feature.exercise_pool.button.update")}

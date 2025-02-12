@@ -40,6 +40,8 @@ interface Chapter {
 interface ExercisesPoolState {
   chapterDetail: Chapter | null;
   isFetching: boolean;
+  isUpdateExercise: boolean;
+  updateExerciseLevel: number;
   error: API_ERROR_RESPONSE | null;
 }
 
@@ -64,13 +66,13 @@ export const fetchExercisesPool = createAsyncThunk(
         `/supervisor/get_lab_chapter_info`,
         {
           params: params,
-        }
+        },
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 export const updateAssignedExercise = createAsyncThunk(
@@ -85,7 +87,7 @@ export const updateAssignedExercise = createAsyncThunk(
       };
       const response = await axiosInstance.post(
         `/supervisor/update_group_assigned_chapter_item`,
-        newRequest
+        newRequest,
       );
       return response.data;
     } catch (error) {
@@ -95,7 +97,7 @@ export const updateAssignedExercise = createAsyncThunk(
         return rejectWithValue(resolveApiError(error));
       }
     }
-  }
+  },
 );
 
 const exercisesPoolSlice = createSlice({
@@ -111,7 +113,9 @@ const exercisesPoolSlice = createSlice({
         state[key] = {
           chapterDetail: existState?.chapterDetail || null,
           isFetching: true,
+          isUpdateExercise: existState?.isUpdateExercise || false,
           error: null,
+          updateExerciseLevel: existState?.updateExerciseLevel || 0,
         };
       })
       .addCase(fetchExercisesPool.fulfilled, (state, action) => {
@@ -120,7 +124,9 @@ const exercisesPoolSlice = createSlice({
         state[key] = {
           chapterDetail: action.payload,
           isFetching: false,
+          isUpdateExercise: false,
           error: null,
+          updateExerciseLevel: 0,
         };
       })
       .addCase(fetchExercisesPool.rejected, (state, action) => {
@@ -129,17 +135,45 @@ const exercisesPoolSlice = createSlice({
         state[key] = {
           chapterDetail: null,
           isFetching: false,
+          isUpdateExercise: false,
           error: action.payload as API_ERROR_RESPONSE,
+          updateExerciseLevel: 0,
         };
       })
-      .addCase(updateAssignedExercise.rejected, (state, action) => {
-        const { group_id, chapter_idx } = action.meta.arg;
+      .addCase(updateAssignedExercise.pending, (state, action) => {
+        const { group_id, chapter_idx, item_id } = action.meta.arg;
         const key = `${group_id}.${chapter_idx}`;
         const existState = state[key];
         state[key] = {
           chapterDetail: existState?.chapterDetail || null,
           isFetching: false,
+          isUpdateExercise: true,
+          error: null,
+          updateExerciseLevel: item_id,
+        };
+      })
+      .addCase(updateAssignedExercise.fulfilled, (state, action) => {
+        const { group_id, chapter_idx, item_id } = action.meta.arg;
+        const key = `${group_id}.${chapter_idx}`;
+        const existState = state[key];
+        state[key] = {
+          chapterDetail: existState?.chapterDetail || null,
+          isFetching: false,
+          isUpdateExercise: false,
+          error: null,
+          updateExerciseLevel: item_id,
+        };
+      })
+      .addCase(updateAssignedExercise.rejected, (state, action) => {
+        const { group_id, chapter_idx, item_id } = action.meta.arg;
+        const key = `${group_id}.${chapter_idx}`;
+        const existState = state[key];
+        state[key] = {
+          chapterDetail: existState?.chapterDetail || null,
+          isFetching: false,
+          isUpdateExercise: false,
           error: action.payload as API_ERROR_RESPONSE,
+          updateExerciseLevel: item_id,
         };
       }),
 });

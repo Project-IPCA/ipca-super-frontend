@@ -22,6 +22,7 @@ import {
   EditExerciseFormRequest,
   ExerciseFormRequest,
   getExerciseFormError,
+  getExerciseFormStatus,
   updateExercise,
   VITE_IPCA_RT,
 } from "./redux/exerciseFormSlice";
@@ -150,6 +151,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
   const exerciseInfoState = useAppSelector(getExercisesInfoState);
   const exerciseInfoKey = `${exerciseId}`;
   const exercise = exerciseInfoState[exerciseInfoKey]?.exerciseInfo;
+  const isFetching = useAppSelector(getExerciseFormStatus);
   const [tempConstraint, setTempConstraint] =
     useState<IKeywordConstraints>(defaultConstraints);
   const [isConstraintDirty, setIsConstraintDirty] = useState<boolean>(false);
@@ -301,7 +303,9 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
       if (exerciseId) {
         dispatch(fetchExercisesInfo(exerciseId));
       }
-      handleToggleAndReset();
+      if (!isFetching) {
+        handleToggleAndReset();
+      }
     } catch (err) {
       if (axios.isAxiosError(err)) {
         showToast({
@@ -619,6 +623,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
             className="ml-auto"
             onClick={handleSubmit(onSubmit)}
             disabled={!(isDirty || isConstraintDirty)}
+            loading={isFetching}
           >
             {t("common.button.submit")}
           </Button>
