@@ -14,6 +14,7 @@ import {
   clearAdminFormError,
   createAdmin,
   getAdminFormError,
+  getAdminFormStatus,
 } from "./redux/adminFormSlice";
 import { showToast } from "../../utils/toast";
 import {
@@ -57,6 +58,7 @@ function AdminForm({ open, onClose }: Props) {
   const departments = useAppSelector(getDepartments);
   const groupFormError = useAppSelector(getGroupFormError);
   const adminFormError = useAppSelector(getAdminFormError);
+  const isFetching = useAppSelector(getAdminFormStatus);
   const { role } = usePermission();
   const initialized = useRef(false);
   const defaultForm = {
@@ -126,7 +128,9 @@ function AdminForm({ open, onClose }: Props) {
     }
     reset(defaultForm);
     dispatch(fetchStaffs());
-    onClose();
+    if (!isFetching) {
+      onClose();
+    }
   };
   return (
     <>
@@ -386,6 +390,7 @@ function AdminForm({ open, onClose }: Props) {
             className="ml-auto"
             onClick={handleSubmit(onSubmit)}
             disabled={!isDirty}
+            loading={isFetching}
           >
             {t("common.button.submit")}
           </Button>

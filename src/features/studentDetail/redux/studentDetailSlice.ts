@@ -70,6 +70,8 @@ interface StudentInfoState {
   studentInfo: StudentInfo | null;
   chapterList: GroupChapterPermission[];
   isFetching: boolean;
+  isDeleteStudent: boolean;
+  isResetPassword: boolean;
   error: API_ERROR_RESPONSE | null;
 }
 
@@ -152,6 +154,8 @@ const studentDetailSlice = createSlice({
           studentInfo: existStudentInfo?.studentInfo || null,
           chapterList: existStudentInfo?.chapterList,
           isFetching: true,
+          isDeleteStudent: existStudentInfo?.isDeleteStudent || false,
+          isResetPassword: existStudentInfo?.isResetPassword || false,
           error: null,
         };
       })
@@ -162,6 +166,8 @@ const studentDetailSlice = createSlice({
           studentInfo: action.payload,
           chapterList: existStudentInfo?.chapterList,
           isFetching: false,
+          isDeleteStudent: existStudentInfo?.isDeleteStudent || false,
+          isResetPassword: existStudentInfo?.isResetPassword || false,
           error: null,
         };
       })
@@ -172,6 +178,8 @@ const studentDetailSlice = createSlice({
           studentInfo: null,
           chapterList: existStudentInfo?.chapterList,
           isFetching: false,
+          isDeleteStudent: existStudentInfo?.isDeleteStudent || false,
+          isResetPassword: existStudentInfo?.isResetPassword || false,
           error: action.payload as API_ERROR_RESPONSE,
         };
       })
@@ -182,6 +190,8 @@ const studentDetailSlice = createSlice({
           studentInfo: existStudentInfo?.studentInfo || null,
           chapterList: existStudentInfo?.chapterList,
           isFetching: true,
+          isDeleteStudent: existStudentInfo?.isDeleteStudent || false,
+          isResetPassword: existStudentInfo?.isResetPassword || false,
           error: null,
         };
       })
@@ -192,6 +202,8 @@ const studentDetailSlice = createSlice({
           studentInfo: existStudentInfo?.studentInfo || null,
           chapterList: action.payload,
           isFetching: false,
+          isDeleteStudent: existStudentInfo?.isDeleteStudent || false,
+          isResetPassword: existStudentInfo?.isResetPassword || false,
           error: null,
         };
       })
@@ -202,17 +214,70 @@ const studentDetailSlice = createSlice({
           studentInfo: existStudentInfo?.studentInfo || null,
           chapterList: existStudentInfo?.chapterList,
           isFetching: true,
+          isDeleteStudent: existStudentInfo?.isDeleteStudent || false,
+          isResetPassword: existStudentInfo?.isResetPassword || false,
           error: action.payload as API_ERROR_RESPONSE,
         };
       })
+      .addCase(resetStudentPasword.pending, (state, action) => {
+        const studentId = action.meta.arg;
+        const existStudentInfo = state[studentId];
+        state[studentId] = {
+          studentInfo: existStudentInfo?.studentInfo || null,
+          chapterList: existStudentInfo?.chapterList,
+          isFetching: existStudentInfo?.isFetching || false,
+          isDeleteStudent: existStudentInfo?.isDeleteStudent || false,
+          isResetPassword: true,
+          error: existStudentInfo?.error || null,
+        };
+      })
+      .addCase(resetStudentPasword.fulfilled, (state, action) => {
+        const studentId = action.meta.arg;
+        const existStudentInfo = state[studentId];
+        state[studentId] = {
+          studentInfo: existStudentInfo?.studentInfo || null,
+          chapterList: existStudentInfo?.chapterList,
+          isFetching: existStudentInfo?.isFetching || false,
+          isDeleteStudent: existStudentInfo?.isDeleteStudent || false,
+          isResetPassword: false,
+          error: existStudentInfo?.error || null,
+        };
+      })
+
       .addCase(resetStudentPasword.rejected, (state, action) => {
         const studentId = action.meta.arg;
         const existStudentInfo = state[studentId];
         state[studentId] = {
           studentInfo: existStudentInfo?.studentInfo || null,
           chapterList: existStudentInfo?.chapterList,
-          isFetching: false,
+          isFetching: existStudentInfo?.isFetching || false,
+          isDeleteStudent: existStudentInfo?.isDeleteStudent || false,
+          isResetPassword: false,
           error: action.payload as API_ERROR_RESPONSE,
+        };
+      })
+      .addCase(deleteStudent.pending, (state, action) => {
+        const studentId = action.meta.arg;
+        const existStudentInfo = state[studentId];
+        state[studentId] = {
+          studentInfo: existStudentInfo?.studentInfo || null,
+          chapterList: existStudentInfo?.chapterList,
+          isFetching: existStudentInfo?.isFetching || false,
+          isDeleteStudent: true,
+          isResetPassword: existStudentInfo?.isResetPassword || false,
+          error: existStudentInfo?.error || null,
+        };
+      })
+      .addCase(deleteStudent.fulfilled, (state, action) => {
+        const studentId = action.meta.arg;
+        const existStudentInfo = state[studentId];
+        state[studentId] = {
+          studentInfo: existStudentInfo?.studentInfo || null,
+          chapterList: existStudentInfo?.chapterList,
+          isFetching: existStudentInfo?.isFetching || false,
+          isDeleteStudent: false,
+          isResetPassword: existStudentInfo?.isResetPassword || false,
+          error: existStudentInfo?.error || null,
         };
       })
       .addCase(deleteStudent.rejected, (state, action) => {
@@ -221,7 +286,9 @@ const studentDetailSlice = createSlice({
         state[studentId] = {
           studentInfo: existStudentInfo?.studentInfo || null,
           chapterList: existStudentInfo?.chapterList,
-          isFetching: false,
+          isFetching: existStudentInfo?.isFetching || false,
+          isDeleteStudent: false,
+          isResetPassword: existStudentInfo?.isResetPassword || false,
           error: action.payload as API_ERROR_RESPONSE,
         };
       }),

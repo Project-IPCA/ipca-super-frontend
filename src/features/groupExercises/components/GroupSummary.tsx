@@ -8,6 +8,8 @@ import {
 } from "@material-tailwind/react";
 import {
   deleteGroup,
+  getDeleteStatus,
+  getLogoutStatus,
   GroupData,
   logoutAllStudents,
   updateAllowGroupLogin,
@@ -54,6 +56,8 @@ function GroupSummary({ groupData }: Props) {
     const [hours, minutes] = timeString.split(":");
     return `${parseInt(hours, 10)}:${minutes}`;
   };
+  const isLogout = useAppSelector(getLogoutStatus);
+  const isDelete = useAppSelector(getDeleteStatus);
   const groupStudent = useAppSelector(getGroupStudents);
   const groupStudentFetching = useAppSelector(getGroupStudentsStatus);
   const onlineStudent = useAppSelector(getOnlineStudents);
@@ -132,6 +136,7 @@ function GroupSummary({ groupData }: Props) {
           </>
         }
         confirmLabel={t("common.button.delete")}
+        isFetching={isDelete}
         type="error"
         handleClose={handleDeleteClose}
         handleSubmit={onDeleteGroup}
@@ -237,6 +242,7 @@ function GroupSummary({ groupData }: Props) {
                   fullWidth
                   className="flex justify-center items-center gap-3 w-full"
                   onClick={() => handleLogoutAll()}
+                  loading={isLogout}
                 >
                   <ArrowRightStartOnRectangleIcon className="w-5 h-5" />
                   {t("feature.group_exercises.button.logout_all")}

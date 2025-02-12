@@ -10,6 +10,7 @@ import {
   AssignedExercise,
   cancelStudentSubmission,
   fetchSubmissionHistory,
+  getExerciseDetailSlice,
   SubmissionHistory,
 } from "../redux/ExerciseDetailSlice";
 import { useEffect, useMemo, useState } from "react";
@@ -17,7 +18,7 @@ import { TABS_VALUE } from "../constants";
 import SubmissionView from "./SubmissionView";
 import { ConfirmModal } from "../../../components";
 import { StudentInfo } from "../../studentDetail/redux/studentDetailSlice";
-import { useAppDispatch } from "../../../hooks/store";
+import { useAppDispatch, useAppSelector } from "../../../hooks/store";
 import { useParams } from "react-router-dom";
 import { parseInt } from "lodash";
 import { showToast } from "../../../utils/toast";
@@ -47,6 +48,9 @@ function SubmissionHistoryList({
   const [tabSelected, setTabSelected] = useState<string>(TABS_VALUE.single);
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
   const { studentId, chapterIdx, problemIdx } = useParams();
+  const exerciseDetailState = useAppSelector(getExerciseDetailSlice);
+  const key = `${studentId}.${chapterIdx}.${problemIdx}`;
+  const isRejectSubmission = exerciseDetailState[key]?.isCancelSubmission;
 
   const handleCloseConfirm = () => setOpenConfirm(false);
   const handleOpenConfirm = () => setOpenConfirm(true);
@@ -75,7 +79,12 @@ function SubmissionHistoryList({
   const handleSubmit = async () => {
     if (reversedSubmissions && reversedSubmissions[0]) {
       const resultAction = await dispatch(
-        cancelStudentSubmission(reversedSubmissions[0].submission_id),
+        cancelStudentSubmission({
+          studentId: String(studentId),
+          chapterIdx: parseInt(String(chapterIdx)),
+          itemId: parseInt(String(problemIdx)),
+          submissionId: reversedSubmissions[0].submission_id,
+        }),
       );
       if (cancelStudentSubmission.fulfilled.match(resultAction)) {
         showToast({
@@ -92,7 +101,9 @@ function SubmissionHistoryList({
           }),
         );
       }
-      handleCloseConfirm();
+      if (!isRejectSubmission) {
+        handleCloseConfirm();
+      }
     }
   };
 
@@ -128,6 +139,7 @@ function SubmissionHistoryList({
         confirmLabel={t("feature.exercise_detail.modal.confirm")}
         type="error"
         handleClose={handleCloseConfirm}
+        isFetching={isRejectSubmission}
         handleSubmit={handleSubmit}
       />
       <Card className="border-[1px] h-full w-full ">

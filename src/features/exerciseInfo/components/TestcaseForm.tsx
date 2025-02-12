@@ -24,11 +24,18 @@ import { useTranslation } from "react-i18next";
 interface Props {
   open: boolean;
   handleToggle: () => void;
+  isUpdateTestcase: boolean;
   exerciseId: string;
   testcaseList: Testcase[];
 }
 
-function TestcaseForm({ open, handleToggle, exerciseId, testcaseList }: Props) {
+function TestcaseForm({
+  open,
+  handleToggle,
+  exerciseId,
+  testcaseList,
+  isUpdateTestcase,
+}: Props) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [jobId, setJobId] = useState<string>();
@@ -192,6 +199,7 @@ function TestcaseForm({ open, handleToggle, exerciseId, testcaseList }: Props) {
               handleToggle();
             }}
             disabled={!isDirty}
+            loading={isUpdateTestcase}
           >
             {t("feature.exercise_info.modal.testcase.button.save")}
           </Button>

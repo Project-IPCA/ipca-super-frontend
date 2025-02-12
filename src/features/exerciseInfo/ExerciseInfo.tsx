@@ -27,7 +27,10 @@ import { FormUseData } from "../exercisesPool/ExercisesPool";
 import TestcaseForm from "./components/TestcaseForm";
 import TestcaseInfo from "./components/TestcaseInfo";
 import { IKeywordConstraints } from "../exerciseForm/ExerciseForm";
-import { deleteExercise } from "../exerciseForm/redux/exerciseFormSlice";
+import {
+  deleteExercise,
+  getExerciseFormDelete,
+} from "../exerciseForm/redux/exerciseFormSlice";
 import { showToast } from "../../utils/toast";
 import { ConfirmModal } from "../../components";
 import { useTranslation } from "react-i18next";
@@ -46,7 +49,9 @@ function ExerciseInfo() {
   const exerciseInfoKey = `${exerciseId}`;
   const exercise = exerciseInfoState[exerciseInfoKey]?.exerciseInfo;
   const isFetching = exerciseInfoState[exerciseInfoKey]?.isFetching;
+  const isUpdateTestcase = exerciseInfoState[exerciseInfoKey]?.isUpdateTestcase;
   const [formOpen, setFormOpen] = useState<boolean>(false);
+  const isDelete = useAppSelector(getExerciseFormDelete);
   const [testcaseFormOpen, setTestcaseFormOpen] = useState<boolean>(false);
   const [formUseData, setFormUseData] = useState<FormUseData>({
     chapterId: "",
@@ -140,11 +145,13 @@ function ExerciseInfo() {
           </>
         }
         confirmLabel={t("common.button.delete")}
+        isFetching={isDelete}
         type="error"
         handleClose={handleCloseDelete}
         handleSubmit={handleDelete}
       />
       <TestcaseForm
+        isUpdateTestcase={isUpdateTestcase}
         exerciseId={exerciseId ?? ""}
         open={testcaseFormOpen}
         handleToggle={handleToggleTestcaseForm}
