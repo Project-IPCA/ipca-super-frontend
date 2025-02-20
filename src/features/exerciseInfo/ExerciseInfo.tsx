@@ -162,6 +162,7 @@ function ExerciseInfo() {
         handleToggle={handleToggleForm}
         formUseData={formUseData}
         exerciseId={exercise?.exercise_id}
+        language={exercisesPool?.language}
       />
       <div className="flex justify-start items-center pb-4 gap-x-2">
         <IconButton variant="text">

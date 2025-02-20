@@ -42,6 +42,11 @@ export interface EditExerciseFormRequest extends ExerciseDataRequest {
   exercise_id: string;
 }
 
+export interface ExeriseRequest {
+  request : ExerciseFormRequest | EditExerciseFormRequest
+  language : string
+}
+
 export interface CheckKeywordRequest {
   exercise_kw_list: UserConstraint;
   sourcecode: string;
@@ -61,11 +66,11 @@ const initialState: ExerciseFormState = {
 
 export const createExercise = createAsyncThunk(
   "exerciseForm/createExercise",
-  async (request: ExerciseFormRequest, { rejectWithValue }) => {
+  async (request: ExeriseRequest, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(
-        `/supervisor/exercise`,
-        request,
+        `/supervisor/exercise/${request.language.toLocaleLowerCase()}`,
+        request.request,
       );
       return response.data;
     } catch (error) {
@@ -80,9 +85,9 @@ export const createExercise = createAsyncThunk(
 
 export const updateExercise = createAsyncThunk(
   "exerciseForm/updateExercise",
-  async (request: EditExerciseFormRequest, { rejectWithValue }) => {
+  async (request: ExeriseRequest, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.put(`/supervisor/exercise`, request);
+      const response = await axiosInstance.put(`/supervisor/exercise/${request.language.toLocaleLowerCase()}`, request.request);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {

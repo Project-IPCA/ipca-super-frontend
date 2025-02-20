@@ -35,6 +35,7 @@ interface Chapter {
   group_id: string;
   group_selected_labs: GroupSelectedLabs;
   lab_list: LabList;
+  language : string;
 }
 
 interface ExercisesPoolState {
