@@ -18,6 +18,7 @@ import {
   AVAILABLE_TIME,
   DAY_OF_WEEK,
   LANGUAGE,
+  PROGRAMMING_LANG_OPTIONS,
   ROLE,
   SEMESTER,
 } from "../../constants/constants";
@@ -71,6 +72,9 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
   const initialized = useRef(false);
 
   const formDataSchema = yup.object({
+    language: yup
+      .string()
+      .required(i18n.t("feature.group_form.error.prog_lang")),
     groupName: yup
       .string()
       .required(i18n.t("feature.group_form.error.group_name")),
@@ -267,6 +271,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
       year: parseInt(data.year),
       semester: parseInt(data.semester),
       dept_id: data.departmentId,
+      language: data.language,
       staffs: staffs,
       supervisor_id: role === ROLE.supervisor ? null : data.supervisor,
     };
@@ -323,6 +328,51 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
           </IconButton>
         </DialogHeader>
         <DialogBody className="space-y-4 pb-6 lg:h-full  h-[14rem] lg:overflow-y-visible overflow-y-scroll">
+          {!groupId && (
+            <div>
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="mb-2 text-left font-medium"
+              >
+                {t("feature.group_form.label.prog_lang")}
+              </Typography>
+              <Controller
+                name="language"
+                control={control}
+                render={({ field }) => {
+                  return (
+                    <AsyncSelect
+                      {...field}
+                      variant="outlined"
+                      size="lg"
+                      color="gray"
+                      containerProps={{
+                        className: "!min-w-full",
+                      }}
+                      labelProps={{
+                        className: "before:mr-0 after:ml-0",
+                      }}
+                      error={!!errors.language}
+                    >
+                      {PROGRAMMING_LANG_OPTIONS.map((lang) => (
+                        <Option key={lang.value} value={lang.value}>
+                          {lang.label}
+                        </Option>
+                      ))}
+                    </AsyncSelect>
+                  );
+                }}
+              />
+              <Typography
+                variant="small"
+                color="red"
+                className="mt-1 flex items-center gap-1 font-normal !text-xs"
+              >
+                {errors.language ? errors.language.message : ""}
+              </Typography>
+            </div>
+          )}
           <div>
             <Typography
               variant="small"
