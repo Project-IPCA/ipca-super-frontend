@@ -21,6 +21,7 @@ import {
   createExercise,
   EditExerciseFormRequest,
   ExerciseFormRequest,
+  ExeriseRequest,
   getExerciseFormError,
   getExerciseFormStatus,
   updateExercise,
@@ -48,6 +49,7 @@ interface Props {
   formUseData: FormUseData;
   exerciseId?: string;
   handleToggleUpdated?: () => void;
+  language? : string
 }
 
 export interface SuggestedConstraintData {
@@ -144,7 +146,7 @@ const defaultConstraints: IKeywordConstraints = {
   },
 };
 
-function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
+function ExerciseForm({ open, handleToggle, formUseData, exerciseId,language }: Props) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const error = useAppSelector(getExerciseFormError);
@@ -217,7 +219,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
-      const response = await axiosInstance.post("/common/keyword_check", {
+      const response = await axiosInstance.post(`/common/keyword_check/${language?.toLocaleLowerCase()}`, {
         exercise_kw_list: constraints.user_defined_constraints,
         sourcecode: data.sourecode,
       });
@@ -274,7 +276,11 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
 
       if (formUseData.level && formUseData.chapterId) {
         if (exerciseId) {
-          const resultAction = await dispatch(updateExercise(updateRequest));
+          const exerciseRequest : ExeriseRequest = {
+            request : updateRequest,
+            language : language || ""
+          }
+          const resultAction = await dispatch(updateExercise(exerciseRequest));
           if (updateExercise.fulfilled.match(resultAction)) {
             showToast({
               variant: "success",
@@ -282,7 +288,11 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
             });
           }
         } else {
-          const resultAction = await dispatch(createExercise(createRequest));
+          const exerciseRequest : ExeriseRequest = {
+            request : createRequest,
+            language : language || ""
+          }
+          const resultAction = await dispatch(createExercise(exerciseRequest));
           if (createExercise.fulfilled.match(resultAction)) {
             showToast({
               variant: "success",
@@ -420,7 +430,7 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
 
   const analyzeKeywordList: SubmitHandler<FormData> = async (data) => {
     try {
-      const response = await axiosInstance.post("/common/get_keyword_list", {
+      const response = await axiosInstance.post(`/common/get_keyword_list/${language?.toLowerCase()}`, {
         sourcecode: data.sourecode,
       });
       if (response.data.status !== "error") {

@@ -71,6 +71,7 @@ function ExercisesPool() {
         open={formOpen}
         handleToggle={handleToggleForm}
         formUseData={formUseData}
+        language={exercisesPool?.language}
       />
       <div className="flex justify-start items-center pb-4 gap-x-2">
         <IconButton variant="text">
