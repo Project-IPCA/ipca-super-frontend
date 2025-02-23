@@ -123,8 +123,9 @@ function TestcaseForm({
 
   useEffect(() => {
     if (jobId && exerciseId) {
+      const token = localStorage.getItem("access_token")
       const evtSource = new EventSource(
-        `${VITE_IPCA_RT}/testcase-result/${jobId}`,
+        `${VITE_IPCA_RT}/testcase-result/${jobId}?token=${token}`,
       );
 
       const entTimeOut = setTimeout(() => {

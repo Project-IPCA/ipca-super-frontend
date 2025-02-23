@@ -52,7 +52,8 @@ function GroupLogs({ groupId }: Props) {
   };
 
   useEffect(() => {
-    const evtSource = new EventSource(`${VITE_IPCA_RT}/class-log/${groupId}`);
+    const token = localStorage.getItem("access_token")
+    const evtSource = new EventSource(`${VITE_IPCA_RT}/class-log/${groupId}?token=${token}`);
     evtSource.onmessage = (event) => {
       if (event.data) {
         const rawData = JSON.parse(event.data);
