@@ -7,8 +7,10 @@ const VITE_IPCA_API = import.meta.env.VITE_IPCA_API;
 export const VITE_IPCA_RT = import.meta.env.VITE_IPCA_RT;
 import axiosInstance from "../../../utils/axios";
 import {
-  SuggestedConstraint,
-  UserConstraint,
+  PythonUserConstraint,
+  PythonSuggestedConstraint,
+  ClangUserConstraint,
+  ClangSuggestedConstraint,
 } from "../../exerciseForm/ExerciseForm";
 
 export interface Testcase {
@@ -30,9 +32,9 @@ interface LabExercise {
   exercise_id: string;
   name: string;
   sourcecode: string;
-  suggested_constraints: SuggestedConstraint;
+  suggested_constraints: PythonSuggestedConstraint | ClangSuggestedConstraint;
   testcase_list: Testcase[];
-  user_defined_constraints: UserConstraint;
+  user_defined_constraints: PythonUserConstraint | ClangUserConstraint;
 }
 
 interface ExerciseInfoState {

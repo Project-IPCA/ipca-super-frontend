@@ -20,13 +20,17 @@ import {
 } from "./redux/exerciseInfoSlice";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
+import { cpp } from "@codemirror/lang-cpp";
 import KeywordConstraints from "../exerciseForm/components/KeywordConstraints";
 import TextEditor from "../exerciseForm/components/TextEditor";
 import { ExerciseForm } from "../exerciseForm";
 import { FormUseData } from "../exercisesPool/ExercisesPool";
 import TestcaseForm from "./components/TestcaseForm";
 import TestcaseInfo from "./components/TestcaseInfo";
-import { IKeywordConstraints } from "../exerciseForm/ExerciseForm";
+import {
+  IPythonKeywordConstraints,
+  IClangKeywordConstraints,
+} from "../exerciseForm/ExerciseForm";
 import {
   deleteExercise,
   getExerciseFormDelete,
@@ -34,7 +38,7 @@ import {
 import { showToast } from "../../utils/toast";
 import { ConfirmModal } from "../../components";
 import { useTranslation } from "react-i18next";
-import { LANGUAGE } from "../../constants/constants";
+import { LANGUAGE, PYTHON_LANG } from "../../constants/constants";
 import { CodeBracketIcon } from "@heroicons/react/24/outline";
 
 function ExerciseInfo() {
@@ -65,7 +69,9 @@ function ExerciseInfo() {
 
   const handleToggleTestcaseForm = () => setTestcaseFormOpen(!testcaseFormOpen);
 
-  const [constraints, setConstraints] = useState<IKeywordConstraints>({
+  const [constraints, setConstraints] = useState<
+    IPythonKeywordConstraints | IClangKeywordConstraints
+  >({
     suggested_constraints: {
       classes: [],
       functions: [],
@@ -109,7 +115,7 @@ function ExerciseInfo() {
         return {
           suggested_constraints: exercise?.suggested_constraints,
           user_defined_constraints: exercise?.user_defined_constraints,
-        };
+        } as IPythonKeywordConstraints | IClangKeywordConstraints;
       });
     }
   }, [exercise]);
@@ -297,7 +303,9 @@ function ExerciseInfo() {
                 height={"300px"}
                 className="focus:!outline-none focus:ring-0 focus:border-none "
                 value={exercise?.sourcecode}
-                extensions={[python()]}
+                extensions={[
+                  exercisesPool?.language === PYTHON_LANG ? python() : cpp(),
+                ]}
                 readOnly={true}
                 editable={false}
               />
