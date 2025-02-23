@@ -189,3 +189,8 @@ export type Permission =
 
 export const C_LANG = "C";
 export const PYTHON_LANG = "PYTHON";
+
+export const PROGRAMMING_LANG_OPTIONS = [
+  { label: "C", value: "C" },
+  { label: "Python", value: "PYTHON" },
+];
