@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
+import { cpp } from "@codemirror/lang-cpp";
 import { useEffect, useState } from "react";
 import TextEditor from "./components/TextEditor";
 import KeywordConstraints from "./components/KeywordConstraints";
@@ -239,27 +240,35 @@ function ExerciseForm({
       if (language === PYTHON_LANG) {
         setConstraints(() => {
           return {
-            suggested_constraints: exercise?.suggested_constraints,
-            user_defined_constraints: exercise?.user_defined_constraints,
+            suggested_constraints:
+              exercise?.suggested_constraints as PythonSuggestedConstraint,
+            user_defined_constraints:
+              exercise?.user_defined_constraints as PythonUserConstraint,
           };
         });
         setTempConstraint(() => {
           return {
-            suggested_constraints: exercise?.suggested_constraints,
-            user_defined_constraints: exercise?.user_defined_constraints,
+            suggested_constraints:
+              exercise?.suggested_constraints as PythonSuggestedConstraint,
+            user_defined_constraints:
+              exercise?.user_defined_constraints as PythonUserConstraint,
           };
         });
       } else {
         setClangConstraints(() => {
           return {
-            suggested_constraints: exercise?.suggested_constraints,
-            user_defined_constraints: exercise?.user_defined_constraints,
+            suggested_constraints:
+              exercise?.suggested_constraints as ClangSuggestedConstraint,
+            user_defined_constraints:
+              exercise?.user_defined_constraints as ClangUserConstraint,
           };
         });
         setClangTempConstraint(() => {
           return {
-            suggested_constraints: exercise?.suggested_constraints,
-            user_defined_constraints: exercise?.user_defined_constraints,
+            suggested_constraints:
+              exercise?.suggested_constraints as ClangSuggestedConstraint,
+            user_defined_constraints:
+              exercise?.user_defined_constraints as ClangUserConstraint,
           };
         });
       }
@@ -434,7 +443,7 @@ function ExerciseForm({
 
   useEffect(() => {
     if (jobId && exerciseId) {
-      const token = localStorage.getItem("access_token")
+      const token = localStorage.getItem("access_token");
       const evtSource = new EventSource(
         `${VITE_IPCA_RT}/testcase-result/${jobId}?token=${token}`,
       );
@@ -724,7 +733,7 @@ function ExerciseForm({
                 height={"300px"}
                 className="focus:!outline-none focus:ring-0 focus:border-none "
                 value={formData.sourecode}
-                extensions={[python()]}
+                extensions={[language === PYTHON_LANG ? python() : cpp()]}
                 onChange={(val) =>
                   setValue("sourecode", val, { shouldDirty: true })
                 }

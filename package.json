@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@codemirror/lang-cpp": "^6.0.2",
     "@codemirror/lang-python": "^6.1.6",
     "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^3.9.1",
