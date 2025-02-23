@@ -4,7 +4,7 @@ import { resolveApiError } from "../../../utils";
 import { API_ERROR_RESPONSE } from "../../../constants/constants";
 import { RootState } from "../../../store/store";
 import axiosInstance from "../../../utils/axios";
-import { UserConstraint } from "../ExerciseForm";
+import { PythonUserConstraint } from "../ExerciseForm";
 
 export const VITE_IPCA_RT = import.meta.env.VITE_IPCA_RT;
 
@@ -13,11 +13,18 @@ interface Constraint {
   limit: number;
 }
 
-interface Constraints {
+interface PythonConstraints {
   classes: Constraint[];
   functions: Constraint[];
   imports: Constraint[];
   methods: Constraint[];
+  reserved_words: Constraint[];
+  variables: Constraint[];
+}
+
+interface ClangConstraints {
+  functions: Constraint[];
+  includes: Constraint[];
   reserved_words: Constraint[];
   variables: Constraint[];
 }
@@ -27,8 +34,8 @@ export interface ExerciseDataRequest {
   sourcecode: string;
   content: string;
   keyword_constraints: {
-    suggested_constraints: Constraints | null;
-    user_defined_constraints: Constraints | null;
+    suggested_constraints: PythonConstraints | ClangConstraints | null;
+    user_defined_constraints: PythonConstraints | ClangConstraints | null;
   };
 }
 
@@ -43,12 +50,12 @@ export interface EditExerciseFormRequest extends ExerciseDataRequest {
 }
 
 export interface ExeriseRequest {
-  request : ExerciseFormRequest | EditExerciseFormRequest
-  language : string
+  request: ExerciseFormRequest | EditExerciseFormRequest;
+  language: string;
 }
 
 export interface CheckKeywordRequest {
-  exercise_kw_list: UserConstraint;
+  exercise_kw_list: PythonUserConstraint;
   sourcecode: string;
 }
 
@@ -87,7 +94,10 @@ export const updateExercise = createAsyncThunk(
   "exerciseForm/updateExercise",
   async (request: ExeriseRequest, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.put(`/supervisor/exercise/${request.language.toLocaleLowerCase()}`, request.request);
+      const response = await axiosInstance.put(
+        `/supervisor/exercise/${request.language.toLocaleLowerCase()}`,
+        request.request,
+      );
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {

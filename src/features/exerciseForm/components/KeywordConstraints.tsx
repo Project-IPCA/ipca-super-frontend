@@ -1,10 +1,12 @@
 import { useEffect, useState, Fragment } from "react";
 import {
-  SuggestedConstraint,
-  UserConstraint,
+  PythonSuggestedConstraint,
+  PythonUserConstraint,
   SuggestedConstraintData,
   UserConstraintData,
   UserConstraintAction,
+  ClangUserConstraint,
+  ClangSuggestedConstraint,
 } from "../ExerciseForm";
 import {
   Accordion,
@@ -31,9 +33,13 @@ type ConstraintsType = "suggested" | "user";
 
 interface Props {
   constraintsType: ConstraintsType;
-  constraints: SuggestedConstraint | UserConstraint;
+  constraints:
+    | PythonSuggestedConstraint
+    | PythonUserConstraint
+    | ClangUserConstraint
+    | ClangSuggestedConstraint;
   handleUserConstraints?: (
-    key: keyof UserConstraint,
+    key: keyof PythonUserConstraint,
     action: UserConstraintAction,
     data?: UserConstraintData,
     index?: number,
@@ -59,7 +65,7 @@ function KeywordConstraints({
   };
 
   const addUserConstraintBySuggested = (
-    key: keyof SuggestedConstraint,
+    key: keyof PythonSuggestedConstraint,
     data?: SuggestedConstraintData,
   ) => {
     if (handleUserConstraints) {
@@ -84,7 +90,7 @@ function KeywordConstraints({
   };
 
   const onUserConstraintChange = (
-    parentKey: keyof UserConstraint,
+    parentKey: keyof PythonUserConstraint,
     key: keyof UserConstraintData,
     item: UserConstraintData,
     index: number,
@@ -123,7 +129,7 @@ function KeywordConstraints({
     <Fragment>
       {(
         Object.entries(constraints) as [
-          keyof (SuggestedConstraint | UserConstraint),
+          keyof (PythonSuggestedConstraint | PythonUserConstraint),
           (SuggestedConstraintData | UserConstraintData)[],
         ][]
       ).map(([key, value]) => (
@@ -153,7 +159,7 @@ function KeywordConstraints({
             {constraintsType === "suggested" ? (
               value.length ? (
                 (value as SuggestedConstraintData[]).map((item, idx) => (
-                  <div className="grid grid-cols-12 gap-2" key={idx}>
+                  <div className="grid grid-cols-12 gap-2 mb-2" key={idx}>
                     <Card className="border-[1px] col-span-6" shadow={false}>
                       <CardBody className="!py-2 !px-4">
                         {item.keyword}
