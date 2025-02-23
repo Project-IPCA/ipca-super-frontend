@@ -91,8 +91,9 @@ function GroupStudents({ groupId }: Props) {
   }, [dispatch, groupId, page]);
 
   useEffect(() => {
+    const token = localStorage.getItem("access_token")
     const evtSource = new EventSource(
-      `${VITE_IPCA_RT}/online-students/${groupId}`,
+      `${VITE_IPCA_RT}/online-students/${groupId}?token=${token}`,
     );
     evtSource.onmessage = (event) => {
       if (event.data) {
