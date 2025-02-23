@@ -186,3 +186,6 @@ export type Permission =
   | "STUDENT_ADMIN"
   | "EXERCISE_ADMIN"
   | "DASHBOARD_ADMIN";
+
+export const C_LANG = "C";
+export const PYTHON_LANG = "PYTHON";
