@@ -54,6 +54,7 @@ interface DashboardState {
 export interface FetchTotalRequest {
   groupId: string | null;
   year: string | null;
+  language: string | null;
 }
 
 const initialState: DashboardState = {
@@ -113,6 +114,7 @@ export const fetchTotalStudents = createAsyncThunk(
       year: request.year,
       groupId: request.groupId,
       status: null,
+      language : request.language
     };
     try {
       const response = await axiosInstance.get("/supervisor/students/total", {
@@ -131,6 +133,7 @@ export const fetchTotalSubmissions = createAsyncThunk(
     const params = {
       year: request.year,
       group_id: request.groupId,
+      language :request.language
     };
     try {
       const response = await axiosInstance.get(
@@ -148,9 +151,10 @@ export const fetchTotalSubmissions = createAsyncThunk(
 
 export const fetchTotalGroups = createAsyncThunk(
   "dashboard/fetchTotalGroups",
-  async (year: string | null, { rejectWithValue }) => {
+  async (request: FetchTotalRequest, { rejectWithValue }) => {
     const params = {
-      year: year,
+      year: request.year,
+      language : request.language
     };
     try {
       const response = await axiosInstance.get("/supervisor/groups/total", {
@@ -169,6 +173,7 @@ export const fetchStatsScoreChapter = createAsyncThunk(
     const params = {
       year: request.year,
       groupId: request.groupId,
+      language : request.language
     };
     try {
       const response = await axiosInstance.get(
@@ -190,6 +195,7 @@ export const fetchStatsSubmissionTime = createAsyncThunk(
     const params = {
       year: request.year,
       group_id: request.groupId,
+      language : request.language
     };
     try {
       const response = await axiosInstance.get(
@@ -207,9 +213,10 @@ export const fetchStatsSubmissionTime = createAsyncThunk(
 
 export const fetchStatsDeptScore = createAsyncThunk(
   "dashboard/fetchStatsDeptScore",
-  async (year: string | null, { rejectWithValue }) => {
+  async (request: FetchTotalRequest, { rejectWithValue }) => {
     const params = {
-      year: year,
+      year: request.year,
+      language : request.language
     };
     try {
       const response = await axiosInstance.get(

@@ -32,6 +32,7 @@ import {
   clearDashboardError,
 } from "./redux/DashboardSlice";
 import { showToast } from "../../utils/toast";
+import { LANG_LIST, PYTHON_LANG } from "../../constants/constants";
 
 function Dashboard() {
   const dispatch = useAppDispatch();
@@ -47,6 +48,7 @@ function Dashboard() {
   const initialized = useRef(false);
   const error = useAppSelector(getDashboardError);
   const [selectedYear, setSelectedYear] = useState<string>("All");
+  const [selectLanguage, setSelectLanguage] = useState<string>(PYTHON_LANG);
   const { t } = useTranslation();
   const myGroups = useAppSelector(getMyGroups);
 
@@ -59,18 +61,20 @@ function Dashboard() {
         groupId: null,
         status: null,
         year: year,
+        language: selectLanguage,
       };
       dispatch(fetchTotalStudents(stuRequest));
       const basicRequest: FetchTotalRequest = {
         groupId: null,
         year: year,
+        language: selectLanguage,
       };
       dispatch(fetchTotalSubmissions(basicRequest));
-      dispatch(fetchTotalGroups(year));
+      dispatch(fetchTotalGroups(basicRequest));
       dispatch(fetchStatsScoreChapter(basicRequest));
       dispatch(fetchTotalStaffs(null));
       dispatch(fetchStatsSubmissionTime(basicRequest));
-      dispatch(fetchStatsDeptScore(year));
+      dispatch(fetchStatsDeptScore(basicRequest));
     }
     return () => {};
   }, [dispatch, initialized]);
@@ -82,12 +86,18 @@ function Dashboard() {
         .sort((a, b) => b - a)
         .map((year) => year.toString()),
     ],
-    [myGroups.filters.year],
+    [myGroups.filters.year]
   );
 
   const handleYearChange = (value: string | undefined) => {
     if (value) {
       setSelectedYear(value);
+    }
+  };
+
+  const handleLanguageChange = (value: string | undefined) => {
+    if (value) {
+      setSelectLanguage(value);
     }
   };
 
@@ -98,20 +108,22 @@ function Dashboard() {
         groupId: null,
         status: null,
         year: year,
+        language: selectLanguage,
       };
       dispatch(fetchTotalStudents(stuRequest));
       const basicRequest: FetchTotalRequest = {
         groupId: null,
         year: year,
+        language: selectLanguage,
       };
       dispatch(fetchTotalSubmissions(basicRequest));
-      dispatch(fetchTotalGroups(year));
+      dispatch(fetchTotalGroups(basicRequest));
       dispatch(fetchStatsScoreChapter(basicRequest));
       dispatch(fetchTotalStaffs(null));
       dispatch(fetchStatsSubmissionTime(basicRequest));
-      dispatch(fetchStatsDeptScore(year));
+      dispatch(fetchStatsDeptScore(basicRequest));
     }
-  }, [selectedYear, dispatch]);
+  }, [selectedYear, selectLanguage, dispatch]);
 
   useEffect(() => {
     if (error) {
@@ -148,23 +160,41 @@ function Dashboard() {
 
   return (
     <>
-      <div className="flex justify-between items-center pb-4 ">
+      <div className="md:flex justify-between items-center pb-4 ">
         <Typography variant="h3">{t("feature.dashboard.title")}</Typography>
-        <div className="w-40">
-          <AsyncSelect
-            label={t("feature.my_groups_list.filter.year")}
-            value={selectedYear ? selectedYear : "All"}
-            onChange={handleYearChange}
-            containerProps={{
-              className: "!min-w-16 ",
-            }}
-          >
-            {yearOptions.map((year) => (
-              <Option key={year} value={year}>
-                {year}
-              </Option>
-            ))}
-          </AsyncSelect>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="md:w-40 w-full">
+            <AsyncSelect
+              label={t("feature.my_groups_list.filter.language")}
+              value={selectLanguage}
+              onChange={handleLanguageChange}
+              containerProps={{
+                className: "!min-w-16 ",
+              }}
+            >
+              {LANG_LIST.map((lang) => (
+                <Option key={lang} value={lang}>
+                  {lang}
+                </Option>
+              ))}
+            </AsyncSelect>
+          </div>
+          <div className="md:w-40 w-full">
+            <AsyncSelect
+              label={t("feature.my_groups_list.filter.year")}
+              value={selectedYear ? selectedYear : "All"}
+              onChange={handleYearChange}
+              containerProps={{
+                className: "!min-w-16 ",
+              }}
+            >
+              {yearOptions.map((year) => (
+                <Option key={year} value={year}>
+                  {year}
+                </Option>
+              ))}
+            </AsyncSelect>
+          </div>
         </div>
       </div>
       <div className="w-full grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1  gap-6 pb-6">
