@@ -53,7 +53,8 @@
       },
       "filter": {
         "year": "Year",
-        "all": "All"
+        "all": "All",
+        "language" : "Language"
       }
     },
     "group_form": {

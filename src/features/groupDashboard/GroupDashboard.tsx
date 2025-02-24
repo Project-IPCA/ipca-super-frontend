@@ -63,11 +63,13 @@ function GroupDashboard({ groupId }: Props) {
         groupId: groupId,
         status: null,
         year: null,
+        language : null
       };
       dispatch(fetchTotalStudents(stuRequest));
       const basicRequest: FetchTotalRequest = {
         groupId: groupId,
         year: null,
+        language : null
       };
       dispatch(fetchTotalSubmissions(basicRequest));
       dispatch(fetchStatsScoreChapter(basicRequest));
