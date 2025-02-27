@@ -33,6 +33,7 @@ import {
 } from "./redux/DashboardSlice";
 import { showToast } from "../../utils/toast";
 import { LANG_LIST, PYTHON_LANG } from "../../constants/constants";
+import { capitalize } from "lodash";
 
 function Dashboard() {
   const dispatch = useAppDispatch();
@@ -86,7 +87,7 @@ function Dashboard() {
         .sort((a, b) => b - a)
         .map((year) => year.toString()),
     ],
-    [myGroups.filters.year]
+    [myGroups.filters.year],
   );
 
   const handleYearChange = (value: string | undefined) => {
@@ -174,7 +175,7 @@ function Dashboard() {
             >
               {LANG_LIST.map((lang) => (
                 <Option key={lang} value={lang}>
-                  {lang}
+                  {capitalize(lang)}
                 </Option>
               ))}
             </AsyncSelect>

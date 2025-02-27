@@ -30,6 +30,7 @@ interface Group {
   student_amount: number;
   instructor: Instructor;
   staffs: Staffs[];
+  language: string;
 }
 
 export interface Filters {
