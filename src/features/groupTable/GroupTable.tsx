@@ -29,6 +29,7 @@ import { GROUP_ADMIN } from "../../constants/constants";
 import { useAppSelector } from "../../hooks/store";
 import { getAvailableGroupsStatus } from "../availableGroupList/redux/AvailableGroupListSlice";
 import { Fragment } from "react";
+import { capitalize } from "lodash";
 
 interface Props {
   userId?: string;
@@ -155,6 +156,16 @@ function GroupTable({
                             {group.semester}
                           </Typography>
                         </td>
+                        <td className={`p-4  ${classes}`}>
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {capitalize(group.language)}
+                          </Typography>
+                        </td>
+
                         <td className={`p-4 ${classes}`}>
                           <Typography
                             variant="small"
