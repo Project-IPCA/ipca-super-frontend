@@ -22,6 +22,7 @@ export interface LabItem {
   exercise_id: string;
   item_id: string;
   name: string;
+  can_select: boolean;
 }
 
 interface LabList {
@@ -35,7 +36,7 @@ interface Chapter {
   group_id: string;
   group_selected_labs: GroupSelectedLabs;
   lab_list: LabList;
-  language : string;
+  language: string;
 }
 
 interface ExercisesPoolState {
