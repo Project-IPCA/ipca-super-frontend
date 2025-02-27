@@ -54,7 +54,7 @@
       "filter": {
         "year": "Year",
         "all": "All",
-        "language" : "Language"
+        "language": "Language"
       }
     },
     "group_form": {
@@ -222,6 +222,9 @@
     "exercise_pool": {
       "title": "Chapter",
       "level": "Level",
+      "error": {
+        "can_submit": "The code for this problem is incorrect."
+      },
       "button": {
         "update": "Update",
         "add_exercise": "Add Exercise"

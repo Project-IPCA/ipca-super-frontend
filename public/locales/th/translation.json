@@ -56,7 +56,7 @@
       "filter": {
         "year": "ปีการศึกษา",
         "all": "ทั้งหมด",
-        "language" : "ภาษา"
+        "language": "ภาษา"
       }
     },
     "group_form": {
@@ -224,6 +224,9 @@
     "exercise_pool": {
       "title": "บทที่",
       "level": "ระดับ",
+      "error": {
+        "can_submit": "โค้ดในข้อนี้ไม่ถูกต้อง"
+      },
       "button": {
         "update": "อัพเดท",
         "add_exercise": "เพิ่มโจทย์"
