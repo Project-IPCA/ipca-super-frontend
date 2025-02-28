@@ -51,6 +51,7 @@ export interface GroupData {
   staffs: Staff[];
   student_amount: number;
   time_end: string;
+  language: string;
   time_start: string;
   year: number;
 }

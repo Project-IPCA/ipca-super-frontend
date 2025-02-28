@@ -40,6 +40,7 @@ import { ConfirmModal } from "../../components";
 import { useTranslation } from "react-i18next";
 import { LANGUAGE, PYTHON_LANG } from "../../constants/constants";
 import { CodeBracketIcon } from "@heroicons/react/24/outline";
+import { capitalize } from "lodash";
 
 function ExerciseInfo() {
   const { t, i18n } = useTranslation();
@@ -182,13 +183,14 @@ function ExerciseInfo() {
             <Typography
               as="div"
               variant="h3"
-              className="h-6 w-32 rounded-full bg-gray-300 "
+              className="h-6 w-44 rounded-full bg-gray-300 "
             >
               &nbsp;
             </Typography>
           ) : (
             <Typography variant="h3">
-              {chapterIdx} {exercisesPool?.chapter_name}
+              {chapterIdx} {exercisesPool?.chapter_name} (
+              {capitalize(exercisesPool?.language)})
             </Typography>
           )}
         </div>

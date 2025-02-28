@@ -12,6 +12,7 @@ import { ExerciseForm } from "../exerciseForm";
 import { showToast } from "../../utils/toast";
 import { useTranslation } from "react-i18next";
 import ExerciseCardSkeleton from "./components/ExerciseCardSkeleton";
+import { capitalize } from "lodash";
 
 export interface FormUseData {
   chapterId: string;
@@ -91,7 +92,8 @@ function ExercisesPool() {
             </Typography>
           ) : (
             <Typography variant="h3">
-              {chapterIdx} {exercisesPool?.chapter_name}
+              {chapterIdx} {exercisesPool?.chapter_name} (
+              {capitalize(exercisesPool?.language)})
             </Typography>
           )}
         </div>
