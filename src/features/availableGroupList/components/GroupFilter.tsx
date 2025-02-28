@@ -2,9 +2,13 @@ import { Option, Select } from "@material-tailwind/react";
 import { AsyncSelect } from "../../../components";
 import { FilterForm, FilterKey } from "../AvailableGroupList";
 import { Filters } from "../redux/AvailableGroupListSlice";
-import { ALL_VALUE } from "../constants";
 import { useEffect, useMemo } from "react";
-import { DAY_OF_WEEK } from "../../../constants/constants";
+import {
+  ALL_LABEL,
+  ALL_VALUE,
+  DAY_OF_WEEK,
+  PROGRAMMING_LANG_OPTIONS,
+} from "../../../constants/constants";
 import { useTranslation } from "react-i18next";
 import { getDayFromDayEnum } from "../../../utils";
 import { useAppDispatch, useAppSelector } from "../../../hooks/store";
@@ -61,8 +65,33 @@ function GroupFilter({ filters, filterForm, handleChangeForm }: Props) {
 
   const classDateOptions = [ALL_VALUE, ...DAY_OF_WEEK];
 
+  const langOptions = [
+    { label: ALL_LABEL, value: ALL_VALUE },
+    ...PROGRAMMING_LANG_OPTIONS,
+  ];
+
   return (
     <div className="flex justify-start items-center pb-4 w-full gap-x-3 lg:flex-row flex-col gap-y-4">
+      <AsyncSelect
+        label={t("feature.available_group_list.filter.language")}
+        value={filterForm.language}
+        onChange={(val) => {
+          if (val) {
+            handleChangeForm("language", val);
+          }
+        }}
+        containerProps={{
+          className: "!min-w-28 ",
+        }}
+      >
+        {langOptions.map((option) => (
+          <Option key={option.value} value={option.value}>
+            {option.value === ALL_VALUE
+              ? t("feature.available_group_list.filter.all")
+              : option.label}
+          </Option>
+        ))}
+      </AsyncSelect>
       <AsyncSelect
         label={t("feature.available_group_list.filter.instructor")}
         value={filterForm.instructorId}

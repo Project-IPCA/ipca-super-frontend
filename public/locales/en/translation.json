@@ -54,6 +54,7 @@
       },
       "filter": {
         "year": "Year",
+        "prog_lang": "Language",
         "all": "All",
         "language": "Language"
       }
@@ -97,7 +98,8 @@
         "year": "Year",
         "semester": "Semester",
         "class_date": "Class Date",
-        "all": "All"
+        "all": "All",
+        "language": "Language"
       }
     },
     "admin_list": {

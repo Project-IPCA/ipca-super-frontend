@@ -70,11 +70,12 @@ const initialState: AvailableGroupState = {
 };
 
 interface AvailableGroupRequest {
-  instructorId: string | null;
-  staffIds: string | null;
-  year: string | null;
-  semester: string | null;
-  day: string | null;
+  instructorId?: string;
+  staffIds?: string;
+  year?: string;
+  semester?: string;
+  day?: string;
+  language?: string;
   page: number;
 }
 
