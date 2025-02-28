@@ -37,11 +37,7 @@ interface Props {
 function GroupDetail({ groupId }: Props) {
   const [searchParams, setSearchParams] = useSearchParams();
   const { permission } = usePermission();
-  const defaultTab =
-    searchParams.get("tab") ||
-    isAcceptedPermission(permission || [], [DASHBOARD_ADMIN])
-      ? tabsValue.OVERVIEW
-      : tabsValue.EXERCISES;
+  const defaultTab = searchParams.get("tab") || tabsValue.EXERCISES;
   const [activeTab, setActiveTab] = useState<string>(defaultTab);
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -75,8 +71,8 @@ function GroupDetail({ groupId }: Props) {
     if (tab && Object.values(tabsValue).includes(tab)) {
       setActiveTab(tab);
     } else {
-      setSearchParams({ tab: tabsValue.OVERVIEW }, { replace: true });
-      setActiveTab(tabsValue.OVERVIEW);
+      setSearchParams({ tab: tabsValue.EXERCISES }, { replace: true });
+      setActiveTab(tabsValue.EXERCISES);
     }
   }, [searchParams]);
 
