@@ -23,13 +23,15 @@ import {
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { getDayFromDayEnum } from "../../utils";
+import { getDayFromDayEnum, isAcceptedPermission } from "../../utils";
 import RoleProtection from "../../components/roleProtection/RoleProtection";
-import { GROUP_ADMIN } from "../../constants/constants";
+import { DASHBOARD_ADMIN, GROUP_ADMIN } from "../../constants/constants";
 import { useAppSelector } from "../../hooks/store";
 import { getAvailableGroupsStatus } from "../availableGroupList/redux/AvailableGroupListSlice";
 import { Fragment } from "react";
 import { capitalize } from "lodash";
+import { tabsValue } from "../groupDetail/constants";
+import usePermission from "../../hooks/usePermission";
 
 interface Props {
   userId?: string;
@@ -57,6 +59,7 @@ function GroupTable({
   const availableGroupFetching = useAppSelector(getAvailableGroupsStatus);
   const myGroupFetching = useAppSelector(getMyGroupsStatus);
   const isFetching = availableGroupFetching || myGroupFetching;
+  const { permission } = usePermission();
 
   const formatStaffNames = (staffs: Staffs[]): string => {
     const staffList = staffs
@@ -254,7 +257,9 @@ function GroupTable({
                               <MenuItem
                                 className="flex justify-start items-center gap-2"
                                 onClick={() =>
-                                  navigate(`/group/${group.group_id}`)
+                                  navigate(
+                                    `/group/${group.group_id}?tab=${isAcceptedPermission(permission || [], [DASHBOARD_ADMIN]) ? tabsValue.OVERVIEW : tabsValue.EXERCISES}`,
+                                  )
                                 }
                               >
                                 <EyeIcon className="w-5 h-5" />
