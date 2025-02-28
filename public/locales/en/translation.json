@@ -226,7 +226,7 @@
       "title": "Chapter",
       "level": "Level",
       "error": {
-        "can_submit": "The code for this problem is incorrect."
+        "can_submit": "Unable to select this problem because the code may be incorrect or the problem doesn't have a test case yet."
       },
       "button": {
         "update": "Update",
