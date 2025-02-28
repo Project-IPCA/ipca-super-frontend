@@ -7,15 +7,17 @@ import {
 } from "./redux/AvailableGroupListSlice";
 import { GroupTable } from "../groupTable";
 import GroupFilter from "./components/GroupFilter";
-import { ALL_VALUE } from "./constants";
 import {
   fetchProfile,
   getProfile,
 } from "../profileForm/redux/profileFormSlice";
 import { GroupForm } from "../groupForm";
 import { useTranslation } from "react-i18next";
+import { ALL_VALUE } from "../../constants/constants";
+import { validateQuery } from "../../utils";
 
 export interface FilterForm {
+  language: string;
   instructorId: string;
   year: string;
   semester: string;
@@ -24,6 +26,7 @@ export interface FilterForm {
 }
 
 export type FilterKey =
+  | "language"
   | "instructorId"
   | "year"
   | "semester"
@@ -40,6 +43,7 @@ function AvailableGroupList() {
   const [groupSelected, setGroupSelected] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState<boolean>(false);
   const [filterForm, setFilterForm] = useState<FilterForm>({
+    language: ALL_VALUE,
     instructorId: ALL_VALUE,
     year: ALL_VALUE,
     semester: ALL_VALUE,
@@ -74,11 +78,6 @@ function AvailableGroupList() {
       initialized.current = true;
       dispatch(
         fetchAvailableGroups({
-          instructorId: null,
-          staffIds: null,
-          year: null,
-          semester: null,
-          day: null,
           page: 1,
         }),
       );
@@ -101,15 +100,15 @@ function AvailableGroupList() {
     }
   };
 
-  const getFormValue = (value: string) => (value === ALL_VALUE ? null : value);
   useEffect(() => {
     dispatch(
       fetchAvailableGroups({
-        instructorId: getFormValue(filterForm.instructorId),
-        staffIds: getFormValue(filterForm.staffs),
-        year: getFormValue(filterForm.year),
-        semester: getFormValue(filterForm.semester),
-        day: getFormValue(filterForm.classDate),
+        instructorId: validateQuery(filterForm.instructorId),
+        staffIds: validateQuery(filterForm.staffs),
+        year: validateQuery(filterForm.year),
+        semester: validateQuery(filterForm.semester),
+        day: validateQuery(filterForm.classDate),
+        language: validateQuery(filterForm.language),
         page: page,
       }),
     );

@@ -196,3 +196,6 @@ export const PROGRAMMING_LANG_OPTIONS = [
   { label: "C", value: "C" },
   { label: "Python", value: "PYTHON" },
 ];
+
+export const ALL_VALUE = "ALL";
+export const ALL_LABEL = "All";
