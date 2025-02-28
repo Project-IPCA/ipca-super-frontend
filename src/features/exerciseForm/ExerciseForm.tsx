@@ -44,6 +44,7 @@ import { showToast } from "../../utils/toast";
 import { useTranslation } from "react-i18next";
 import i18n from "../../locales";
 import { PYTHON_LANG } from "../../constants/constants";
+import { capitalize } from "lodash";
 
 interface Props {
   open: boolean;
@@ -626,7 +627,8 @@ function ExerciseForm({
           <Typography variant="h4" color="blue-gray">
             {exerciseId
               ? t("feature.exercise_form.title.edit")
-              : t("feature.exercise_form.title.add")}
+              : t("feature.exercise_form.title.add")}{" "}
+            ({capitalize(language)})
           </Typography>
           <Typography className="mt-1 font-normal text-gray-600">
             {`${t("feature.exercise_form.desc")} ${formUseData.level}`}

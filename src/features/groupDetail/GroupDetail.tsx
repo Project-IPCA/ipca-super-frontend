@@ -28,6 +28,7 @@ import { getDashboardStatus } from "../dashboard/redux/DashboardSlice";
 import { getGroupDashboardStatus } from "../groupDashboard/redux/groupDashboardSlice";
 import { getProfileStatus } from "../profileForm/redux/profileFormSlice";
 import { getGroupStudentsStatus } from "../groupStudents/redux/GroupStudentsSlice";
+import { capitalize } from "lodash";
 
 interface Props {
   groupId: string;
@@ -123,12 +124,15 @@ function GroupDetail({ groupId }: Props) {
             <Typography
               as="div"
               variant="h3"
-              className="h-6 w-32 rounded-full bg-gray-300 "
+              className="h-6 w-44 rounded-full bg-gray-300 "
             >
               &nbsp;
             </Typography>
           ) : (
-            <Typography variant="h3">{groupDetail?.group_no || ""}</Typography>
+            <Typography variant="h3">
+              {groupDetail?.group_no || ""} (
+              {capitalize(groupDetail?.language || "")})
+            </Typography>
           )}
         </div>
       </div>

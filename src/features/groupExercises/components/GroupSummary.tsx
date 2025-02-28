@@ -122,6 +122,8 @@ function GroupSummary({ groupData }: Props) {
     }
   };
 
+  console.log(groupData);
+
   return (
     <>
       <ConfirmModal
@@ -161,10 +163,16 @@ function GroupSummary({ groupData }: Props) {
                   label={t("feature.group_exercises.label.group_name")}
                   value={groupData?.name}
                 />
-                <LabelValueText
-                  label={t("feature.group_exercises.label.group_no")}
-                  value={groupData?.group_no.toString()}
-                />
+                <div className="flex justify-start flex-wrap items-center gap-x-4">
+                  <LabelValueText
+                    label={t("feature.group_exercises.label.group_no")}
+                    value={groupData?.group_no.toString()}
+                  />
+                  <LabelValueText
+                    label={t("feature.group_exercises.label.language")}
+                    value={capitalize(groupData?.language)}
+                  />
+                </div>
                 <div className="flex justify-start flex-wrap items-center gap-x-4">
                   <LabelValueText
                     label={t("feature.group_exercises.label.year")}

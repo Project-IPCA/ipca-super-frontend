@@ -166,7 +166,8 @@
         "all_stu": "All Students",
         "online_stu": "Online Students",
         "allow_login": "Allow login",
-        "allow_profile": "Allow upload profile"
+        "allow_profile": "Allow upload profile",
+        "language": "Language"
       },
       "button": {
         "delete_group": "Delete Group",
