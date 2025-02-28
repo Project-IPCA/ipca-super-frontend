@@ -36,11 +36,15 @@ interface Props {
 
 function GroupDetail({ groupId }: Props) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const defaultTab = searchParams.get("tab") || tabsValue.OVERVIEW;
+  const { permission } = usePermission();
+  const defaultTab =
+    searchParams.get("tab") ||
+    isAcceptedPermission(permission || [], [DASHBOARD_ADMIN])
+      ? tabsValue.OVERVIEW
+      : tabsValue.EXERCISES;
   const [activeTab, setActiveTab] = useState<string>(defaultTab);
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { permission } = usePermission();
   const groupDetail = useAppSelector(getGroupExercise);
   const dashboardFetching = useAppSelector(getDashboardStatus);
   const groupDashboardFetching = useAppSelector(getGroupDashboardStatus);
