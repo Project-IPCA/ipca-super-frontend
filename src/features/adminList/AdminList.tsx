@@ -1,5 +1,5 @@
 import { Button, Typography } from "@material-tailwind/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AdminForm } from "../adminForm";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import { fetchStaffs, getStaffs } from "../groupForm/redux/groupFormSlice";
@@ -24,7 +24,6 @@ function AdminList() {
   const [adminOpen, setAdminOpen] = useState<boolean>(false);
   const selectAdmin = useAppSelector(getSelectAdmin);
   const isAdmin = selectAdmin?.isAdmin;
-  const initialized = useRef(false);
   const { role } = usePermission();
   const { t } = useTranslation();
 
@@ -41,11 +40,8 @@ function AdminList() {
   };
 
   useEffect(() => {
-    if (!initialized.current) {
-      initialized.current = true;
-      dispatch(fetchStaffs(role == ROLE.beyonder ? null : "1"));
-    }
-  }, [dispatch, initialized]);
+    dispatch(fetchStaffs(role == ROLE.beyonder ? null : "1"));
+  }, [role]);
 
   const isAccessFeat = () => {
     return role === ROLE.beyonder || role === ROLE.supervisor;
