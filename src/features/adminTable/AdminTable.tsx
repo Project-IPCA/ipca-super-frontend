@@ -1,4 +1,14 @@
-import { Card, Typography } from "@material-tailwind/react";
+import {
+  Card,
+  Chip,
+  IconButton,
+  Menu,
+  MenuHandler,
+  MenuItem,
+  MenuList,
+  Typography,
+} from "@material-tailwind/react";
+import { EllipsisVerticalIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
 import { getGroupFormStatus, Staffs } from "../groupForm/redux/groupFormSlice";
 import { useTranslation } from "react-i18next";
 import {
@@ -6,24 +16,43 @@ import {
   ROLE,
   ROLE_DISPLAY_2_LANGUAGE,
 } from "../../constants/constants";
-import { useAppSelector } from "../../hooks/store";
+import { useAppDispatch, useAppSelector } from "../../hooks/store";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import { setSelectAdmin } from "../adminList/redux/AdminListSlice";
 
 interface Props {
   staffs: Staffs[];
+  showDeleteBtn: boolean;
+  handleOpenAdmin: () => void;
 }
 
-function AdminTable({ staffs }: Props) {
+function AdminTable({ staffs, showDeleteBtn, handleOpenAdmin }: Props) {
+  const dispatch = useAppDispatch();
   const { i18n } = useTranslation();
   const { t } = useTranslation();
   const isFetching = useAppSelector(getGroupFormStatus);
   const tableHeaders = Array.isArray(
-    t("feature.admin_table.th_list", {
-      returnObjects: true,
-    }),
-  )
-    ? (t("feature.admin_table.th_list", {
+    t(
+      `${
+        showDeleteBtn
+          ? "feature.admin_table.beyonder_th_list"
+          : "feature.admin_table.th_list"
+      }`,
+      {
         returnObjects: true,
-      }) as string[])
+      }
+    )
+  )
+    ? (t(
+        `${
+          showDeleteBtn
+            ? "feature.admin_table.beyonder_th_list"
+            : "feature.admin_table.th_list"
+        }`,
+        {
+          returnObjects: true,
+        }
+      ) as string[])
     : [];
 
   const isThLang = () => {
@@ -57,6 +86,11 @@ function AdminTable({ staffs }: Props) {
           ? ROLE_DISPLAY_2_LANGUAGE.invalid.th
           : ROLE_DISPLAY_2_LANGUAGE.invalid.en;
     }
+  };
+
+  const onDeleteAdmin = (staff: Staffs) => {
+    dispatch(setSelectAdmin(staff));
+    handleOpenAdmin();
   };
 
   return (
@@ -136,6 +170,53 @@ function AdminTable({ staffs }: Props) {
                           {getRoleDisplay(staff.role)}
                         </Typography>
                       </td>
+                      {showDeleteBtn ? (
+                        <>
+                          <td className={`p-4 ${classes}`}>
+                            <Chip
+                              className="w-fit"
+                              variant="ghost"
+                              color={staff.active ? "green" : "red"}
+                              size="sm"
+                              value={
+                                staff.active
+                                  ? t("feature.admin_table.stats.active")
+                                  : t("feature.admin_table.stats.inactive")
+                              }
+                            />
+                          </td>
+                          <td className={`p-4 ${classes}`}>
+                            <Menu placement="bottom-end">
+                              <MenuHandler>
+                                <IconButton variant="text">
+                                  <EllipsisVerticalIcon className="w-5 h-5" />
+                                </IconButton>
+                              </MenuHandler>
+                              <MenuList>
+                                <MenuItem
+                                  className="flex justify-start items-center gap-2"
+                                  onClick={() => onDeleteAdmin(staff)}
+                                >
+                                  {staff.active ? (
+                                    <TrashIcon className="w-5 h-5" />
+                                  ) : (
+                                    <ArrowPathIcon className="w-5 h-5" />
+                                  )}
+                                  {t(
+                                    `feature.admin_table.action.${
+                                      staff.active == true
+                                        ? "delete"
+                                        : "restore"
+                                    }`
+                                  )}
+                                </MenuItem>
+                              </MenuList>
+                            </Menu>
+                          </td>
+                        </>
+                      ) : (
+                        ""
+                      )}
                     </tr>
                   );
                 })}
