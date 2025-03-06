@@ -121,10 +121,37 @@
           "Exercise Admin",
           "Dashboard Admin"
         ]
+      },
+      "action_modal": {
+        "delete": {
+          "title": "Delete Admin?",
+          "msg1": "Are you sure you want to delete admin",
+          "confirm": "Delete"
+        },
+        "restore": {
+          "title": "Restore Admin?",
+          "msg1": "Are you sure you want to restore admin",
+          "confirm": "Restore"
+        }
       }
     },
     "admin_table": {
-      "th_list": ["First Name", "Last Name", "Role"]
+      "th_list": ["First Name", "Last Name", "Role"],
+      "beyonder_th_list": [
+        "First Name",
+        "Last Name",
+        "Role",
+        "Status",
+        "Action"
+      ],
+      "stats": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "action": {
+        "delete": "Delete",
+        "restore": "Restore"
+      }
     },
     "admin_form": {
       "title": "Create Admin",

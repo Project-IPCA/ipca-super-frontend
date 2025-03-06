@@ -57,7 +57,7 @@ function StudentTable({
   const tableHeadersP1 = Array.isArray(
     t("feature.group_students.th_list.part1", {
       returnObjects: true,
-    }),
+    })
   )
     ? (t("feature.group_students.th_list.part1", {
         returnObjects: true,
@@ -82,7 +82,9 @@ function StudentTable({
   const getTableHeader = () => {
     const labs = labInfo.map(
       (lab) =>
-        `${t("feature.group_students.th_list.lab")} ${lab.chapter_idx} (${lab.full_mark})`,
+        `${t("feature.group_students.th_list.lab")} ${lab.chapter_idx} (${
+          lab.full_mark
+        })`
     );
     return [...tableHeadersP1, ...labs, ...tableHeadersP2];
   };
@@ -97,7 +99,9 @@ function StudentTable({
                 {getTableHeader().map((head, index) => (
                   <th
                     key={head}
-                    className={`border-b border-blue-gray-100 bg-blue-gray-50 p-4 ${index === 3 ? "sticky left-0 z-10" : ""}`}
+                    className={`border-b border-blue-gray-100 bg-blue-gray-50 p-4 ${
+                      index === 3 ? "sticky left-0 z-10" : ""
+                    }`}
                   >
                     <Typography
                       variant="small"
@@ -146,6 +150,7 @@ function StudentTable({
                       </td>
                       <td className={`p-4 ${classes}`}>
                         <Chip
+                          className="w-fit"
                           variant="ghost"
                           color={
                             onlineStudent.includes(student.stu_id)
@@ -213,7 +218,7 @@ function StudentTable({
                               {value}
                             </Typography>
                           </td>
-                        ),
+                        )
                       )}
                       <td className={`p-4 ${classes}`}>
                         <Typography
@@ -223,7 +228,7 @@ function StudentTable({
                         >
                           {Object.values(student.chapter_score).reduce(
                             (total, value) => total + value,
-                            0,
+                            0
                           )}
                         </Typography>
                       </td>

@@ -83,7 +83,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
       .required(i18n.t("feature.group_form.error.group_number.required"))
       .matches(
         /^[0-9]+$/,
-        i18n.t("feature.group_form.error.group_number.number"),
+        i18n.t("feature.group_form.error.group_number.number")
       ),
     dayOfWeek: yup
       .string()
@@ -104,7 +104,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
         yup.object({
           value: yup.string().required(),
           label: yup.string().required(),
-        }),
+        })
       )
       .required(),
     supervisor: yup.string().when("role", {
@@ -177,7 +177,9 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
   useEffect(() => {
     if (groupId && groupInfo[groupId]) {
       const newGroupInfo = groupInfo[groupId];
-      const classTime = `${formatTime(newGroupInfo.time_start)} - ${formatTime(newGroupInfo.time_end)}`;
+      const classTime = `${formatTime(newGroupInfo.time_start)} - ${formatTime(
+        newGroupInfo.time_end
+      )}`;
       const staffs = newGroupInfo.staffs.map((staff) => ({
         value: staff.staff_id,
         label: `${staff.f_name} ${staff.l_name}`,
@@ -200,48 +202,42 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
     if (!initialized.current) {
       initialized.current = true;
       dispatch(fetchDepartments());
-      dispatch(fetchStaffs());
+      dispatch(fetchStaffs("1"));
       dispatch(fetchSupervisors());
     }
   }, [dispatch, initialized]);
 
   const staffsOptions = useMemo(
     () =>
-      staffs.reduce(
-        (acc, staff) => {
-          if (staff.staff_id !== userId && staff.staff_id !== supervisorsForm) {
-            acc.push({
-              value: staff.staff_id,
-              label: `${staff.f_name} ${staff.l_name}`,
-            });
-          }
-          return acc;
-        },
-        [] as { value: string; label: string }[],
-      ),
-    [staffs, userId, supervisorsForm],
+      staffs.reduce((acc, staff) => {
+        if (staff.staff_id !== userId && staff.staff_id !== supervisorsForm) {
+          acc.push({
+            value: staff.staff_id,
+            label: `${staff.f_name} ${staff.l_name}`,
+          });
+        }
+        return acc;
+      }, [] as { value: string; label: string }[]),
+    [staffs, userId, supervisorsForm]
   );
 
   const supervisorsOptions = useMemo(() => {
     const staffSet = new Set(staffsForm.map((staff) => staff.value));
 
-    return supervisors.reduce(
-      (acc, sup) => {
-        if (!staffSet.has(sup.supervisor_id)) {
-          acc.push({
-            value: sup.supervisor_id,
-            label: `${sup.f_name} ${sup.l_name}`,
-          });
-        }
-        return acc;
-      },
-      [] as { value: string; label: string }[],
-    );
+    return supervisors.reduce((acc, sup) => {
+      if (!staffSet.has(sup.supervisor_id)) {
+        acc.push({
+          value: sup.supervisor_id,
+          label: `${sup.f_name} ${sup.l_name}`,
+        });
+      }
+      return acc;
+    }, [] as { value: string; label: string }[]);
   }, [supervisors, staffsForm]);
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: groupId ? 5 : 2 }, (_, i) =>
-    (currentYear + 1 - i).toString(),
+    (currentYear + 1 - i).toString()
   );
 
   useEffect(() => {
@@ -277,7 +273,7 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
     };
     if (groupId) {
       const resultAction = await dispatch(
-        updateStudentGroup({ request: request, groupId: groupId }),
+        updateStudentGroup({ request: request, groupId: groupId })
       );
       if (updateStudentGroup.fulfilled.match(resultAction)) {
         showToast({
@@ -388,7 +384,11 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
               size="lg"
               placeholder={t("feature.group_form.label.group_name")}
               error={!!errors.groupName}
-              className={`  ${errors.groupName ? "!border-t-red-500 focus:!border-t-red-500" : "focus:!border-t-gray-900 !border-t-blue-gray-200"} `}
+              className={`  ${
+                errors.groupName
+                  ? "!border-t-red-500 focus:!border-t-red-500"
+                  : "focus:!border-t-gray-900 !border-t-blue-gray-200"
+              } `}
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
@@ -418,7 +418,11 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
                 size="lg"
                 placeholder={t("feature.group_form.label.group_number")}
                 error={!!errors.groupNumber}
-                className={`  ${errors.groupNumber ? "!border-t-red-500 focus:!border-t-red-500" : "focus:!border-t-gray-900 !border-t-blue-gray-200"} `}
+                className={`  ${
+                  errors.groupNumber
+                    ? "!border-t-red-500 focus:!border-t-red-500"
+                    : "focus:!border-t-gray-900 !border-t-blue-gray-200"
+                } `}
                 labelProps={{
                   className: "before:content-none after:content-none",
                 }}

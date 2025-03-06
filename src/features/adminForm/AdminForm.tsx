@@ -127,7 +127,7 @@ function AdminForm({ open, onClose }: Props) {
       });
     }
     reset(defaultForm);
-    dispatch(fetchStaffs());
+    dispatch(fetchStaffs(role == ROLE.beyonder ? null : "1"));
     if (!isFetching) {
       onClose();
     }
