@@ -178,7 +178,6 @@ function GroupForm({ open, onClose, groupId = null }: Props) {
   useEffect(() => {
     if (groupId && groupInfo[groupId]) {
       const newGroupInfo = groupInfo[groupId];
-      console.log(newGroupInfo);
       const classTime = `${formatTime(newGroupInfo.time_start)} - ${formatTime(
         newGroupInfo.time_end,
       )}`;

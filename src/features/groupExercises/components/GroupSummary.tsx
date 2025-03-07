@@ -122,8 +122,6 @@ function GroupSummary({ groupData }: Props) {
     }
   };
 
-  console.log(groupData);
-
   return (
     <>
       <ConfirmModal
