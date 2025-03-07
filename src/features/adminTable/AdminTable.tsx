@@ -1,4 +1,14 @@
-import { Card, Typography } from "@material-tailwind/react";
+import {
+  Card,
+  Chip,
+  IconButton,
+  Menu,
+  MenuHandler,
+  MenuItem,
+  MenuList,
+  Typography,
+} from "@material-tailwind/react";
+import { EllipsisVerticalIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
 import { getGroupFormStatus, Staffs } from "../groupForm/redux/groupFormSlice";
 import { useTranslation } from "react-i18next";
 import {
@@ -6,24 +16,43 @@ import {
   ROLE,
   ROLE_DISPLAY_2_LANGUAGE,
 } from "../../constants/constants";
-import { useAppSelector } from "../../hooks/store";
+import { useAppDispatch, useAppSelector } from "../../hooks/store";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import { setSelectAdmin } from "../adminList/redux/AdminListSlice";
 
 interface Props {
   staffs: Staffs[];
+  showDeleteBtn: boolean;
+  handleOpenAdmin: () => void;
 }
 
-function AdminTable({ staffs }: Props) {
+function AdminTable({ staffs, showDeleteBtn, handleOpenAdmin }: Props) {
+  const dispatch = useAppDispatch();
   const { i18n } = useTranslation();
   const { t } = useTranslation();
   const isFetching = useAppSelector(getGroupFormStatus);
   const tableHeaders = Array.isArray(
-    t("feature.admin_table.th_list", {
-      returnObjects: true,
-    }),
-  )
-    ? (t("feature.admin_table.th_list", {
+    t(
+      `${
+        showDeleteBtn
+          ? "feature.admin_table.beyonder_th_list"
+          : "feature.admin_table.th_list"
+      }`,
+      {
         returnObjects: true,
-      }) as string[])
+      }
+    )
+  )
+    ? (t(
+        `${
+          showDeleteBtn
+            ? "feature.admin_table.beyonder_th_list"
+            : "feature.admin_table.th_list"
+        }`,
+        {
+          returnObjects: true,
+        }
+      ) as string[])
     : [];
 
   const isThLang = () => {
@@ -59,6 +88,11 @@ function AdminTable({ staffs }: Props) {
     }
   };
 
+  const onDeleteAdmin = (staff: Staffs) => {
+    dispatch(setSelectAdmin(staff));
+    handleOpenAdmin();
+  };
+
   return (
     <>
       <Card className="h-full w-full  shadow-none border-[1.5px]">
@@ -85,9 +119,9 @@ function AdminTable({ staffs }: Props) {
             {isFetching ? (
               <tbody>
                 {[...Array(10)].map((_, rIndex) => (
-                  <tr key={rIndex} className="even:bg-blue-gray-50/50 ">
+                  <tr key={rIndex}>
                     {[...Array(tableHeaders.length)].map((_, cIndex) => (
-                      <td className="text-center p-5">
+                      <td className="text-center p-5" key={cIndex}>
                         <Typography
                           key={`${rIndex}${cIndex}`}
                           as="div"
@@ -102,37 +136,90 @@ function AdminTable({ staffs }: Props) {
               </tbody>
             ) : (
               <tbody>
-                {staffs.map((staff) => (
-                  <tr key={staff.staff_id} className="even:bg-blue-gray-50/50 ">
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {staff.f_name}
-                      </Typography>
-                    </td>
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {staff.l_name}
-                      </Typography>
-                    </td>
-                    <td className="p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {getRoleDisplay(staff.role)}
-                      </Typography>
-                    </td>
-                  </tr>
-                ))}
+                {staffs.map((staff, index) => {
+                  const classes =
+                    index === staffs.length - 1
+                      ? ""
+                      : "border-b border-blue-gray-50";
+                  return (
+                    <tr key={staff.staff_id}>
+                      <td className={`p-4 ${classes}`}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {staff.f_name}
+                        </Typography>
+                      </td>
+                      <td className={`p-4 ${classes}`}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {staff.l_name}
+                        </Typography>
+                      </td>
+                      <td className={`p-4 ${classes}`}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {getRoleDisplay(staff.role)}
+                        </Typography>
+                      </td>
+                      {showDeleteBtn ? (
+                        <>
+                          <td className={`p-4 ${classes}`}>
+                            <Chip
+                              className="w-fit"
+                              variant="ghost"
+                              color={staff.active ? "green" : "red"}
+                              size="sm"
+                              value={
+                                staff.active
+                                  ? t("feature.admin_table.stats.active")
+                                  : t("feature.admin_table.stats.inactive")
+                              }
+                            />
+                          </td>
+                          <td className={`p-4 ${classes}`}>
+                            <Menu placement="bottom-end">
+                              <MenuHandler>
+                                <IconButton variant="text">
+                                  <EllipsisVerticalIcon className="w-5 h-5" />
+                                </IconButton>
+                              </MenuHandler>
+                              <MenuList>
+                                <MenuItem
+                                  className="flex justify-start items-center gap-2"
+                                  onClick={() => onDeleteAdmin(staff)}
+                                >
+                                  {staff.active ? (
+                                    <TrashIcon className="w-5 h-5" />
+                                  ) : (
+                                    <ArrowPathIcon className="w-5 h-5" />
+                                  )}
+                                  {t(
+                                    `feature.admin_table.action.${
+                                      staff.active == true
+                                        ? "delete"
+                                        : "restore"
+                                    }`
+                                  )}
+                                </MenuItem>
+                              </MenuList>
+                            </Menu>
+                          </td>
+                        </>
+                      ) : (
+                        ""
+                      )}
+                    </tr>
+                  );
+                })}
               </tbody>
             )}
           </table>

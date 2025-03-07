@@ -36,6 +36,7 @@ export interface Group {
   student_amount: number;
   instructor: Instructor;
   staffs: Staffs[];
+  language: string;
 }
 
 interface MyGroups {
@@ -71,13 +72,18 @@ const initialState: MyGroupState = {
 export const fetchMyGroups = createAsyncThunk(
   "myGroups/fetchMyGroups",
   async (
-    { year, page }: { year: string; page: number },
+    {
+      year,
+      language,
+      page,
+    }: { year?: string; language?: string; page: number },
     { rejectWithValue },
   ) => {
     try {
       const response = await axiosInstance.get(`/supervisor/my_groups`, {
         params: {
           year: year,
+          language: language,
           page: page,
           pageSize: 10,
         },

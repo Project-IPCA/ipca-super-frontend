@@ -17,6 +17,7 @@ import {
   fetchRolePermission,
   getRolePermission,
   getRolePermissionError,
+  getUpdatePermStatus,
   RolePermission,
   updateRolePermission,
 } from "../redux/AdminListSlice";
@@ -34,6 +35,7 @@ function ConfigurePermissionsForm({ open, handleOpen }: Props) {
   const error = useAppSelector(getRolePermissionError);
   const rolePermissions = useAppSelector(getRolePermission);
   const initialized = useRef(false);
+  const isFetching = useAppSelector(getUpdatePermStatus);
 
   const [formData, setFormData] = useState<RolePermission[]>([
     {
@@ -46,11 +48,29 @@ function ConfigurePermissionsForm({ open, handleOpen }: Props) {
     },
   ]);
 
+  const [tempFormData, setTempFormData] = useState<RolePermission[]>([
+    {
+      role: ROLE.ta,
+      permission: [],
+    },
+    {
+      role: ROLE.executive,
+      permission: [],
+    },
+  ]);
+
+  const [isDirty, setIsDirty] = useState<boolean>(false);
+
   useEffect(() => {
     if (rolePermissions && rolePermissions.length > 0) {
       setFormData(rolePermissions);
+      setTempFormData(rolePermissions);
     }
   }, [rolePermissions, setFormData]);
+
+  useEffect(() => {
+    setIsDirty(JSON.stringify(formData) !== JSON.stringify(tempFormData));
+  }, [formData, tempFormData]);
 
   const handleSetRolePermissions = (role: string, perm: string) => {
     const selectedRoleIdx = formData.findIndex((r) => r.role === role);
@@ -131,7 +151,12 @@ function ConfigurePermissionsForm({ open, handleOpen }: Props) {
       </DialogBody>
 
       <DialogFooter>
-        <Button className="ml-auto" onClick={() => onSubmit()}>
+        <Button
+          className="ml-auto"
+          onClick={() => onSubmit()}
+          disabled={!isDirty}
+          loading={isFetching}
+        >
           {t("common.button.submit")}
         </Button>
       </DialogFooter>

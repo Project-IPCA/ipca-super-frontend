@@ -63,11 +63,13 @@ function GroupDashboard({ groupId }: Props) {
         groupId: groupId,
         status: null,
         year: null,
+        language : null
       };
       dispatch(fetchTotalStudents(stuRequest));
       const basicRequest: FetchTotalRequest = {
         groupId: groupId,
         year: null,
+        language : null
       };
       dispatch(fetchTotalSubmissions(basicRequest));
       dispatch(fetchStatsScoreChapter(basicRequest));
@@ -78,8 +80,9 @@ function GroupDashboard({ groupId }: Props) {
   }, [dispatch, initialized, groupId]);
 
   useEffect(() => {
+    const token = localStorage.getItem("access_token")
     const evtSource = new EventSource(
-      `${VITE_IPCA_RT}/online-students/${groupId}`,
+      `${VITE_IPCA_RT}/online-students/${groupId}?token=${token}`,
     );
     evtSource.onmessage = (event) => {
       if (event.data) {

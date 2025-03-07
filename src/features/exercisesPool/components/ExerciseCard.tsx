@@ -6,6 +6,7 @@ import {
   Checkbox,
   Option,
   Select,
+  Tooltip,
   Typography,
 } from "@material-tailwind/react";
 import {
@@ -20,12 +21,16 @@ import { useMemo, useState } from "react";
 import { useAppDispatch } from "../../../hooks/store";
 import { showToast } from "../../../utils/toast";
 import { useTranslation } from "react-i18next";
+import { parseInt } from "lodash";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 
 interface Props {
   level: string;
   labItems: LabItem[];
   chapterId: string;
   selectedItems: string[];
+  isUpdateExercise: boolean;
+  updateExerciseLevel: number;
   handleToggleForm: () => void;
   handleSetFormUseData: (chapterId: string, level: string) => void;
 }
@@ -35,6 +40,8 @@ function ExerciseCard({
   labItems,
   selectedItems,
   chapterId,
+  isUpdateExercise,
+  updateExerciseLevel,
   handleToggleForm,
   handleSetFormUseData,
 }: Props) {
@@ -148,6 +155,7 @@ function ExerciseCard({
               <Checkbox
                 crossOrigin=""
                 defaultChecked={getItemSelected(item.exercise_id)}
+                disabled={!item.can_select}
                 onClick={() =>
                   tempSelected.includes(item.exercise_id)
                     ? removeSelected(item.exercise_id)
@@ -164,6 +172,15 @@ function ExerciseCard({
               >
                 {item.name}
               </Typography>
+              {!item.can_select && (
+                <Tooltip
+                  className="ml-auto"
+                  content={t("feature.exercise_pool.error.can_submit")}
+                  placement="top-end"
+                >
+                  <ExclamationCircleIcon className="ml-auto w-6 h-6 text-red-500" />
+                </Tooltip>
+              )}
             </div>
           ))}
           {labItemsFiltered.length === 0 && (
@@ -177,6 +194,7 @@ function ExerciseCard({
         <Button
           size="sm"
           variant="outlined"
+          loading={isUpdateExercise && parseInt(level) == updateExerciseLevel}
           onClick={() => handleUpdatedAssingedExercise()}
         >
           {t("feature.exercise_pool.button.update")}

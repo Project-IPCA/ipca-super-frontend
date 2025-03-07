@@ -1,5 +1,5 @@
 import { Button, Typography } from "@material-tailwind/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AdminForm } from "../adminForm";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import { fetchStaffs, getStaffs } from "../groupForm/redux/groupFormSlice";
@@ -8,13 +8,22 @@ import { useTranslation } from "react-i18next";
 import ConfigurePermissionsForm from "./components/ConfigurePermissionsForm";
 import usePermission from "../../hooks/usePermission";
 import { ROLE } from "../../constants/constants";
+import { ConfirmModal } from "../../components";
+import {
+  deleteAdmin,
+  getSelectAdmin,
+  restoreAdmin,
+} from "./redux/AdminListSlice";
+import { showToast } from "../../utils/toast";
 
 function AdminList() {
   const dispatch = useAppDispatch();
   const staffs = useAppSelector(getStaffs);
   const [formOpen, setFormOpen] = useState<boolean>(false);
   const [permFormOpen, setPermFormOpen] = useState<boolean>(false);
-  const initialized = useRef(false);
+  const [adminOpen, setAdminOpen] = useState<boolean>(false);
+  const selectAdmin = useAppSelector(getSelectAdmin);
+  const isAdmin = selectAdmin?.isAdmin;
   const { role } = usePermission();
   const { t } = useTranslation();
 
@@ -26,19 +35,91 @@ function AdminList() {
     setPermFormOpen(!permFormOpen);
   };
 
+  const handleAdminOpen = () => {
+    setAdminOpen(!adminOpen);
+  };
+
   useEffect(() => {
-    if (!initialized.current) {
-      initialized.current = true;
-      dispatch(fetchStaffs());
-    }
-  }, [dispatch, initialized]);
+    dispatch(fetchStaffs(role == ROLE.beyonder ? null : "1"));
+  }, [role]);
 
   const isAccessFeat = () => {
     return role === ROLE.beyonder || role === ROLE.supervisor;
   };
 
+  const isBeyonder = () => {
+    return role === ROLE.beyonder;
+  };
+
+  const handleDeleteAdmin = async () => {
+    if (selectAdmin.admin) {
+      const resultAction = await dispatch(
+        deleteAdmin(selectAdmin.admin.staff_id)
+      );
+      if (deleteAdmin.fulfilled.match(resultAction)) {
+        showToast({
+          variant: "success",
+          message: "Admin has been deleted.",
+        });
+      }
+    }
+    if (!isAdmin) {
+      handleAdminOpen();
+      dispatch(fetchStaffs(role == ROLE.beyonder ? null : "1"));
+    }
+  };
+
+  const handleRestoreAdmin = async () => {
+    if (selectAdmin.admin) {
+      const resultAction = await dispatch(
+        restoreAdmin(selectAdmin.admin.staff_id)
+      );
+      if (restoreAdmin.fulfilled.match(resultAction)) {
+        showToast({
+          variant: "success",
+          message: "Admin has been restored.",
+        });
+      }
+    }
+    if (!isAdmin) {
+      handleAdminOpen();
+      dispatch(fetchStaffs(role == ROLE.beyonder ? null : "1"));
+    }
+  };
+
   return (
     <>
+      <ConfirmModal
+        open={adminOpen}
+        title={t(
+          `feature.admin_list.action_modal.${
+            selectAdmin.admin?.active == true ? "delete" : "restore"
+          }.title`
+        )}
+        description={
+          <>
+            {t(
+              `feature.admin_list.action_modal.${
+                selectAdmin.admin?.active == true ? "delete" : "restore"
+              }.msg1`
+            )}{" "}
+            <b>
+              {selectAdmin.admin?.f_name} {selectAdmin.admin?.l_name}
+            </b>
+          </>
+        }
+        confirmLabel={t(
+          `feature.admin_list.action_modal.${
+            selectAdmin.admin?.active == true ? "delete" : "restore"
+          }.confirm`
+        )}
+        type={selectAdmin.admin?.active ? "error" : "default"}
+        handleClose={handleAdminOpen}
+        handleSubmit={
+          selectAdmin.admin?.active ? handleDeleteAdmin : handleRestoreAdmin
+        }
+        isFetching={isAdmin}
+      />
       {isAccessFeat() && (
         <>
           <ConfigurePermissionsForm
@@ -73,7 +154,11 @@ function AdminList() {
           </div>
         </>
       )}
-      <AdminTable staffs={staffs} />
+      <AdminTable
+        staffs={staffs}
+        showDeleteBtn={isBeyonder()}
+        handleOpenAdmin={handleAdminOpen}
+      />
     </>
   );
 }

@@ -32,6 +32,7 @@ interface User {
 
 export interface Staffs extends User {
   staff_id: string;
+  active: boolean;
 }
 
 interface Supervisor extends User {
@@ -61,13 +62,13 @@ export const fetchGroupInfo = createAsyncThunk(
   async (groupId: string, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(
-        `/supervisor/my_group_info/${groupId}`,
+        `/supervisor/my_group_info/${groupId}`
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const fetchDepartments = createAsyncThunk(
@@ -79,19 +80,23 @@ export const fetchDepartments = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const fetchStaffs = createAsyncThunk(
   "groupForm/fetchStaffs",
-  async (_, { rejectWithValue }) => {
+  async (active: string | null, { rejectWithValue }) => {
+    const params = {
+      active: active,
+    };
+    console.log(active);
     try {
-      const response = await axiosInstance.get(`/common/staffs`);
+      const response = await axiosInstance.get(`/common/staffs`, { params });
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const fetchSupervisors = createAsyncThunk(
@@ -103,7 +108,7 @@ export const fetchSupervisors = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  },
+  }
 );
 
 export const createStudentGroup = createAsyncThunk(
@@ -119,19 +124,19 @@ export const createStudentGroup = createAsyncThunk(
         return rejectWithValue(resolveApiError(error));
       }
     }
-  },
+  }
 );
 
 export const updateStudentGroup = createAsyncThunk(
   "groupForm/updateStudentGroup",
   async (
     { request, groupId }: { request: FormRequest; groupId: string },
-    { rejectWithValue },
+    { rejectWithValue }
   ) => {
     try {
       const response = await axiosInstance.put(
         `/supervisor/my_group_info/${groupId}`,
-        request,
+        request
       );
       return response.data;
     } catch (error) {
@@ -141,7 +146,7 @@ export const updateStudentGroup = createAsyncThunk(
         return rejectWithValue(resolveApiError(error));
       }
     }
-  },
+  }
 );
 
 const groupFormSlice = createSlice({
@@ -199,10 +204,23 @@ const groupFormSlice = createSlice({
         state.isFetching = false;
         state.error = action.payload as API_ERROR_RESPONSE;
       })
+      .addCase(createStudentGroup.pending, (state, _) => {
+        state.isFetching = true;
+      })
+      .addCase(createStudentGroup.fulfilled, (state, _) => {
+        state.isFetching = false;
+      })
       .addCase(createStudentGroup.rejected, (state, action) => {
         state.error = action.payload as API_ERROR_RESPONSE;
       })
+      .addCase(updateStudentGroup.pending, (state, _) => {
+        state.isFetching = true;
+      })
+      .addCase(updateStudentGroup.fulfilled, (state, _) => {
+        state.isFetching = false;
+      })
       .addCase(updateStudentGroup.rejected, (state, action) => {
+        state.isFetching = true;
         state.error = action.payload as API_ERROR_RESPONSE;
       }),
 });

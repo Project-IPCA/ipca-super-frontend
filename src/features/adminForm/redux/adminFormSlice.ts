@@ -16,10 +16,12 @@ export interface FormRequest {
 
 interface AdminFormState {
   error: API_ERROR_RESPONSE | null;
+  isFetching: boolean;
 }
 
 const initialState: AdminFormState = {
   error: null,
+  isFetching: false,
 };
 
 export const createAdmin = createAsyncThunk(
@@ -35,7 +37,7 @@ export const createAdmin = createAsyncThunk(
         return rejectWithValue(resolveApiError(error));
       }
     }
-  }
+  },
 );
 
 const adminFormSlice = createSlice({
@@ -47,11 +49,20 @@ const adminFormSlice = createSlice({
     },
   },
   extraReducers: (builder) =>
-    builder.addCase(createAdmin.rejected, (state, action) => {
-      state.error = action.payload as API_ERROR_RESPONSE;
-    }),
+    builder
+      .addCase(createAdmin.pending, (state, _) => {
+        state.isFetching = true;
+      })
+      .addCase(createAdmin.fulfilled, (state, _) => {
+        state.isFetching = false;
+      })
+      .addCase(createAdmin.rejected, (state, action) => {
+        state.error = action.payload as API_ERROR_RESPONSE;
+      }),
 });
 
 export const { clearAdminFormError } = adminFormSlice.actions;
 export const getAdminFormError = (state: RootState) => state.adminForm.error;
+export const getAdminFormStatus = (state: RootState) =>
+  state.adminForm.isFetching;
 export default adminFormSlice.reducer;

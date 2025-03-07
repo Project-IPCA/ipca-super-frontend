@@ -52,7 +52,9 @@ const DatePicker = ({ setValue, formData }: Props) => {
   };
 
   useEffect(() => {
-    setValue("dob", date ? formatDate(date, "yyyy-MM-dd") : "");
+    setValue("dob", date ? formatDate(date, "yyyy-MM-dd") : "", {
+      shouldDirty: true,
+    });
   }, [date]);
 
   useEffect(() => {

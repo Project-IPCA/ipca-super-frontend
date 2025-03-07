@@ -65,7 +65,7 @@ function StudentRankingModal({ open, handleOpen, studentRanking }: Props) {
                   {stu.student.kmitl_id}
                   {" - "}
                   {stu.student.firstname} {stu.student.lastname}{" "}
-                  {stu.student.nickname ? " (" + stu.student.nickname + "" : ""}
+                  {stu.student.nickname ? " (" + stu.student.nickname + ")" : ""}
                 </Typography>
               </div>
               <Typography className="text-sm font-bold">{stu.score}</Typography>

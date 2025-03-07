@@ -24,11 +24,18 @@ import { useTranslation } from "react-i18next";
 interface Props {
   open: boolean;
   handleToggle: () => void;
+  isUpdateTestcase: boolean;
   exerciseId: string;
   testcaseList: Testcase[];
 }
 
-function TestcaseForm({ open, handleToggle, exerciseId, testcaseList }: Props) {
+function TestcaseForm({
+  open,
+  handleToggle,
+  exerciseId,
+  testcaseList,
+  isUpdateTestcase,
+}: Props) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [jobId, setJobId] = useState<string>();
@@ -45,9 +52,12 @@ function TestcaseForm({ open, handleToggle, exerciseId, testcaseList }: Props) {
   };
 
   const [testcases, setTestcases] = useState<Testcase[]>([...testcaseList]);
+  const [tempTestcases, setTempTestcases] = useState<Testcase[]>([]);
+  const [isDirty, setIsDirty] = useState<boolean>(false);
   const [removed, setRemoved] = useState<string[]>([]);
   useEffect(() => {
     setTestcases(testcaseList);
+    setTempTestcases(testcaseList);
   }, [testcaseList]);
 
   const removeTestcase = (index: number) => {
@@ -55,6 +65,10 @@ function TestcaseForm({ open, handleToggle, exerciseId, testcaseList }: Props) {
       prevTestcases.filter((_, i) => i !== index),
     );
   };
+
+  useEffect(() => {
+    setIsDirty(JSON.stringify(testcases) !== JSON.stringify(tempTestcases));
+  }, [testcases, tempTestcases]);
 
   const updateTestcaseField = (
     index: number,
@@ -109,8 +123,9 @@ function TestcaseForm({ open, handleToggle, exerciseId, testcaseList }: Props) {
 
   useEffect(() => {
     if (jobId && exerciseId) {
+      const token = localStorage.getItem("access_token")
       const evtSource = new EventSource(
-        `${VITE_IPCA_RT}/testcase-result/${jobId}`,
+        `${VITE_IPCA_RT}/testcase-result/${jobId}?token=${token}`,
       );
 
       const entTimeOut = setTimeout(() => {
@@ -184,6 +199,8 @@ function TestcaseForm({ open, handleToggle, exerciseId, testcaseList }: Props) {
               handleSubmitSave();
               handleToggle();
             }}
+            disabled={!isDirty}
+            loading={isUpdateTestcase}
           >
             {t("feature.exercise_info.modal.testcase.button.save")}
           </Button>

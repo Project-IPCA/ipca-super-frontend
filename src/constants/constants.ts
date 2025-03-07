@@ -186,3 +186,16 @@ export type Permission =
   | "STUDENT_ADMIN"
   | "EXERCISE_ADMIN"
   | "DASHBOARD_ADMIN";
+
+export const LANG_LIST = ["PYTHON", "C"];
+
+export const C_LANG = "C";
+export const PYTHON_LANG = "PYTHON";
+
+export const PROGRAMMING_LANG_OPTIONS = [
+  { label: "C", value: "C" },
+  { label: "Python", value: "PYTHON" },
+];
+
+export const ALL_VALUE = "ALL";
+export const ALL_LABEL = "All";

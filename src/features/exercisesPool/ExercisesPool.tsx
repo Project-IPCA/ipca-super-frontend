@@ -12,6 +12,7 @@ import { ExerciseForm } from "../exerciseForm";
 import { showToast } from "../../utils/toast";
 import { useTranslation } from "react-i18next";
 import ExerciseCardSkeleton from "./components/ExerciseCardSkeleton";
+import { capitalize } from "lodash";
 
 export interface FormUseData {
   chapterId: string;
@@ -34,6 +35,8 @@ function ExercisesPool() {
   const exercisesPool = exercisesPoolState[key]?.chapterDetail;
   const error = exercisesPoolState[key]?.error;
   const isFetching = exercisesPoolState[key]?.isFetching;
+  const isUpdateExercise = exercisesPoolState[key]?.isUpdateExercise;
+  const updateExerciseLevel = exercisesPoolState[key]?.updateExerciseLevel;
 
   const handleToggleForm = () => setFormOpen(!formOpen);
 
@@ -69,6 +72,7 @@ function ExercisesPool() {
         open={formOpen}
         handleToggle={handleToggleForm}
         formUseData={formUseData}
+        language={exercisesPool?.language}
       />
       <div className="flex justify-start items-center pb-4 gap-x-2">
         <IconButton variant="text">
@@ -88,7 +92,8 @@ function ExercisesPool() {
             </Typography>
           ) : (
             <Typography variant="h3">
-              {chapterIdx} {exercisesPool?.chapter_name}
+              {chapterIdx} {exercisesPool?.chapter_name} (
+              {capitalize(exercisesPool?.language)})
             </Typography>
           )}
         </div>
@@ -104,7 +109,9 @@ function ExercisesPool() {
                   key={level}
                   level={level}
                   chapterId={exercisesPool?.chapter_id || ""}
+                  isUpdateExercise={isUpdateExercise}
                   labItems={labItems}
+                  updateExerciseLevel={updateExerciseLevel}
                   selectedItems={
                     exercisesPool?.group_selected_labs[level] || []
                   }

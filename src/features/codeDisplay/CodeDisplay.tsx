@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
+import { cpp } from "@codemirror/lang-cpp";
 import {
   getCodeDisplayState,
   getCodeFromMinio,
@@ -28,7 +29,7 @@ const CodeDisplay = ({ fileName }: Props) => {
       className="border-[1px]"
       height="auto"
       value={String(code)}
-      extensions={[python()]}
+      extensions={[python(), cpp()]}
       readOnly={true}
       editable={false}
       autoFocus={false}

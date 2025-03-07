@@ -1,5 +1,6 @@
 import { isAxiosError } from "axios";
 import {
+  ALL_VALUE,
   API_ERROR_RESPONSE,
   DAY_OF_WEEK,
   DAYS_2_LANGUAGE,
@@ -72,7 +73,7 @@ export const getRoleFromEnum = (role: string, lang: string) => {
 
 export const isAcceptedPermission = (
   perms: Permission[],
-  acceptedPermission: Permission[]
+  acceptedPermission: Permission[],
 ) => {
   return perms.some((i) => acceptedPermission.includes(i));
 };
@@ -85,4 +86,8 @@ export const processData = (log: ActivityLog): ActivityLog => {
     };
   }
   return log;
+};
+
+export const validateQuery = (value: string) => {
+  return value === ALL_VALUE ? undefined : value;
 };

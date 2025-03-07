@@ -16,8 +16,9 @@ function ProtectedRoutes() {
 
   useEffect(() => {
     if (data.profile.f_name) {
+      const token = localStorage.getItem("access_token")
       const evtSource = new EventSource(
-        `${VITE_IPCA_RT}/user/connection/${data.profile.user_id}`
+        `${VITE_IPCA_RT}/user/connection/${data.profile.user_id}?token=${token}`
       );
       evtSource.onmessage = (event) => {
         if (event.data) {

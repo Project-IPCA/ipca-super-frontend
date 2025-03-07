@@ -28,6 +28,7 @@ import { getDashboardStatus } from "../dashboard/redux/DashboardSlice";
 import { getGroupDashboardStatus } from "../groupDashboard/redux/groupDashboardSlice";
 import { getProfileStatus } from "../profileForm/redux/profileFormSlice";
 import { getGroupStudentsStatus } from "../groupStudents/redux/GroupStudentsSlice";
+import { capitalize } from "lodash";
 
 interface Props {
   groupId: string;
@@ -35,11 +36,11 @@ interface Props {
 
 function GroupDetail({ groupId }: Props) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const defaultTab = searchParams.get("tab") || tabsValue.OVERVIEW;
+  const { permission } = usePermission();
+  const defaultTab = searchParams.get("tab") || tabsValue.EXERCISES;
   const [activeTab, setActiveTab] = useState<string>(defaultTab);
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { permission } = usePermission();
   const groupDetail = useAppSelector(getGroupExercise);
   const dashboardFetching = useAppSelector(getDashboardStatus);
   const groupDashboardFetching = useAppSelector(getGroupDashboardStatus);
@@ -70,8 +71,8 @@ function GroupDetail({ groupId }: Props) {
     if (tab && Object.values(tabsValue).includes(tab)) {
       setActiveTab(tab);
     } else {
-      setSearchParams({ tab: tabsValue.OVERVIEW }, { replace: true });
-      setActiveTab(tabsValue.OVERVIEW);
+      setSearchParams({ tab: tabsValue.EXERCISES }, { replace: true });
+      setActiveTab(tabsValue.EXERCISES);
     }
   }, [searchParams]);
 
@@ -123,12 +124,15 @@ function GroupDetail({ groupId }: Props) {
             <Typography
               as="div"
               variant="h3"
-              className="h-6 w-32 rounded-full bg-gray-300 "
+              className="h-6 w-44 rounded-full bg-gray-300 "
             >
               &nbsp;
             </Typography>
           ) : (
-            <Typography variant="h3">{groupDetail?.group_no || ""}</Typography>
+            <Typography variant="h3">
+              {groupDetail?.group_no || ""} (
+              {capitalize(groupDetail?.language || "")})
+            </Typography>
           )}
         </div>
       </div>

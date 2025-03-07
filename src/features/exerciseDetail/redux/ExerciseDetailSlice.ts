@@ -40,7 +40,12 @@ interface AssignedExerciseState {
   exceriseDetail: AssignedExercise | null;
   submissionHistory: SubmissionHistory[];
   isFetching: boolean;
+  isCancelSubmission: boolean;
   error: API_ERROR_RESPONSE | null;
+}
+
+interface CancelStudentSubmissionRequest extends ExerciseRequest {
+  submissionId: string;
 }
 
 const initialState: {
@@ -49,16 +54,16 @@ const initialState: {
 
 export const cancelStudentSubmission = createAsyncThunk(
   "studentInfo/cancelStudentSubmission",
-  async (submissionId: string, { rejectWithValue }) => {
+  async (request: CancelStudentSubmissionRequest, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.put(
-        `/supervisor/cancle_student_submission/${submissionId}`
+        `/supervisor/cancle_student_submission/${request.submissionId}`,
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 export const fetchSubmissionHistory = createAsyncThunk(
@@ -77,7 +82,7 @@ export const fetchSubmissionHistory = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 export const fetchAssignedExercise = createAsyncThunk(
@@ -93,13 +98,13 @@ export const fetchAssignedExercise = createAsyncThunk(
         `/supervisor/assigned_student_exercise`,
         {
           params: params,
-        }
+        },
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(resolveApiError(error));
     }
-  }
+  },
 );
 
 const exerciseDetailSlice = createSlice({
@@ -116,6 +121,7 @@ const exerciseDetailSlice = createSlice({
           exceriseDetail: existExercise?.exceriseDetail || null,
           submissionHistory: existExercise?.submissionHistory,
           isFetching: true,
+          isCancelSubmission: existExercise?.isCancelSubmission || false,
           error: null,
         };
       })
@@ -127,6 +133,7 @@ const exerciseDetailSlice = createSlice({
           exceriseDetail: action.payload,
           submissionHistory: existExercise?.submissionHistory,
           isFetching: false,
+          isCancelSubmission: existExercise?.isCancelSubmission || false,
           error: null,
         };
       })
@@ -138,6 +145,7 @@ const exerciseDetailSlice = createSlice({
           exceriseDetail: null,
           submissionHistory: existExercise?.submissionHistory,
           isFetching: false,
+          isCancelSubmission: existExercise?.isCancelSubmission || false,
           error: action.payload as API_ERROR_RESPONSE,
         };
       })
@@ -149,6 +157,7 @@ const exerciseDetailSlice = createSlice({
           exceriseDetail: existExercise?.exceriseDetail,
           submissionHistory: existExercise?.submissionHistory,
           isFetching: true,
+          isCancelSubmission: existExercise?.isCancelSubmission || false,
           error: null,
         };
       })
@@ -160,6 +169,7 @@ const exerciseDetailSlice = createSlice({
           exceriseDetail: existExercise?.exceriseDetail,
           submissionHistory: action.payload,
           isFetching: false,
+          isCancelSubmission: existExercise?.isCancelSubmission || false,
           error: null,
         };
       })
@@ -171,7 +181,44 @@ const exerciseDetailSlice = createSlice({
           exceriseDetail: existExercise?.exceriseDetail,
           submissionHistory: existExercise?.submissionHistory,
           isFetching: false,
+          isCancelSubmission: existExercise?.isCancelSubmission || false,
           error: action.payload as API_ERROR_RESPONSE,
+        };
+      })
+      .addCase(cancelStudentSubmission.pending, (state, action) => {
+        const { studentId, chapterIdx, itemId } = action.meta.arg;
+        const key = `${studentId}.${chapterIdx}.${itemId}`;
+        const existExercise = state[key];
+        state[key] = {
+          exceriseDetail: existExercise?.exceriseDetail,
+          submissionHistory: existExercise?.submissionHistory,
+          isFetching: existExercise?.isFetching,
+          isCancelSubmission: true,
+          error: null,
+        };
+      })
+      .addCase(cancelStudentSubmission.fulfilled, (state, action) => {
+        const { studentId, chapterIdx, itemId } = action.meta.arg;
+        const key = `${studentId}.${chapterIdx}.${itemId}`;
+        const existExercise = state[key];
+        state[key] = {
+          exceriseDetail: existExercise?.exceriseDetail,
+          submissionHistory: existExercise?.submissionHistory,
+          isFetching: existExercise?.isFetching,
+          isCancelSubmission: false,
+          error: null,
+        };
+      })
+      .addCase(cancelStudentSubmission.rejected, (state, action) => {
+        const { studentId, chapterIdx, itemId } = action.meta.arg;
+        const key = `${studentId}.${chapterIdx}.${itemId}`;
+        const existExercise = state[key];
+        state[key] = {
+          exceriseDetail: existExercise?.exceriseDetail,
+          submissionHistory: existExercise?.submissionHistory,
+          isFetching: existExercise?.isFetching,
+          isCancelSubmission: false,
+          error: null,
         };
       }),
 });

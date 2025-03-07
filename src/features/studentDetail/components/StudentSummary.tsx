@@ -9,13 +9,14 @@ import {
 } from "@material-tailwind/react";
 import {
   deleteStudent,
+  getStudentDetailState,
   resetStudentPasword,
   StudentInfo,
 } from "../redux/studentDetailSlice";
 import { profileNone } from "../../../assets";
 import { ConfirmModal, LabelValueText } from "../../../components";
 import { capitalize } from "lodash";
-import { useAppDispatch } from "../../../hooks/store";
+import { useAppDispatch, useAppSelector } from "../../../hooks/store";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import { StudentPermissionForm } from "../../studentPermissionForm";
@@ -36,6 +37,9 @@ function StudentSummary({ studentInfo, isFetching }: Props) {
   const [openReset, setOpenReset] = useState<boolean>(false);
   const [openPermForm, setOpenPermForm] = useState<boolean>(false);
   const { studentId } = useParams();
+  const studentState = useAppSelector(getStudentDetailState);
+  const isDeleteStudent = studentState[String(studentId)]?.isDeleteStudent;
+  const isResetPassword = studentState[String(studentId)]?.isResetPassword;
 
   const handleDeleteOpen = () => setOpenDelete(true);
   const handleDeleteClose = () => setOpenDelete(false);
@@ -54,7 +58,9 @@ function StudentSummary({ studentInfo, isFetching }: Props) {
         });
       }
     }
-    handleResetClose();
+    if (!isResetPassword) {
+      handleResetClose();
+    }
   };
 
   const handleDeleteStudent = async () => {
@@ -67,7 +73,9 @@ function StudentSummary({ studentInfo, isFetching }: Props) {
         });
       }
     }
-    handleDeleteClose();
+    if (!isDeleteStudent) {
+      handleDeleteClose();
+    }
     navigate(-1);
   };
   return (
@@ -89,6 +97,7 @@ function StudentSummary({ studentInfo, isFetching }: Props) {
         type="error"
         handleClose={handleDeleteClose}
         handleSubmit={handleDeleteStudent}
+        isFetching={isDeleteStudent}
       />
       <ConfirmModal
         open={openReset}
@@ -106,6 +115,7 @@ function StudentSummary({ studentInfo, isFetching }: Props) {
         confirmLabel={t("feature.student_detail.modal.reset_password.confirm")}
         type="error"
         handleClose={handleResetClose}
+        isFetching={isResetPassword}
         handleSubmit={handleResetStudentPassword}
       />
       <StudentPermissionForm

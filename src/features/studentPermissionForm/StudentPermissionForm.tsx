@@ -10,8 +10,11 @@ import {
 } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
-import { useAppDispatch } from "../../hooks/store";
-import { updateStudentCanSubmit } from "./redux/StudentPermissionFormSlice";
+import { useAppDispatch, useAppSelector } from "../../hooks/store";
+import {
+  getStudentPermFormStatus,
+  updateStudentCanSubmit,
+} from "./redux/StudentPermissionFormSlice";
 import { fetchGroupStudents } from "../groupStudents/redux/GroupStudentsSlice";
 import { fetchStudentInfo } from "../studentDetail/redux/studentDetailSlice";
 import { showToast } from "../../utils/toast";
@@ -39,6 +42,7 @@ function StudentPermissionForm({
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [submitPerm, setSubmitPerm] = useState<boolean>(true);
+  const isFetching = useAppSelector(getStudentPermFormStatus);
   const handleSubmit = async () => {
     if (studentId) {
       await dispatch(
@@ -56,7 +60,9 @@ function StudentPermissionForm({
       await dispatch(fetchGroupStudents({ groupId: groupId, page: page }));
       await dispatch(fetchStudentInfo(studentId));
     }
-    handleClose();
+    if (!isFetching) {
+      handleClose();
+    }
   };
   return (
     <Dialog size="sm" open={open} handler={handleClose} className="p-4 ">
@@ -101,7 +107,11 @@ function StudentPermissionForm({
         </div>
       </DialogBody>
       <DialogFooter>
-        <Button className="ml-auto" onClick={() => handleSubmit()}>
+        <Button
+          className="ml-auto"
+          onClick={() => handleSubmit()}
+          loading={isFetching}
+        >
           {t("common.button.submit")}
         </Button>
       </DialogFooter>

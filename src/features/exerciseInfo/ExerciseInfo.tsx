@@ -20,19 +20,27 @@ import {
 } from "./redux/exerciseInfoSlice";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
+import { cpp } from "@codemirror/lang-cpp";
 import KeywordConstraints from "../exerciseForm/components/KeywordConstraints";
 import TextEditor from "../exerciseForm/components/TextEditor";
 import { ExerciseForm } from "../exerciseForm";
 import { FormUseData } from "../exercisesPool/ExercisesPool";
 import TestcaseForm from "./components/TestcaseForm";
 import TestcaseInfo from "./components/TestcaseInfo";
-import { IKeywordConstraints } from "../exerciseForm/ExerciseForm";
-import { deleteExercise } from "../exerciseForm/redux/exerciseFormSlice";
+import {
+  IPythonKeywordConstraints,
+  IClangKeywordConstraints,
+} from "../exerciseForm/ExerciseForm";
+import {
+  deleteExercise,
+  getExerciseFormDelete,
+} from "../exerciseForm/redux/exerciseFormSlice";
 import { showToast } from "../../utils/toast";
 import { ConfirmModal } from "../../components";
 import { useTranslation } from "react-i18next";
-import { LANGUAGE } from "../../constants/constants";
+import { LANGUAGE, PYTHON_LANG } from "../../constants/constants";
 import { CodeBracketIcon } from "@heroicons/react/24/outline";
+import { capitalize } from "lodash";
 
 function ExerciseInfo() {
   const { t, i18n } = useTranslation();
@@ -46,7 +54,9 @@ function ExerciseInfo() {
   const exerciseInfoKey = `${exerciseId}`;
   const exercise = exerciseInfoState[exerciseInfoKey]?.exerciseInfo;
   const isFetching = exerciseInfoState[exerciseInfoKey]?.isFetching;
+  const isUpdateTestcase = exerciseInfoState[exerciseInfoKey]?.isUpdateTestcase;
   const [formOpen, setFormOpen] = useState<boolean>(false);
+  const isDelete = useAppSelector(getExerciseFormDelete);
   const [testcaseFormOpen, setTestcaseFormOpen] = useState<boolean>(false);
   const [formUseData, setFormUseData] = useState<FormUseData>({
     chapterId: "",
@@ -60,7 +70,9 @@ function ExerciseInfo() {
 
   const handleToggleTestcaseForm = () => setTestcaseFormOpen(!testcaseFormOpen);
 
-  const [constraints, setConstraints] = useState<IKeywordConstraints>({
+  const [constraints, setConstraints] = useState<
+    IPythonKeywordConstraints | IClangKeywordConstraints
+  >({
     suggested_constraints: {
       classes: [],
       functions: [],
@@ -104,7 +116,7 @@ function ExerciseInfo() {
         return {
           suggested_constraints: exercise?.suggested_constraints,
           user_defined_constraints: exercise?.user_defined_constraints,
-        };
+        } as IPythonKeywordConstraints | IClangKeywordConstraints;
       });
     }
   }, [exercise]);
@@ -140,11 +152,13 @@ function ExerciseInfo() {
           </>
         }
         confirmLabel={t("common.button.delete")}
+        isFetching={isDelete}
         type="error"
         handleClose={handleCloseDelete}
         handleSubmit={handleDelete}
       />
       <TestcaseForm
+        isUpdateTestcase={isUpdateTestcase}
         exerciseId={exerciseId ?? ""}
         open={testcaseFormOpen}
         handleToggle={handleToggleTestcaseForm}
@@ -155,6 +169,7 @@ function ExerciseInfo() {
         handleToggle={handleToggleForm}
         formUseData={formUseData}
         exerciseId={exercise?.exercise_id}
+        language={exercisesPool?.language}
       />
       <div className="flex justify-start items-center pb-4 gap-x-2">
         <IconButton variant="text">
@@ -168,13 +183,14 @@ function ExerciseInfo() {
             <Typography
               as="div"
               variant="h3"
-              className="h-6 w-32 rounded-full bg-gray-300 "
+              className="h-6 w-44 rounded-full bg-gray-300 "
             >
               &nbsp;
             </Typography>
           ) : (
             <Typography variant="h3">
-              {chapterIdx} {exercisesPool?.chapter_name}
+              {chapterIdx} {exercisesPool?.chapter_name} (
+              {capitalize(exercisesPool?.language)})
             </Typography>
           )}
         </div>
@@ -289,7 +305,9 @@ function ExerciseInfo() {
                 height={"300px"}
                 className="focus:!outline-none focus:ring-0 focus:border-none "
                 value={exercise?.sourcecode}
-                extensions={[python()]}
+                extensions={[
+                  exercisesPool?.language === PYTHON_LANG ? python() : cpp(),
+                ]}
                 readOnly={true}
                 editable={false}
               />

@@ -42,7 +42,7 @@ function RolePermissionsTable({
   };
 
   return (
-    <Card className="h-full w-full overflow-scroll">
+    <Card className="h-full w-full overflow-scroll shadow-none border-[1px]">
       <table className="w-full min-w-max table-auto text-left">
         <thead>
           <tr>

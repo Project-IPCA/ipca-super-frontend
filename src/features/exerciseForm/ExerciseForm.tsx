@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
+import { cpp } from "@codemirror/lang-cpp";
 import { useEffect, useState } from "react";
 import TextEditor from "./components/TextEditor";
 import KeywordConstraints from "./components/KeywordConstraints";
@@ -21,7 +22,9 @@ import {
   createExercise,
   EditExerciseFormRequest,
   ExerciseFormRequest,
+  ExeriseRequest,
   getExerciseFormError,
+  getExerciseFormStatus,
   updateExercise,
   VITE_IPCA_RT,
 } from "./redux/exerciseFormSlice";
@@ -40,6 +43,8 @@ import axios from "axios";
 import { showToast } from "../../utils/toast";
 import { useTranslation } from "react-i18next";
 import i18n from "../../locales";
+import { PYTHON_LANG } from "../../constants/constants";
+import { capitalize } from "lodash";
 
 interface Props {
   open: boolean;
@@ -47,6 +52,7 @@ interface Props {
   formUseData: FormUseData;
   exerciseId?: string;
   handleToggleUpdated?: () => void;
+  language?: string;
 }
 
 export interface SuggestedConstraintData {
@@ -61,7 +67,7 @@ export interface UserConstraintData {
   type: ConstraintType;
 }
 
-export interface SuggestedConstraint {
+export interface PythonSuggestedConstraint {
   classes: SuggestedConstraintData[];
   functions: SuggestedConstraintData[];
   imports: SuggestedConstraintData[];
@@ -70,7 +76,7 @@ export interface SuggestedConstraint {
   variables: SuggestedConstraintData[];
 }
 
-export interface UserConstraint {
+export interface PythonUserConstraint {
   classes: UserConstraintData[];
   functions: UserConstraintData[];
   imports: UserConstraintData[];
@@ -79,9 +85,28 @@ export interface UserConstraint {
   variables: UserConstraintData[];
 }
 
-export interface IKeywordConstraints {
-  suggested_constraints: SuggestedConstraint;
-  user_defined_constraints: UserConstraint;
+export interface ClangSuggestedConstraint {
+  functions: SuggestedConstraintData[];
+  includes: SuggestedConstraintData[];
+  reserved_words: SuggestedConstraintData[];
+  variables: SuggestedConstraintData[];
+}
+
+export interface ClangUserConstraint {
+  functions: UserConstraintData[];
+  includes: UserConstraintData[];
+  reserved_words: UserConstraintData[];
+  variables: UserConstraintData[];
+}
+
+export interface IPythonKeywordConstraints {
+  suggested_constraints: PythonSuggestedConstraint;
+  user_defined_constraints: PythonUserConstraint;
+}
+
+export interface IClangKeywordConstraints {
+  suggested_constraints: ClangSuggestedConstraint;
+  user_defined_constraints: ClangUserConstraint;
 }
 
 interface CheckUserConstraintData extends UserConstraintData {
@@ -124,7 +149,7 @@ const formDataSchema = yup.object({
 export type FormData = yup.InferType<typeof formDataSchema>;
 export type UserConstraintAction = "add" | "delete" | "update";
 
-const defaultConstraints: IKeywordConstraints = {
+const defaultConstraints: IPythonKeywordConstraints = {
   suggested_constraints: {
     classes: [],
     functions: [],
@@ -143,13 +168,40 @@ const defaultConstraints: IKeywordConstraints = {
   },
 };
 
-function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
+const defaultClangConstraints: IClangKeywordConstraints = {
+  suggested_constraints: {
+    functions: [],
+    variables: [],
+    includes: [],
+    reserved_words: [],
+  },
+  user_defined_constraints: {
+    functions: [],
+    variables: [],
+    includes: [],
+    reserved_words: [],
+  },
+};
+
+function ExerciseForm({
+  open,
+  handleToggle,
+  formUseData,
+  exerciseId,
+  language,
+}: Props) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const error = useAppSelector(getExerciseFormError);
   const exerciseInfoState = useAppSelector(getExercisesInfoState);
   const exerciseInfoKey = `${exerciseId}`;
   const exercise = exerciseInfoState[exerciseInfoKey]?.exerciseInfo;
+  const isFetching = useAppSelector(getExerciseFormStatus);
+  const [tempConstraint, setTempConstraint] =
+    useState<IPythonKeywordConstraints>(defaultConstraints);
+  const [clangTempConstraint, setClangTempConstraint] =
+    useState<IClangKeywordConstraints>(defaultClangConstraints);
+  const [isConstraintDirty, setIsConstraintDirty] = useState<boolean>(false);
   const { groupId, chapterIdx } = useParams();
   const [jobId, setJobId] = useState<string>();
 
@@ -162,10 +214,10 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
   const defaultForm = {
     name: "",
     sourecode: "",
-    content: "",
+    content: "<p><br></p>",
   };
   const {
-    formState: { errors },
+    formState: { errors, isDirty },
     register,
     handleSubmit,
     reset,
@@ -179,31 +231,89 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
   const formData = watch();
 
   const [constraints, setConstraints] =
-    useState<IKeywordConstraints>(defaultConstraints);
+    useState<IPythonKeywordConstraints>(defaultConstraints);
+
+  const [clangConstraints, setClangConstraints] =
+    useState<IClangKeywordConstraints>(defaultClangConstraints);
 
   useEffect(() => {
     if (exercise) {
-      setConstraints(() => {
-        return {
-          suggested_constraints: exercise?.suggested_constraints,
-          user_defined_constraints: exercise?.user_defined_constraints,
-        };
-      });
+      if (language === PYTHON_LANG) {
+        setConstraints(() => {
+          return {
+            suggested_constraints:
+              exercise?.suggested_constraints as PythonSuggestedConstraint,
+            user_defined_constraints:
+              exercise?.user_defined_constraints as PythonUserConstraint,
+          };
+        });
+        setTempConstraint(() => {
+          return {
+            suggested_constraints:
+              exercise?.suggested_constraints as PythonSuggestedConstraint,
+            user_defined_constraints:
+              exercise?.user_defined_constraints as PythonUserConstraint,
+          };
+        });
+      } else {
+        setClangConstraints(() => {
+          return {
+            suggested_constraints:
+              exercise?.suggested_constraints as ClangSuggestedConstraint,
+            user_defined_constraints:
+              exercise?.user_defined_constraints as ClangUserConstraint,
+          };
+        });
+        setClangTempConstraint(() => {
+          return {
+            suggested_constraints:
+              exercise?.suggested_constraints as ClangSuggestedConstraint,
+            user_defined_constraints:
+              exercise?.user_defined_constraints as ClangUserConstraint,
+          };
+        });
+      }
     }
   }, [exercise]);
+
+  useEffect(() => {
+    if (language === PYTHON_LANG) {
+      setIsConstraintDirty(
+        JSON.stringify(constraints) !== JSON.stringify(tempConstraint),
+      );
+    } else {
+      setIsConstraintDirty(
+        JSON.stringify(clangConstraints) !==
+          JSON.stringify(clangTempConstraint),
+      );
+    }
+  }, [
+    constraints,
+    clangConstraints,
+    clangTempConstraint,
+    tempConstraint,
+    language,
+  ]);
 
   const handleToggleAndReset = () => {
     handleToggle();
     reset(defaultForm);
     setConstraints(defaultConstraints);
+    setClangConstraints(defaultClangConstraints);
   };
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
-      const response = await axiosInstance.post("/common/keyword_check", {
-        exercise_kw_list: constraints.user_defined_constraints,
-        sourcecode: data.sourecode,
-      });
+      const response = await axiosInstance.post(
+        `/common/keyword_check/${language?.toLocaleLowerCase()}`,
+        {
+          exercise_kw_list:
+            language === PYTHON_LANG
+              ? constraints.user_defined_constraints
+              : clangConstraints.user_defined_constraints,
+          sourcecode: data.sourecode,
+        },
+      );
       const responseData: CheckKeywordReponse = response.data;
       if (responseData.status == "failed") {
         const errConstraints = Object.entries(responseData.keyword_constraint)
@@ -237,8 +347,14 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
         sourcecode: data.sourecode,
         content: data.content,
         keyword_constraints: {
-          suggested_constraints: constraints.suggested_constraints,
-          user_defined_constraints: constraints.user_defined_constraints,
+          suggested_constraints:
+            language === PYTHON_LANG
+              ? constraints.suggested_constraints
+              : clangConstraints.suggested_constraints,
+          user_defined_constraints:
+            language === PYTHON_LANG
+              ? constraints.user_defined_constraints
+              : clangConstraints.user_defined_constraints,
         },
       };
       const createRequest: ExerciseFormRequest = {
@@ -257,7 +373,11 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
 
       if (formUseData.level && formUseData.chapterId) {
         if (exerciseId) {
-          const resultAction = await dispatch(updateExercise(updateRequest));
+          const exerciseRequest: ExeriseRequest = {
+            request: updateRequest,
+            language: language || "",
+          };
+          const resultAction = await dispatch(updateExercise(exerciseRequest));
           if (updateExercise.fulfilled.match(resultAction)) {
             showToast({
               variant: "success",
@@ -265,7 +385,11 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
             });
           }
         } else {
-          const resultAction = await dispatch(createExercise(createRequest));
+          const exerciseRequest: ExeriseRequest = {
+            request: createRequest,
+            language: language || "",
+          };
+          const resultAction = await dispatch(createExercise(exerciseRequest));
           if (createExercise.fulfilled.match(resultAction)) {
             showToast({
               variant: "success",
@@ -286,7 +410,9 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
       if (exerciseId) {
         dispatch(fetchExercisesInfo(exerciseId));
       }
-      handleToggleAndReset();
+      if (!isFetching) {
+        handleToggleAndReset();
+      }
     } catch (err) {
       if (axios.isAxiosError(err)) {
         showToast({
@@ -318,8 +444,9 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
 
   useEffect(() => {
     if (jobId && exerciseId) {
+      const token = localStorage.getItem("access_token");
       const evtSource = new EventSource(
-        `${VITE_IPCA_RT}/testcase-result/${jobId}`,
+        `${VITE_IPCA_RT}/testcase-result/${jobId}?token=${token}`,
       );
 
       const entTimeOut = setTimeout(() => {
@@ -347,53 +474,100 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
   }, [jobId, exerciseId]);
 
   const handleUserConstraints = (
-    key: keyof UserConstraint,
+    key: keyof PythonUserConstraint | keyof ClangUserConstraint,
     action: UserConstraintAction,
     data?: UserConstraintData,
     index?: number,
   ) => {
-    const currentItems = [...constraints.user_defined_constraints[key]];
+    const currentItems =
+      language === PYTHON_LANG
+        ? [
+            ...constraints.user_defined_constraints[
+              key as keyof PythonUserConstraint
+            ],
+          ]
+        : [
+            ...clangConstraints.user_defined_constraints[
+              key as keyof ClangUserConstraint
+            ],
+          ];
 
     switch (action) {
       case "add":
         if (data !== undefined) {
-          setConstraints((prev) => {
-            return {
-              ...prev,
-              user_defined_constraints: {
-                ...prev.user_defined_constraints,
-                [key]: [...currentItems, data],
-              },
-            };
-          });
+          if (language === PYTHON_LANG) {
+            setConstraints((prev) => {
+              return {
+                ...prev,
+                user_defined_constraints: {
+                  ...prev.user_defined_constraints,
+                  [key]: [...currentItems, data],
+                },
+              };
+            });
+          } else {
+            setClangConstraints((prev) => {
+              return {
+                ...prev,
+                user_defined_constraints: {
+                  ...prev.user_defined_constraints,
+                  [key]: [...currentItems, data],
+                },
+              };
+            });
+          }
         }
         break;
       case "update":
         if (index !== undefined && data !== undefined) {
           currentItems[index] = data;
-          return setConstraints((prev) => {
-            return {
-              ...prev,
-              user_defined_constraints: {
-                ...prev.user_defined_constraints,
-                [key]: currentItems,
-              },
-            };
-          });
+          if (language === PYTHON_LANG) {
+            setConstraints((prev) => {
+              return {
+                ...prev,
+                user_defined_constraints: {
+                  ...prev.user_defined_constraints,
+                  [key]: currentItems,
+                },
+              };
+            });
+          } else {
+            setClangConstraints((prev) => {
+              return {
+                ...prev,
+                user_defined_constraints: {
+                  ...prev.user_defined_constraints,
+                  [key]: currentItems,
+                },
+              };
+            });
+          }
         }
         break;
       case "delete":
         if (index !== undefined) {
           currentItems.splice(index, 1);
-          return setConstraints((prev) => {
-            return {
-              ...prev,
-              user_defined_constraints: {
-                ...prev.user_defined_constraints,
-                [key]: currentItems,
-              },
-            };
-          });
+          if (language === PYTHON_LANG) {
+            setConstraints((prev) => {
+              return {
+                ...prev,
+                user_defined_constraints: {
+                  ...prev.user_defined_constraints,
+                  [key]: currentItems,
+                },
+              };
+            });
+          } else {
+            setClangConstraints((prev) => {
+              return {
+                ...prev,
+                user_defined_constraints: {
+                  ...prev.user_defined_constraints,
+                  [key]: currentItems,
+                },
+              };
+            });
+          }
         }
         break;
     }
@@ -401,13 +575,22 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
 
   const analyzeKeywordList: SubmitHandler<FormData> = async (data) => {
     try {
-      const response = await axiosInstance.post("/common/get_keyword_list", {
-        sourcecode: data.sourecode,
-      });
+      const response = await axiosInstance.post(
+        `/common/get_keyword_list/${language?.toLowerCase()}`,
+        {
+          sourcecode: data.sourecode,
+        },
+      );
       if (response.data.status !== "error") {
-        setConstraints((constraint) => {
-          return { ...constraint, suggested_constraints: response.data.data };
-        });
+        if (language === PYTHON_LANG) {
+          setConstraints((constraint) => {
+            return { ...constraint, suggested_constraints: response.data.data };
+          });
+        } else {
+          setClangConstraints((constraint) => {
+            return { ...constraint, suggested_constraints: response.data.data };
+          });
+        }
         return;
       }
       showToast({
@@ -444,7 +627,8 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
           <Typography variant="h4" color="blue-gray">
             {exerciseId
               ? t("feature.exercise_form.title.edit")
-              : t("feature.exercise_form.title.add")}
+              : t("feature.exercise_form.title.add")}{" "}
+            ({capitalize(language)})
           </Typography>
           <Typography className="mt-1 font-normal text-gray-600">
             {`${t("feature.exercise_form.desc")} ${formUseData.level}`}
@@ -507,7 +691,9 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
             </Typography>
             <TextEditor
               value={formData.content}
-              onChange={(val) => setValue("content", val)}
+              onChange={(val) =>
+                setValue("content", val, { shouldDirty: true })
+              }
               errors={errors}
               exerciseId={exerciseId}
             />
@@ -549,8 +735,10 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
                 height={"300px"}
                 className="focus:!outline-none focus:ring-0 focus:border-none "
                 value={formData.sourecode}
-                extensions={[python()]}
-                onChange={(val) => setValue("sourecode", val)}
+                extensions={[language === PYTHON_LANG ? python() : cpp()]}
+                onChange={(val) =>
+                  setValue("sourecode", val, { shouldDirty: true })
+                }
                 placeholder={t("feature.exercise_form.placeholder.code")}
               />
             </Card>
@@ -573,7 +761,11 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
               </Typography>
               <KeywordConstraints
                 constraintsType="suggested"
-                constraints={constraints.suggested_constraints}
+                constraints={
+                  language === PYTHON_LANG
+                    ? constraints.suggested_constraints
+                    : clangConstraints.suggested_constraints
+                }
                 handleUserConstraints={handleUserConstraints}
                 isEdit={true}
               />
@@ -588,7 +780,11 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
               </Typography>
               <KeywordConstraints
                 constraintsType="user"
-                constraints={constraints.user_defined_constraints}
+                constraints={
+                  language === PYTHON_LANG
+                    ? constraints.user_defined_constraints
+                    : clangConstraints.user_defined_constraints
+                }
                 handleUserConstraints={handleUserConstraints}
                 isEdit={true}
               />
@@ -596,7 +792,12 @@ function ExerciseForm({ open, handleToggle, formUseData, exerciseId }: Props) {
           </div>
         </DialogBody>
         <DialogFooter className="space-x-2">
-          <Button className="ml-auto" onClick={handleSubmit(onSubmit)}>
+          <Button
+            className="ml-auto"
+            onClick={handleSubmit(onSubmit)}
+            disabled={!(isDirty || isConstraintDirty)}
+            loading={isFetching}
+          >
             {t("common.button.submit")}
           </Button>
         </DialogFooter>

@@ -51,6 +51,7 @@ export interface GroupData {
   staffs: Staff[];
   student_amount: number;
   time_end: string;
+  language: string;
   time_start: string;
   year: number;
 }
@@ -58,12 +59,16 @@ export interface GroupData {
 interface GroupDetailState {
   groupDetail: GroupData | null;
   isFetching: boolean;
+  isLogout: boolean;
+  isDelete: boolean;
   error: API_ERROR_RESPONSE | null;
 }
 
 const initialState: GroupDetailState = {
   groupDetail: null,
   isFetching: false,
+  isLogout: false,
+  isDelete: false,
   error: null,
 };
 
@@ -181,11 +186,24 @@ const groupDetailSlice = createSlice({
         state.error = action.payload as API_ERROR_RESPONSE;
         state.isFetching = false;
       })
+      .addCase(logoutAllStudents.pending, (state, _) => {
+        state.isLogout = true;
+      })
+      .addCase(logoutAllStudents.fulfilled, (state, _) => {
+        state.isLogout = false;
+      })
       .addCase(logoutAllStudents.rejected, (state, action) => {
         state.error = action.payload as API_ERROR_RESPONSE;
-        state.isFetching = false;
+        state.isLogout = false;
+      })
+      .addCase(deleteGroup.pending, (state, _) => {
+        state.isDelete = true;
+      })
+      .addCase(deleteGroup.fulfilled, (state, _) => {
+        state.isDelete = false;
       })
       .addCase(deleteGroup.rejected, (state, action) => {
+        state.isDelete = false;
         state.error = action.payload as API_ERROR_RESPONSE;
       }),
 });
@@ -196,6 +214,10 @@ export const getGroupExercise = (state: RootState) =>
   state.groupExercise.groupDetail;
 export const getGroupExerciseStatus = (state: RootState) =>
   state.groupExercise.isFetching;
+export const getLogoutStatus = (state: RootState) =>
+  state.groupExercise.isLogout;
+export const getDeleteStatus = (state: RootState) =>
+  state.groupExercise.isDelete;
 
 export const getGroupExerciseError = (state: RootState) =>
   state.groupExercise.error;
