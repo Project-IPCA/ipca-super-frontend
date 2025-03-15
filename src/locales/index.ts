@@ -14,7 +14,9 @@ i18n
     fallbackLng: "th",
     debug: false,
     backend: {
-      loadPath: "/locales/{{lng}}/translation.json",
+      loadPath: import.meta.env.PROD
+        ? "/super/locales/{{lng}}/translation.json"
+        : "/locales/{{lng}}/translation.json",
     },
     interpolation: {
       escapeValue: false,

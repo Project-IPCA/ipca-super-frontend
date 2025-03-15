@@ -5,8 +5,12 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     restart: on-failure
+    ports:
+      - 5175:5175
     networks:
       - ipca-stack
+    environment:
+      - TZ=Asia/Bangkok
     env_file:
       - .env
 
