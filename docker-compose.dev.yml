@@ -7,6 +7,8 @@ services:
     restart: on-failure
     networks:
       - ipca-stack
+    environment:
+      - TZ=Asia/Bangkok
     env_file:
       - .env
 
