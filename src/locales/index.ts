@@ -13,9 +13,11 @@ i18n
     },
     fallbackLng: "th",
     debug: false,
-    loadPath: import.meta.env.PROD
-      ? "/super/locales/{{lng}}/translation.json"
-      : "/locales/{{lng}}/translation.json",
+    backend: {
+      loadPath: import.meta.env.PROD
+        ? "/super/locales/{{lng}}/translation.json"
+        : "/locales/{{lng}}/translation.json",
+    },
     interpolation: {
       escapeValue: false,
     },
